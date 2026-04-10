@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Engineer's Handbook of Machine Learning — Leonardo Pulga</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+  :root {
+    --bg:      #2a2d35;
+    --surface: #33373f;
+    --border:  #484d58;
+    --text:    #d4d8e0;
+    --muted:   #8e94a4;
+    --accent:  #7db8d8;
+    --gold:    #c9a84c;
+    --green:   #6ab882;
+    --amber:   #c9a84c;
+    --code-bg: #22262e;
+    --tag-bg:  #2d3d52;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif;
+         font-size:15px; line-height:1.7; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .container { max-width:860px; margin:0 auto; padding:0 1.5rem; }
+
+  /* NAV */
+  .site-nav {
+    border-bottom:1px solid var(--border); padding:.8rem 0;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .site-nav .brand { font-weight:600; color:#dde3ec; font-size:.92rem; }
+  .site-nav ul { display:flex; gap:1.4rem; list-style:none; }
+  .site-nav a { font-size:.82rem; color:var(--muted); }
+  .site-nav a:hover { color:var(--accent); }
+
+  /* HERO */
+  .hero {
+    padding:4rem 0 3rem;
+    border-bottom:1px solid var(--border);
+    margin-bottom:3rem;
+  }
+  .hero-label { font-size:.72rem; color:var(--muted); letter-spacing:.1em;
+                text-transform:uppercase; margin-bottom:.6rem; }
+  .hero h1 { font-size:2.2rem; font-weight:700; color:#dde3ec; line-height:1.2; margin-bottom:.5rem; }
+  .hero .subtitle { font-size:1.05rem; color:var(--muted); margin-bottom:1.2rem; }
+  .hero .author-line { font-size:.88rem; color:var(--muted); margin-bottom:1.8rem; }
+  .hero .author-line strong { color:#cdd5e0; }
+  .hero-actions { display:flex; gap:.8rem; flex-wrap:wrap; }
+  .btn-gold {
+    display:inline-block; background:var(--gold); color:#0d1117;
+    font-weight:700; font-size:.85rem; padding:10px 22px; border-radius:6px;
+    transition:opacity .2s;
+  }
+  .btn-gold:hover { opacity:.85; text-decoration:none; }
+  .btn-outline {
+    display:inline-block; border:1px solid var(--border); color:var(--accent);
+    font-weight:500; font-size:.85rem; padding:9px 20px; border-radius:6px;
+    transition:opacity .2s;
+  }
+  .btn-outline:hover { opacity:.75; text-decoration:none; }
+
+  /* PITCH */
+  .pitch-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; margin:2rem 0; }
+  .pitch-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:8px; padding:16px;
+  }
+  .pitch-card .icon { font-size:1.4rem; margin-bottom:.5rem; }
+  .pitch-card h4 { font-size:.9rem; color:#cdd5e0; margin-bottom:.3rem; }
+  .pitch-card p { font-size:.8rem; color:var(--muted); line-height:1.6; }
+
+  /* PARTS */
+  h2 { font-size:1.25rem; font-weight:600; color:#cdd5e0; margin:2.5rem 0 .8rem;
+       padding-bottom:.35rem; border-bottom:1px solid var(--border); }
+  h3 { font-size:1rem; font-weight:600; color:var(--accent); margin:1.4rem 0 .4rem; }
+  p { margin-bottom:1rem; }
+
+  .part-block { margin-bottom:2.2rem; }
+  .part-label { font-size:.7rem; letter-spacing:.1em; text-transform:uppercase;
+                color:var(--muted); margin-bottom:.6rem; }
+  .chapter-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; }
+  .chapter-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:6px; padding:12px 14px;
+    display:flex; gap:10px; align-items:flex-start;
+    transition:border-color .15s;
+  }
+  .chapter-card:hover { border-color:var(--accent); }
+  .chapter-card a { text-decoration:none; color:inherit; display:contents; }
+  .ch-num { font-size:.68rem; color:var(--muted); white-space:nowrap; padding-top:2px;
+             font-variant-numeric:tabular-nums; min-width:2rem; }
+  .ch-info h4 { font-size:.82rem; color:#cdd5e0; margin-bottom:.2rem; line-height:1.3; }
+  .ch-info p { font-size:.72rem; color:var(--muted); line-height:1.5; margin:0; }
+  .tags { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.4rem; }
+  .tag { background:var(--tag-bg); color:var(--accent); font-size:.62rem;
+         padding:.1rem .45rem; border-radius:3px; }
+
+  /* ABOUT AUTHOR */
+  .author-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:10px; padding:22px 24px;
+    display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap;
+    margin:2rem 0;
+  }
+  .author-card img { width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid var(--border); }
+  .author-bio h3 { color:#cdd5e0; font-size:1rem; margin-bottom:.3rem; }
+  .author-bio .role { color:var(--accent); font-size:.8rem; margin-bottom:.6rem; }
+  .author-bio p { font-size:.83rem; color:var(--muted); line-height:1.7; margin:0; }
+
+  nav.bottom-nav { border-top:1px solid var(--border); padding:1.5rem 0; margin-top:3rem;
+                   display:flex; justify-content:space-between; font-size:.85rem; }
+  footer { text-align:center; color:var(--muted); font-size:.75rem;
+           padding:2rem 0; border-top:1px solid var(--border); margin-top:1rem; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="site-nav">
+    <div class="brand">Leonardo Pulga</div>
+    <ul>
+      <li><a href="../index.html">About</a></li>
+      <li><a href="../resume.html">Resume</a></li>
+      <li><a href="../blog.html">Blog</a></li>
+      <li><a href="./index.html">All chapters</a></li>
+    </ul>
+  </nav>
+</div>
+
+<!-- HERO -->
+<div class="container">
+<section class="hero">
+  <div class="hero-label">Technical Handbook</div>
+  <h1>The Engineer's Handbook<br>of Machine Learning</h1>
+  <div class="subtitle">Applied ML for engineering systems — from first principles to production deployment.</div>
+  <div class="author-line">by <strong>Leonardo Pulga, Ph.D.</strong> · Sr. Engineering Data Scientist, Baker Hughes</div>
+  <div class="hero-actions">
+    <a class="btn-gold" href="./index.html">Read the chapters →</a>
+    <a class="btn-outline" href="https://www.linkedin.com/in/leonardopulga/" target="_blank">Contact the author</a>
+  </div>
+</section>
+
+<!-- PITCH -->
+<h2>Who this is for</h2>
+<p>
+  This handbook is written for engineers who need to actually build and deploy ML systems —
+  not for researchers benchmarking on toy datasets. If you're working on turbomachinery,
+  combustion, chemical processes, structural health monitoring, energy systems, or any physical
+  asset where wrong predictions have real consequences, this is for you.
+</p>
+
+<div class="pitch-grid">
+  <div class="pitch-card">
+    <div class="icon">⚙️</div>
+    <h4>Physics-first, not data-first</h4>
+    <p>Every method is framed around what you know from physics and what you're trying to learn from data.</p>
+  </div>
+  <div class="pitch-card">
+    <div class="icon">🔬</div>
+    <h4>Equations that mean something</h4>
+    <p>No hand-waving. Every key formula is derived, explained, and connected to an engineering interpretation.</p>
+  </div>
+  <div class="pitch-card">
+    <div class="icon">💻</div>
+    <h4>Working code, not pseudocode</h4>
+    <p>Python implementations using PyTorch, GPflow, BoTorch, scikit-learn — libraries you'd actually use.</p>
+  </div>
+  <div class="pitch-card">
+    <div class="icon">🚀</div>
+    <h4>Production-oriented</h4>
+    <p>ONNX export, INT8 quantisation, MLOps, certification evidence packages — the stuff that matters at deployment.</p>
+  </div>
+  <div class="pitch-card">
+    <div class="icon">📐</div>
+    <h4>Decision tables, not vague guidance</h4>
+    <p>When to use GP vs XGBoost, KF vs EnKF, EI vs TuRBO — clear criteria, not "it depends".</p>
+  </div>
+  <div class="pitch-card">
+    <div class="icon">🔒</div>
+    <h4>Safety-critical aware</h4>
+    <p>DO-178C, ISO 26262, ASME V&V — how certification requirements shape every design decision.</p>
+  </div>
+</div>
+
+<!-- PARTS -->
+<h2>What's inside — 23 chapters, 7 parts</h2>
+
+<div class="part-block">
+  <div class="part-label">Part I · Foundations</div>
+  <div class="chapter-grid">
+    <div class="chapter-card"><a href="./ch01-introduction.html">
+      <span class="ch-num">01</span>
+      <div class="ch-info">
+        <h4>Introduction to ML for Engineering</h4>
+        <p>How to frame engineering problems as ML problems — and when not to.</p>
+        <div class="tags"><span class="tag">framing</span><span class="tag">lifecycle</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch02-mathematics-statistics.html">
+      <span class="ch-num">02</span>
+      <div class="ch-info">
+        <h4>Mathematics & Statistics Refresher</h4>
+        <p>Linear algebra, probability, Bayes theorem — what you actually need.</p>
+        <div class="tags"><span class="tag">probability</span><span class="tag">Bayes</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch03-eda.html">
+      <span class="ch-num">03</span>
+      <div class="ch-info">
+        <h4>Exploratory Data Analysis</h4>
+        <p>Data Quality Index, outlier detection, feature importance before modelling.</p>
+        <div class="tags"><span class="tag">DQI</span><span class="tag">EDA</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch04-design-of-experiments.html">
+      <span class="ch-num">04</span>
+      <div class="ch-info">
+        <h4>Design of Experiments</h4>
+        <p>Sobol' sequences, Latin hypercube, Bayesian active learning for next test.</p>
+        <div class="tags"><span class="tag">Sobol'</span><span class="tag">LHS</span><span class="tag">active learning</span></div>
+      </div>
+    </a></div>
+  </div>
+</div>
+
+<div class="part-block">
+  <div class="part-label">Part II · Supervised Learning & Surrogates</div>
+  <div class="chapter-grid">
+    <div class="chapter-card"><a href="./ch05-supervised-learning.html">
+      <span class="ch-num">05</span>
+      <div class="ch-info">
+        <h4>Regression & Classification</h4>
+        <p>Gaussian processes with ARD, XGBoost, conformal prediction intervals.</p>
+        <div class="tags"><span class="tag">GP</span><span class="tag">XGBoost</span><span class="tag">Matérn</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch06-deep-learning.html">
+      <span class="ch-num">06</span>
+      <div class="ch-info">
+        <h4>Deep Learning for Regression</h4>
+        <p>MLP, ResNet, physics-aware architectures, dropout UQ.</p>
+        <div class="tags"><span class="tag">MLP</span><span class="tag">ResNet</span><span class="tag">UQ</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch07-uncertainty-quantification.html">
+      <span class="ch-num">07</span>
+      <div class="ch-info">
+        <h4>Uncertainty Quantification</h4>
+        <p>Conformal PI, GP posterior, calibration curves, total vs epistemic UQ.</p>
+        <div class="tags"><span class="tag">conformal PI</span><span class="tag">calibration</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch08-validation-interpretability.html">
+      <span class="ch-num">08</span>
+      <div class="ch-info">
+        <h4>Validation & Interpretability</h4>
+        <p>SHAP values, ASME V&V, model cards, ODD documentation.</p>
+        <div class="tags"><span class="tag">SHAP</span><span class="tag">ASME V&V</span><span class="tag">model card</span></div>
+      </div>
+    </a></div>
+  </div>
+</div>
+
+<div class="part-block">
+  <div class="part-label">Part III · Time Series & Dynamical Systems</div>
+  <div class="chapter-grid">
+    <div class="chapter-card"><a href="./ch09-time-series.html">
+      <span class="ch-num">09</span>
+      <div class="ch-info">
+        <h4>Classical Time-Series Methods</h4>
+        <p>ARIMA, Kalman filter, state-space models, stationarity.</p>
+        <div class="tags"><span class="tag">ARIMA</span><span class="tag">KF</span><span class="tag">SSM</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch10-deep-time-series.html">
+      <span class="ch-num">10</span>
+      <div class="ch-info">
+        <h4>Deep Learning for Time Series</h4>
+        <p>LSTM, TCN, Transformer, PatchTST — simulation vs one-step error.</p>
+        <div class="tags"><span class="tag">LSTM</span><span class="tag">TCN</span><span class="tag">Transformer</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch11-system-identification.html">
+      <span class="ch-num">11</span>
+      <div class="ch-info">
+        <h4>System Identification</h4>
+        <p>ARX/ARMAX/OE/BJ, N4SID, NARX, Hammerstein-Wiener, neural SSMs.</p>
+        <div class="tags"><span class="tag">ARX</span><span class="tag">N4SID</span><span class="tag">NARX</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch12-virtual-sensors.html">
+      <span class="ch-num">12</span>
+      <div class="ch-info">
+        <h4>Virtual Sensors</h4>
+        <p>8-step design process, grey-box GP+LSTM, EKF for battery temperature.</p>
+        <div class="tags"><span class="tag">grey-box</span><span class="tag">EKF</span><span class="tag">NOx</span></div>
+      </div>
+    </a></div>
+  </div>
+</div>
+
+<div class="part-block">
+  <div class="part-label">Part IV · Condition Monitoring & Deployment</div>
+  <div class="chapter-grid">
+    <div class="chapter-card"><a href="./ch13-anomaly-detection.html">
+      <span class="ch-num">13</span>
+      <div class="ch-info">
+        <h4>Anomaly Detection</h4>
+        <p>CUSUM, Isolation Forest, LSTM autoencoder, VAE ELBO, bearing envelope analysis.</p>
+        <div class="tags"><span class="tag">CUSUM</span><span class="tag">VAE</span><span class="tag">bearings</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch14-deployment.html">
+      <span class="ch-num">14</span>
+      <div class="ch-info">
+        <h4>Deployment: Edge, PLC & Cloud</h4>
+        <p>ONNX export, INT8 quantisation, MLOps pipeline, OOD detection, shadow/canary rollout.</p>
+        <div class="tags"><span class="tag">ONNX</span><span class="tag">INT8</span><span class="tag">MLOps</span></div>
+      </div>
+    </a></div>
+  </div>
+</div>
+
+<div class="part-block">
+  <div class="part-label">Part V · Optimisation & Reliability</div>
+  <div class="chapter-grid">
+    <div class="chapter-card"><a href="./ch15-optimisation.html">
+      <span class="ch-num">15</span>
+      <div class="ch-info">
+        <h4>Bayesian Optimisation</h4>
+        <p>EI, TuRBO, adjoint gradients, constrained BO, multi-objective qEHVI.</p>
+        <div class="tags"><span class="tag">EI</span><span class="tag">TuRBO</span><span class="tag">adjoint</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch16-reliability.html">
+      <span class="ch-num">16</span>
+      <div class="ch-info">
+        <h4>Reliability Analysis & RUL</h4>
+        <p>Weibull distribution, censored MLE, LSTM-Weibull hybrid, RBDO.</p>
+        <div class="tags"><span class="tag">Weibull</span><span class="tag">censored</span><span class="tag">RBDO</span></div>
+      </div>
+    </a></div>
+  </div>
+</div>
+
+<div class="part-block">
+  <div class="part-label">Part VI · Advanced Physics-Informed Methods</div>
+  <div class="chapter-grid">
+    <div class="chapter-card"><a href="./ch17-physics-multifidelity.html">
+      <span class="ch-num">17</span>
+      <div class="ch-info">
+        <h4>Physics-Constrained ML & Multi-Fidelity</h4>
+        <p>Kennedy-O'Hagan co-kriging, PINN, budget allocation, physics architecture constraints.</p>
+        <div class="tags"><span class="tag">KO GP</span><span class="tag">PINN</span><span class="tag">multi-fidelity</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch18-3d-neural-operators.html">
+      <span class="ch-num">18</span>
+      <div class="ch-info">
+        <h4>3D Fields & Neural Operators</h4>
+        <p>POD-ROM, FNO, DeepONet, GNN, Transolver — full-field engineering predictions.</p>
+        <div class="tags"><span class="tag">FNO</span><span class="tag">DeepONet</span><span class="tag">GNN</span></div>
+      </div>
+    </a></div>
+  </div>
+</div>
+
+<div class="part-block">
+  <div class="part-label">Part VII · Emerging & Advanced Topics</div>
+  <div class="chapter-grid">
+    <div class="chapter-card"><a href="./ch19-clustering.html">
+      <span class="ch-num">19</span>
+      <div class="ch-info">
+        <h4>Unsupervised Learning & Clustering</h4>
+        <p>K-means, GMM EM, DBSCAN, silhouette, drive cycle operating mode detection.</p>
+        <div class="tags"><span class="tag">GMM</span><span class="tag">DBSCAN</span><span class="tag">K-means</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch20-generative-ai.html">
+      <span class="ch-num">20</span>
+      <div class="ch-info">
+        <h4>Generative AI & Foundation Models</h4>
+        <p>LLM reliability taxonomy, RCTCO prompts, RAG, TimeGPT, Lag-Llama.</p>
+        <div class="tags"><span class="tag">LLM</span><span class="tag">RAG</span><span class="tag">TimeGPT</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch21-reinforcement-learning.html">
+      <span class="ch-num">21</span>
+      <div class="ch-info">
+        <h4>Reinforcement Learning for Control</h4>
+        <p>PPO, SAC, sim-to-real gap bound, safe RL with CPO and CBF.</p>
+        <div class="tags"><span class="tag">PPO</span><span class="tag">SAC</span><span class="tag">safe RL</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch22-model-versioning-mlops.html">
+      <span class="ch-num">22</span>
+      <div class="ch-info">
+        <h4>Model Versioning & MLOps</h4>
+        <p>MLflow, DVC, model registry, PSI drift, rollback, certification evidence.</p>
+        <div class="tags"><span class="tag">MLflow</span><span class="tag">PSI</span><span class="tag">DO-178C</span></div>
+      </div>
+    </a></div>
+    <div class="chapter-card"><a href="./ch23-digital-twin.html">
+      <span class="ch-num">23</span>
+      <div class="ch-info">
+        <h4>Digital Twin Architecture</h4>
+        <p>FEM→ROM→DT pipeline, EnKF assimilation, innovation monitor, transfer learning.</p>
+        <div class="tags"><span class="tag">EnKF</span><span class="tag">POD-ROM</span><span class="tag">DT maturity</span></div>
+      </div>
+    </a></div>
+  </div>
+</div>
+
+<!-- ABOUT AUTHOR -->
+<h2>About the author</h2>
+<div class="author-card">
+  <img src="../assets/images/leo-avatar.jpg" alt="Leonardo Pulga">
+  <div class="author-bio">
+    <h3>Leonardo Pulga, Ph.D.</h3>
+    <div class="role">Senior AI Specialist for Engineering & Controls · Baker Hughes</div>
+    <p>
+      7+ years building ML systems for energy and automotive engineering — hybrid virtual sensors,
+      3D surrogate models, Bayesian optimisation workflows, and digital twin architectures.
+      Ph.D. in Automotive for Intelligent Mobility from UNIBO, working on AI-augmented CFD
+      for ICEs with Maserati. 2nd place LEC Data Challenge (2021, 2023), 4th place Ariel
+      Data Challenge (2022), Mensa Italy affiliate.
+    </p>
+    <p style="margin-top:.6rem;">
+      <a href="../index.html">Personal site</a> ·
+      <a href="https://www.linkedin.com/in/leonardopulga/" target="_blank">LinkedIn</a> ·
+      <a href="https://github.com/drleo93" target="_blank">GitHub</a> ·
+      <a href="https://www.researchgate.net/profile/Leonardo-Pulga" target="_blank">ResearchGate</a>
+    </p>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="../blog.html">← Back to Blog</a>
+  <a href="./index.html">All 23 chapters →</a>
+</nav>
+
+</div>
+
+<footer>
+  <div class="container">
+    The Engineer's Handbook of Machine Learning · Leonardo Pulga Ph.D. · 2026
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Leonardo Pulga</title>
+  <link rel="shortcut icon" href="./assets/images/logo.ico" type="image/x-icon">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    .book-promo {
+      background: linear-gradient(135deg, hsl(240,2%,16%) 0%, hsl(240,3%,12%) 100%);
+      border: 1px solid hsl(0,0%,22%);
+      border-left: 4px solid hsl(45,100%,71%);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 32px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .book-promo-text { flex: 1; min-width: 200px; }
+    .book-promo-text h3 { color: hsl(45,100%,71%); font-size: 1rem; margin-bottom: 6px; }
+    .book-promo-text p { font-size: 13px; color: hsl(0,0%,60%); line-height: 1.7; margin: 0; }
+    .book-promo-actions { display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+    .btn-primary {
+      display:inline-block; background:hsl(45,100%,71%); color:hsl(240,2%,12%);
+      font-weight:600; font-size:12px; padding:8px 18px; border-radius:6px;
+      text-decoration:none; transition:opacity .2s;
+    }
+    .btn-primary:hover { opacity:.85; }
+    .btn-outline {
+      display:inline-block; border:1px solid hsl(45,100%,71%); color:hsl(45,100%,71%);
+      font-weight:500; font-size:12px; padding:7px 16px; border-radius:6px;
+      text-decoration:none; transition:opacity .2s;
+    }
+    .btn-outline:hover { opacity:.75; }
+    .section-label {
+      font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+      color:hsl(0,0%,45%); margin:28px 0 12px;
+      padding-bottom:8px; border-bottom:1px solid hsl(0,0%,18%);
+    }
+  </style>
+</head>
+<body>
+<main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" data-sidebar>
+    <div class="sidebar-info">
+      <figure class="avatar-box">
+        <img src="./assets/images/leo-avatar.jpg" alt="Leonardo Pulga" width="80">
+      </figure>
+      <div class="info-content">
+        <h1 class="name" title="Leonardo Pulga">Leonardo Pulga</h1>
+        <p class="title">Sr. Engineering Data Scientist, Ph.D.</p>
+      </div>
+      <button class="info_more-btn" data-sidebar-btn>
+        <span>Show Contacts</span>
+        <ion-icon name="chevron-down"></ion-icon>
+      </button>
+    </div>
+    <div class="sidebar-info_more">
+      <div class="separator"></div>
+      <ul class="contacts-list">
+        <li class="contact-item">
+          <div class="icon-box"><ion-icon name="mail-outline"></ion-icon></div>
+          <div class="contact-info">
+            <p class="contact-title">Email</p>
+            <a href="mailto:leonardo.pulga93@gmail.com" class="contact-link">leonardo.pulga93@gmail.com</a>
+          </div>
+        </li>
+        <li class="contact-item">
+          <div class="icon-box"><ion-icon name="location-outline"></ion-icon></div>
+          <div class="contact-info">
+            <p class="contact-title">Location</p>
+            <address>Novi di Modena, MO — Italy</address>
+          </div>
+        </li>
+      </ul>
+      <div class="separator"></div>
+      <ul class="social-list">
+        <li class="social-item">
+          <a href="https://www.linkedin.com/in/leonardopulga/" class="social-link" target="_blank" title="LinkedIn">
+            <ion-icon name="logo-linkedin"></ion-icon>
+          </a>
+        </li>
+        <li class="social-item">
+          <a href="https://github.com/drleo93" class="social-link" target="_blank" title="GitHub">
+            <ion-icon name="logo-github"></ion-icon>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+
+    <nav class="navbar">
+      <ul class="navbar-list">
+        <li class="navbar-item"><a class="navbar-link" href="./index.html" data-nav-link>About</a></li>
+        <li class="navbar-item"><a class="navbar-link" href="./resume.html" data-nav-link>Resume</a></li>
+        <li class="navbar-item"><a class="navbar-link active" href="./blog.html" data-nav-link>Blog</a></li>
+        <li class="navbar-item"><a class="navbar-link" href="./index.html#contact" data-nav-link>Contact</a></li>
+      </ul>
+    </nav>
+
+    <article class="blog active" data-page="blog">
+
+      <header>
+        <h2 class="h2 article-title">Blog</h2>
+      </header>
+
+      <!-- Book promo banner -->
+      <div class="book-promo">
+        <div class="book-promo-text">
+          <h3>📘 The Engineer's Handbook of Machine Learning</h3>
+          <p>
+            23 chapters on applied ML for engineering — from Gaussian processes and uncertainty quantification
+            through deep time-series, neural operators, and digital twin architecture.
+            Written for engineers who deploy in production, not for tutorial enthusiasts.
+          </p>
+          <div class="book-promo-actions">
+            <a class="btn-primary" href="./blog/book.html">About the book</a>
+            <a class="btn-outline" href="./blog/index.html">All 23 chapters →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured posts -->
+      <p class="section-label">Featured chapters</p>
+
+      <section class="blog-posts">
+        <ul class="blog-posts-list">
+
+          <li class="blog-post-item">
+            <a href="./blog/ch10-deep-time-series.html">
+              <figure class="blog-banner-box">
+                <img src="./assets/images/blog-1.jpg" alt="Deep Learning for Time Series" loading="lazy">
+              </figure>
+              <div class="blog-content">
+                <div class="blog-meta">
+                  <p class="blog-category">Deep Learning</p>
+                  <span class="dot"></span>
+                  <time>Chapter 10</time>
+                </div>
+                <h3 class="h3 blog-item-title">LSTM, TCN & Transformers for Engineering Time Series</h3>
+                <p class="blog-text">
+                  Simulation error vs one-step error, dilated causal convolutions,
+                  causal masking, PatchTST, and a grey-box NOx virtual sensor.
+                </p>
+              </div>
+            </a>
+          </li>
+
+          <li class="blog-post-item">
+            <a href="./blog/ch15-optimisation.html">
+              <figure class="blog-banner-box">
+                <img src="./assets/images/blog-2.jpg" alt="Bayesian Optimisation" loading="lazy">
+              </figure>
+              <div class="blog-content">
+                <div class="blog-meta">
+                  <p class="blog-category">Optimisation</p>
+                  <span class="dot"></span>
+                  <time>Chapter 15</time>
+                </div>
+                <h3 class="h3 blog-item-title">Bayesian Optimisation: EI, TuRBO, Adjoint & Multi-Objective</h3>
+                <p class="blog-text">
+                  Expected Improvement, trust-region BO, gradient-based adjoint for
+                  PDE-constrained optimisation, constrained BO, Pareto fronts.
+                </p>
+              </div>
+            </a>
+          </li>
+
+          <li class="blog-post-item">
+            <a href="./blog/ch17-physics-multifidelity.html">
+              <figure class="blog-banner-box">
+                <img src="./assets/images/blog-3.jpg" alt="Multi-fidelity" loading="lazy">
+              </figure>
+              <div class="blog-content">
+                <div class="blog-meta">
+                  <p class="blog-category">Physics ML</p>
+                  <span class="dot"></span>
+                  <time>Chapter 17</time>
+                </div>
+                <h3 class="h3 blog-item-title">Multi-Fidelity GP: 200 RANS + 12 Hot-Fire Tests</h3>
+                <p class="blog-text">
+                  Kennedy-O'Hagan co-kriging, PINN physics loss, budget allocation,
+                  and physics-constrained neural architectures for turbine surrogates.
+                </p>
+              </div>
+            </a>
+          </li>
+
+          <li class="blog-post-item">
+            <a href="./blog/ch18-3d-neural-operators.html">
+              <figure class="blog-banner-box">
+                <img src="./assets/images/blog-4.jpg" alt="Neural Operators" loading="lazy">
+              </figure>
+              <div class="blog-content">
+                <div class="blog-meta">
+                  <p class="blog-category">3D AI</p>
+                  <span class="dot"></span>
+                  <time>Chapter 18</time>
+                </div>
+                <h3 class="h3 blog-item-title">3D Fields & Neural Operators: FNO, DeepONet, Transolver</h3>
+                <p class="blog-text">
+                  POD-ROM SVD pipeline, Fourier Neural Operator kernel, GNN message passing,
+                  and O(NK) attention for full-field engineering predictions.
+                </p>
+              </div>
+            </a>
+          </li>
+
+          <li class="blog-post-item">
+            <a href="./blog/ch23-digital-twin.html">
+              <figure class="blog-banner-box">
+                <img src="./assets/images/blog-5.jpg" alt="Digital Twin" loading="lazy">
+              </figure>
+              <div class="blog-content">
+                <div class="blog-meta">
+                  <p class="blog-category">Digital Twin</p>
+                  <span class="dot"></span>
+                  <time>Chapter 23</time>
+                </div>
+                <h3 class="h3 blog-item-title">Digital Twin Architecture: FEM → ROM → Real-Time Update</h3>
+                <p class="blog-text">
+                  EnKF data assimilation, innovation-sequence health monitor, model-plant
+                  mismatch detection, and transfer learning for data-scarce assets.
+                </p>
+              </div>
+            </a>
+          </li>
+
+          <li class="blog-post-item">
+            <a href="./blog/ch21-reinforcement-learning.html">
+              <figure class="blog-banner-box">
+                <img src="./assets/images/blog-6.jpg" alt="Reinforcement Learning" loading="lazy">
+              </figure>
+              <div class="blog-content">
+                <div class="blog-meta">
+                  <p class="blog-category">Control & RL</p>
+                  <span class="dot"></span>
+                  <time>Chapter 21</time>
+                </div>
+                <h3 class="h3 blog-item-title">RL for Engineering Control: PPO, SAC & Safe RL</h3>
+                <p class="blog-text">
+                  Sim-to-real gap bound, hybrid energy management env with SAC,
+                  reward shaping, CPO, and control barrier function safety filters.
+                </p>
+              </div>
+            </a>
+          </li>
+
+        </ul>
+      </section>
+
+      <p style="text-align:center; margin-top:24px;">
+        <a class="btn-outline" href="./blog/index.html">See all 23 chapters →</a>
+      </p>
+
+    </article>
+  </div>
+</main>
+
+<script src="./assets/js/script.js"></script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html>
