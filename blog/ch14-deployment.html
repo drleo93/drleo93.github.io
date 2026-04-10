@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deployment for Resource-Constrained Environments | ML Handbook</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root {
+  --bg:      #0d1117;
+  --surface: #161b22;
+  --border:  #2d333b;
+  --text:    #b8c0cc;
+  --muted:   #6e7890;
+  --accent:  #6da5cc;
+  --green:   #5a9e72;
+  --amber:   #c49a3c;
+  --red:     #c97b76;
+  --code-bg: #13191f;
+  --tag-bg:  #1a2d40;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Georgia', serif; font-size: 16px; line-height: 1.7; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+header { border-bottom: 1px solid var(--border); padding: 2rem 0 1.5rem; text-align: center; }
+.series-label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; font-family: monospace; }
+h1 { color: var(--accent); font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+.subtitle { color: var(--muted); font-size: 1rem; }
+.tags { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.tag { background: var(--tag-bg); color: var(--accent); padding: 0.2rem 0.7rem; border-radius: 3px; font-size: 0.75rem; font-family: monospace; border: 1px solid var(--border); }
+main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+.tldr { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 4px; padding: 1.2rem 1.5rem; margin-bottom: 2.5rem; }
+.tldr h2 { color: var(--accent); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.75rem; }
+.tldr ul { padding-left: 1.2rem; }
+.tldr li { margin-bottom: 0.35rem; }
+h2 { color: var(--accent); font-size: 1.35rem; margin: 2.5rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+h3 { color: #8db4c8; font-size: 1.1rem; margin: 1.8rem 0 0.7rem; }
+p { margin-bottom: 1rem; }
+ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+li { margin-bottom: 0.3rem; }
+.box-lesson  { background: #0c2316; border-left: 4px solid var(--green);  border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-pitfall { background: #2a1600; border-left: 4px solid var(--amber); border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-rule    { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid #6e7681; border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-example { background: #131220; border-left: 4px solid #7c6fad; border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.5rem; font-weight: 700; }
+.box-lesson .box-label  { color: var(--green); }
+.box-pitfall .box-label { color: var(--amber); }
+.box-rule .box-label    { color: #8b949e; }
+.box-example .box-label { color: #9d8fd4; }
+.math-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; margin: 1.2rem 0; overflow-x: auto; }
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; overflow-x: auto; margin: 1.2rem 0; }
+code { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #a8c4d8; }
+p code, li code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 2px; font-size: 0.85em; }
+table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+thead th { background: var(--surface); color: var(--accent); padding: 0.6rem 0.8rem; text-align: left; border-bottom: 2px solid var(--border); font-family: monospace; font-size: 0.8rem; }
+tbody td { padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:hover { background: #1a1f27; }
+.nav-links { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.9rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 1rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="series-label">The Engineer's Handbook of Machine Learning</div>
+  <h1>Deployment for Resource-Constrained Environments</h1>
+  <div class="subtitle">Chapter 14 &mdash; ONNX, Quantisation, MLOps, OOD Detection, ECU Deployment</div>
+  <div class="tags">
+    <span class="tag">ONNX</span>
+    <span class="tag">INT8</span>
+    <span class="tag">Quantisation</span>
+    <span class="tag">ECU</span>
+    <span class="tag">MLOps</span>
+    <span class="tag">OOD Detection</span>
+    <span class="tag">Shadow Deployment</span>
+    <span class="tag">Model Cards</span>
+  </div>
+</header>
+
+<main>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>ONNX is the universal intermediate representation: train in Python (any framework), export once, run anywhere — ECU, PLC, Raspberry Pi, cloud.</li>
+    <li>INT8 quantisation gives 4&times; size and 2&ndash;4&times; speed reduction at &lt;2% accuracy loss for smooth engineering regression. <strong>Use dynamic quantisation for LSTM</strong> (weights INT8, activations FP32).</li>
+    <li>The most dangerous deployment failure is silent: model running outside training domain, returning confidently wrong predictions with no alarm. OOD detection is mandatory.</li>
+    <li>Only 3% of companies successfully leverage AI in production. The gap is engineering infrastructure, not algorithms.</li>
+    <li>Always profile latency and memory on the <em>target hardware</em>, not the development machine.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>1. Deployment Target Landscape</h2>
+
+<table>
+  <thead>
+    <tr><th>Target</th><th>RAM</th><th>Latency Budget</th><th>Export Format</th><th>Best Model</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Automotive ECU (Cortex-M7)</td><td>128&ndash;512 KB</td><td>&lt;1 ms</td><td>C-code (ONNX2C)</td><td>XGBoost INT8 or shallow MLP</td></tr>
+    <tr><td>FADEC (DO-178C certified)</td><td>1&ndash;4 MB</td><td>&lt;5 ms</td><td>Certified C code</td><td>RSM or shallow MLP + formal V&amp;V</td></tr>
+    <tr><td>Industrial PLC (Siemens S7)</td><td>1&ndash;64 MB</td><td>&lt;10 ms</td><td>FMU (FMI 2.0) or ONNX RT</td><td>XGBoost, GP sparse</td></tr>
+    <tr><td>IoT gateway (RPi 4)</td><td>1&ndash;4 GB</td><td>&lt;100 ms</td><td>ONNX Runtime, TFLite</td><td>LSTM FP16, XGBoost</td></tr>
+    <tr><td>Edge server (Jetson Orin)</td><td>8&ndash;64 GB</td><td>&lt;1 s</td><td>PyTorch, ONNX, TensorRT</td><td>Any; GPU acceleration</td></tr>
+    <tr><td>Cloud / SaaS</td><td>Unlimited</td><td>&lt;5 s</td><td>REST API, Docker</td><td>Full Python stack</td></tr>
+  </tbody>
+</table>
+
+<!-- ================================================================== -->
+<h2>2. ONNX: The Universal Export Pipeline</h2>
+
+<p>ONNX (Open Neural Network Exchange) is the universal intermediate representation. Train in any Python framework, export once, run anywhere:</p>
+
+<ul>
+  <li>XGBoost/sklearn → <code>skl2onnx</code> → ONNX</li>
+  <li>PyTorch → <code>torch.onnx.export()</code> → ONNX</li>
+  <li>TensorFlow → <code>tf2onnx</code> → ONNX</li>
+  <li>GPflow → TF → ONNX</li>
+</ul>
+
+<p>ONNX Runtime executes on any target: Linux, Windows, ARM MCU (via TFLite), GPU (via TensorRT), or bare-metal ECU (via ONNX2C C-code generation).</p>
+
+<pre><code># Export sklearn/XGBoost pipeline to ONNX
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
+import onnxruntime as ort
+import numpy as np
+
+initial_type = [('float_input', FloatTensorType([None, d]))]
+onnx_model = convert_sklearn(pipeline, initial_types=initial_type, opset=17)
+
+with open("surrogate.onnx", "wb") as f:
+    f.write(onnx_model.SerializeToString())
+
+# Validate numerical equivalence
+sess = ort.InferenceSession("surrogate.onnx")
+y_python = pipeline.predict(X_test)
+y_onnx   = sess.run(None, {'float_input': X_test.astype(np.float32)})[0]
+max_rel_error = np.max(np.abs(y_python - y_onnx) / (np.abs(y_python) + 1e-10))
+assert max_rel_error < 1e-4, f"ONNX equivalence FAIL: {max_rel_error:.2e}"
+
+# Latency benchmark
+import time
+latencies = []
+for _ in range(1000):
+    t0 = time.perf_counter()
+    sess.run(None, {'float_input': X_test[0:1].astype(np.float32)})
+    latencies.append((time.perf_counter() - t0) * 1e6)
+print(f"Mean: {np.mean(latencies):.1f} µs, P99: {np.percentile(latencies, 99):.1f} µs")</code></pre>
+
+<!-- ================================================================== -->
+<h2>3. Model Quantisation</h2>
+
+<p>INT8 quantisation maps FP32 weights and activations to 8-bit integers:</p>
+
+<div class="math-block">
+$$x_{int8} = \operatorname{round}\!\left(\frac{x_{fp32} - z}{s}\right), \quad x_{fp32} \approx s \cdot x_{int8} + z$$
+</div>
+
+<p>where $s$ (scale) and $z$ (zero-point) are computed from a representative calibration dataset.</p>
+
+<table>
+  <thead>
+    <tr><th>Precision</th><th>Model Size</th><th>Latency</th><th>RMSE Increase</th><th>Use Case</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>FP64</td><td>8&times; FP16</td><td>Slowest</td><td>0% (reference)</td><td>Training, GP exact</td></tr>
+    <tr><td>FP32</td><td>2&times; FP16</td><td>1&times;</td><td>0%</td><td>Offline Python inference</td></tr>
+    <tr><td>FP16</td><td>1&times;</td><td>1.5&ndash;2&times;</td><td>&lt;0.1%</td><td>LSTM, Transformer, GPU edge</td></tr>
+    <tr><td><strong>INT8</strong></td><td>0.5&times; FP16</td><td><strong>2&ndash;4&times;</strong></td><td>&lt;2%</td><td>ECU, MCU, IoT</td></tr>
+    <tr><td>INT4</td><td>0.25&times; FP16</td><td>4&ndash;8&times;</td><td>2&ndash;10%</td><td>Ultra-constrained; use carefully</td></tr>
+  </tbody>
+</table>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Fixed-Point Overflow at Temperature Extremes</div>
+  INT8 scale factors are computed from the calibration dataset. If production inputs fall outside the calibration range — which happens predictably at temperature extremes — activations saturate at ±127 and model output is clipped or corrupted. <strong>Always calibrate on the full operating envelope</strong>, including corner cases (−40°C cold start, +125°C engine bay). Re-run the full validation protocol after quantisation before ECU integration.
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Quantisation Rules for Engineering Surrogates</div>
+  <ol>
+    <li>Always re-run the 15-step validation protocol after quantisation.</li>
+    <li>For regulatory-certified surrogates (FADEC, OBD): document quantisation procedure, calibration dataset provenance, and post-quantisation accuracy in the model card.</li>
+    <li>INT8 XGBoost: typically &lt;0.5% RMSE increase for smooth regression (compressor map, OCV curve).</li>
+    <li><strong>LSTM: use dynamic quantisation</strong> (weights INT8, activations FP32). Static quantisation of LSTM fails due to hidden state distribution shift.</li>
+    <li>GP models are FP64 by necessity. For embedded: distil to INT8-quantised MLP or use decision-tree approximation.</li>
+  </ol>
+</div>
+
+<!-- ================================================================== -->
+<h2>4. MLOps: Engineering ML Systems for Production</h2>
+
+<p>Only 3% of companies successfully leverage AI to a high degree in production. The gap is engineering infrastructure, not algorithms. Three consistent barriers:</p>
+
+<ol>
+  <li><strong>Data accessibility</strong>: sensor data exists but is locked in plant historians (OSIsoft PI, AVEVA, AspenTech InSite). Solution: treat the data pipeline as a capital project, not an IT ticket.</li>
+  <li><strong>Team structure</strong>: data scientists and process engineers in separate silos with incompatible KPIs. Solution: cross-functional ML engineering team with both physics knowledge and ML skills.</li>
+  <li><strong>Wrong approach</strong>: attempting to pre-train large models before establishing data infrastructure. Solution: start with a linear model on existing historian data and build infrastructure incrementally.</li>
+</ol>
+
+<h3>Model Versioning and Reproducibility</h3>
+
+<p>Minimum requirements for production engineering models:</p>
+
+<ol>
+  <li><strong>Data versioning</strong>: every training dataset has a unique hash. Use DVC or MLflow artifacts to link model versions to the exact data they were trained on.</li>
+  <li><strong>Code versioning</strong>: training code pinned to a Git SHA. The model card records both data hash and code SHA.</li>
+  <li><strong>Environment reproducibility</strong>: <code>requirements.txt</code> frozen to exact package versions. Docker image for complete reproducibility.</li>
+  <li><strong>Random seed control</strong>: all random operations seeded and recorded. Verify: retrain from same data + code + seed; compare model hashes.</li>
+</ol>
+
+<h3>A/B Testing and Staged Rollouts</h3>
+
+<p>Never replace the production model immediately with a new version:</p>
+
+<ul>
+  <li><strong>Shadow deployment</strong>: new model runs in parallel, predictions logged but not acted on. Compare performance against production on live data.</li>
+  <li><strong>Canary release</strong>: route 5&ndash;10% of inference requests to the new model. Monitor RMSE and OOD rates. Roll back if metrics degrade.</li>
+  <li><strong>Champion-Challenger</strong>: define a statistical test (paired t-test on RMSE) for promotion from Challenger to Champion.</li>
+</ul>
+
+<!-- ================================================================== -->
+<h2>5. Out-of-Distribution Detection</h2>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Silent Deployment Failure</div>
+  The most dangerous deployment failure is silent: a model running outside its training domain, returning confidently wrong predictions with no alarm. Input range validation and OOD detection must be part of every deployed surrogate — not optional.
+</div>
+
+<p>OOD detection strategies for engineering surrogates:</p>
+
+<ul>
+  <li><strong>Input range validation</strong>: enforce hard bounds on each input feature. If any input falls outside $[\mu_{train} \pm 3\sigma_{train}]$, flag as OOD and return <code>NaN</code> rather than a prediction.</li>
+  <li><strong>Mahalanobis distance</strong>: $D^2 = (\mathbf{x} - \boldsymbol{\mu})^\top \Sigma^{-1} (\mathbf{x} - \boldsymbol{\mu})$ computed in the training feature space. Threshold at 99th percentile of training $D^2$ values.</li>
+  <li><strong>GP posterior variance</strong>: if using a GP surrogate, the posterior variance $\sigma^{*2}(\mathbf{x})$ directly quantifies prediction uncertainty. Set a maximum variance threshold above which predictions are flagged.</li>
+  <li><strong>Ensemble disagreement</strong>: train $M=5$ models on bootstrap samples. Flag if standard deviation of predictions exceeds a threshold.</li>
+</ul>
+
+<!-- ================================================================== -->
+<h2>6. Key Takeaways</h2>
+
+<ul>
+  <li>ONNX is the deployment standard: export once, run anywhere. Always validate numerical equivalence after export (relative error &lt;$10^{-4}$).</li>
+  <li>INT8 gives 4&times; compression at &lt;2% RMSE loss. Use dynamic quantisation for LSTM. Always calibrate on the full operating envelope.</li>
+  <li>Profile latency on <em>target hardware</em>. Development machine latency is irrelevant for ECU or MCU deployment.</li>
+  <li>MLOps is infrastructure engineering, not a data science task. Data pipeline + versioning + monitoring must be built before deploying models at scale.</li>
+  <li>Shadow deployment → canary release → champion-challenger: always stage model updates in production.</li>
+  <li>OOD detection is non-negotiable. Silent failures from domain shift are more dangerous than model accuracy limitations.</li>
+  <li>For regulatory deployment (FADEC, OBD): model card + traceability (Git SHA + data hash) + post-quantisation validation are all mandatory.</li>
+</ul>
+
+<div class="nav-links">
+  <a href="ch13-anomaly-detection.html">&larr; Ch13: Anomaly Detection</a>
+  <a href="ch15-optimisation.html">Ch15: Engineering Optimisation &rarr;</a>
+</div>
+
+</main>
+
+<footer>
+  <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
+  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 2: Mathematical &amp; Statistical Foundations | Engineer's ML Handbook</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root {
+  --bg:      #0d1117;
+  --surface: #161b22;
+  --border:  #2d333b;
+  --text:    #b8c0cc;
+  --muted:   #6e7890;
+  --accent:  #6da5cc;
+  --green:   #5a9e72;
+  --amber:   #c49a3c;
+  --red:     #c97b76;
+  --code-bg: #13191f;
+  --tag-bg:  #1a2d40;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.7}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:1.4rem 2rem}
+header .breadcrumb{font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem}
+header h1{font-size:1.7rem;font-weight:700;color:#d0dae8;line-height:1.25}
+header .meta{font-size:0.82rem;color:var(--muted);margin-top:0.5rem}
+
+.tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin:0.9rem 0}
+.tag{background:var(--tag-bg);color:var(--accent);font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;border:1px solid #2a4a66}
+
+.container{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
+
+.tldr{background:#0c1e30;border:1px solid #2a4a66;border-left:4px solid var(--accent);border-radius:6px;padding:1.1rem 1.4rem;margin:1.5rem 0}
+.tldr h3{color:var(--accent);font-size:0.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:0.5rem}
+.tldr ul{padding-left:1.2rem}
+.tldr li{margin-bottom:0.25rem;font-size:0.92rem}
+
+h2{color:#c8d6e5;font-size:1.3rem;margin:2.2rem 0 0.8rem;padding-bottom:0.35rem;border-bottom:1px solid var(--border)}
+h3{color:#a8bcd0;font-size:1.05rem;margin:1.6rem 0 0.5rem}
+h4{color:var(--muted);font-size:0.95rem;margin:1.2rem 0 0.3rem;text-transform:uppercase;letter-spacing:.04em}
+p{margin-bottom:0.9rem}
+ul,ol{padding-left:1.5rem;margin-bottom:0.9rem}
+li{margin-bottom:0.3rem}
+
+code{background:var(--code-bg);color:#a8d4a8;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.85em;padding:0.1em 0.4em;border-radius:3px}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto;margin:1rem 0}
+pre code{background:none;padding:0;font-size:0.88em}
+
+/* callout boxes */
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-rule{background:#161b22;border-left:4px solid #6e7681;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0;border:1px solid var(--border);border-left:4px solid #6e7681}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-label{font-size:0.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:0.5rem}
+.box-lesson .box-label{color:var(--green)}
+.box-pitfall .box-label{color:var(--amber)}
+.box-rule .box-label{color:#8b9aaa}
+.box-example .box-label{color:#9d8fd4}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;margin:1.2rem 0}
+table{width:100%;border-collapse:collapse;font-size:0.87rem}
+th{background:#1c2636;color:#c8d6e5;padding:0.6rem 0.85rem;text-align:left;border-bottom:2px solid var(--border)}
+td{padding:0.55rem 0.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#161d28}
+td:first-child{color:#9bafc4}
+
+.formula-block{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:0.9rem 1.2rem;margin:1rem 0;text-align:center;overflow-x:auto}
+
+nav.chapter-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0;margin-top:2rem;border-top:1px solid var(--border);font-size:0.88rem}
+nav.chapter-nav a{color:var(--accent)}
+
+footer{background:var(--surface);border-top:1px solid var(--border);padding:1.2rem 2rem;text-align:center;font-size:0.8rem;color:var(--muted);margin-top:3rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="breadcrumb"><a href="index.html">Engineer's ML Handbook</a> › Part I: Foundations</div>
+  <h1>Ch 2: Mathematical &amp; Statistical Foundations</h1>
+  <div class="meta">Chapter 2 of 23 &nbsp;·&nbsp; ~45 min read &nbsp;·&nbsp; Reference chapter — return repeatedly</div>
+  <div class="tags">
+    <span class="tag">probability</span>
+    <span class="tag">Bayes</span>
+    <span class="tag">bias-variance</span>
+    <span class="tag">MLE/MAP</span>
+    <span class="tag">information theory</span>
+    <span class="tag">linear algebra</span>
+    <span class="tag">hypothesis testing</span>
+    <span class="tag">cross-validation</span>
+    <span class="tag">metrics</span>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="tldr">
+  <h3>TL;DR</h3>
+  <ul>
+    <li>Bayesian inference (prior × likelihood ∝ posterior) is the unifying framework behind GP regression, logistic regression, and OLS — they are all special cases.</li>
+    <li>The bias-variance-noise decomposition is the single most useful diagnostic: if train error is low and test error is high → high variance; if both are high → high bias.</li>
+    <li>MLE under Gaussian noise <em>is</em> OLS. MAP with a Gaussian prior <em>is</em> Ridge regression. L1 prior → Lasso.</li>
+    <li>Never compute a matrix inverse directly — always use Cholesky decomposition for PD matrices.</li>
+    <li>GroupKFold, not random KFold, for any engineering dataset with temporal or batch structure. Random KFold on time-series data gives optimistic RMSE by 20–60%.</li>
+    <li>A weak Pearson correlation (\(r=0.09\)) can hide a strong physical signal in the wrong coordinate system. Use physics-motivated features and mutual information for nonlinear screening.</li>
+  </ul>
+</div>
+
+<!-- =========================================================== -->
+<h2>1. Probability Essentials</h2>
+
+<p>A <strong>probability space</strong> \((\Omega, \mathcal{F}, P)\) is the formal substrate. For engineering ML you rarely work at this level, but the Kolmogorov axioms define the rules everything else obeys.</p>
+
+<h3>Bayes' Theorem — the foundation</h3>
+
+<div class="formula-block">
+$$P(A \mid B) = \frac{P(B \mid A)\,P(A)}{P(B)}$$
+</div>
+
+<p>In ML terms: let \(A = \boldsymbol{\theta}\) (parameters) and \(B = \mathcal{D}\) (data):</p>
+
+<div class="formula-block">
+$$\underbrace{p(\boldsymbol{\theta} \mid \mathcal{D})}_{\text{posterior}} = \frac{\overbrace{p(\mathcal{D} \mid \boldsymbol{\theta})}^{\text{likelihood}}\;\overbrace{p(\boldsymbol{\theta})}^{\text{prior}}}{\underbrace{p(\mathcal{D})}_{\text{evidence}}}$$
+</div>
+
+<p>The evidence \(p(\mathcal{D}) = \int p(\mathcal{D} \mid \boldsymbol{\theta})p(\boldsymbol{\theta})\,d\boldsymbol{\theta}\) is the quantity maximised in GP model selection (Chapter 5).</p>
+
+<h3>Laws of expectation and variance</h3>
+
+<p><strong>Law of total expectation</strong> (tower property): \(\mathbb{E}[X] = \mathbb{E}_Z[\mathbb{E}[X \mid Z]]\). This underlies the bias-variance decomposition and GP posterior derivations.</p>
+
+<p><strong>Law of total variance</strong>: \(\mathrm{Var}(X) = \mathbb{E}[\mathrm{Var}(X \mid Z)] + \mathrm{Var}(\mathbb{E}[X \mid Z])\). This splits total variability into within-group and between-group components — critical for hierarchical models.</p>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson — conditional independence</div>
+  In a SCADA system, sensor readings at time \(t\) may be <strong>conditionally independent</strong> given the plant state, even though they are marginally correlated. Formally: \(X \perp\!\!\!\perp Y \mid Z\) if \(p(x,y \mid z) = p(x \mid z)\,p(y \mid z)\). Exploiting this is the basis of Kalman filters and graphical models.
+</div>
+
+<h3>The Gaussian and why it dominates</h3>
+
+<p>Three properties make the Gaussian unavoidable:</p>
+<ol>
+  <li><strong>Closure under linear transformation</strong>: if \(X \sim \mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\Sigma})\) and \(\mathbf{A}\) is any matrix, then \(\mathbf{A}X \sim \mathcal{N}(\mathbf{A}\boldsymbol{\mu}, \mathbf{A}\boldsymbol{\Sigma}\mathbf{A}^\top)\).</li>
+  <li><strong>Closure under conditioning</strong>: if \((X_1, X_2)\) are jointly Gaussian, then \(X_1 \mid X_2 = x_2\) is Gaussian with closed-form mean and covariance. This <em>is</em> GP prediction.</li>
+  <li><strong>Maximum entropy</strong> among all distributions with given mean and variance.</li>
+</ol>
+
+<p>The GP posterior mean and covariance formulas follow directly from Gaussian conditional rules:</p>
+<div class="formula-block">
+$$\boldsymbol{\mu}_{1|2} = \boldsymbol{\mu}_1 + \boldsymbol{\Sigma}_{12}\boldsymbol{\Sigma}_{22}^{-1}(\mathbf{a} - \boldsymbol{\mu}_2), \qquad \boldsymbol{\Sigma}_{1|2} = \boldsymbol{\Sigma}_{11} - \boldsymbol{\Sigma}_{12}\boldsymbol{\Sigma}_{22}^{-1}\boldsymbol{\Sigma}_{21}$$
+</div>
+
+<h3>Distributions reference</h3>
+
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr><th>Distribution</th><th>Parameters</th><th>Density</th><th>Engineering use</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Gaussian \(\mathcal{N}(\mu,\sigma^2)\)</td><td>Mean, variance</td><td>\(\frac{1}{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}\)</td><td>GP, noise model, UQ</td></tr>
+    <tr><td>Multivariate Gaussian \(\mathcal{N}(\boldsymbol{\mu},\boldsymbol{\Sigma})\)</td><td>Mean vector, covariance matrix</td><td>Quadratic form in exponent</td><td>GP posterior, Kalman filter</td></tr>
+    <tr><td>Bernoulli \(\mathrm{Bern}(p)\)</td><td>Success prob. \(p\)</td><td>\(p^x(1-p)^{1-x}\)</td><td>Binary classification</td></tr>
+    <tr><td>Weibull \(\mathrm{Wei}(\eta,\beta)\)</td><td>Scale \(\eta\), shape \(\beta\)</td><td>\(\frac{\beta}{\eta}\!\left(\frac{x}{\eta}\right)^{\beta-1}\!e^{-(x/\eta)^\beta}\)</td><td>Reliability (Ch. 16)</td></tr>
+    <tr><td>Student-\(t_\nu(\mu,\sigma^2)\)</td><td>d.o.f. \(\nu\), location, scale</td><td>Heavy tails; \(\nu\to\infty\): Gaussian</td><td>Robust regression</td></tr>
+    <tr><td>Log-Normal \(\mathrm{LogN}(\mu,\sigma^2)\)</td><td>\(\ln X \sim \mathcal{N}(\mu,\sigma^2)\)</td><td>Positive-valued, right-skewed</td><td>Defect sizes, lifetimes</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- =========================================================== -->
+<h2>2. Parameter Estimation: MLE and MAP</h2>
+
+<h3>Maximum Likelihood Estimation (MLE)</h3>
+
+<div class="formula-block">
+$$\hat{\boldsymbol{\theta}}_{MLE} = \arg\max_{\boldsymbol{\theta}} \sum_{i=1}^n \log p(y_i \mid \boldsymbol{\theta})$$
+</div>
+
+<p>MLE for linear regression with Gaussian noise gives OLS exactly:</p>
+<div class="formula-block">
+$$\hat{\boldsymbol{\beta}}_{MLE} = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{y}$$
+</div>
+
+<p>This is not a coincidence: OLS is MLE under Gaussian noise. Every time you minimise squared error, you are making a Gaussian noise assumption.</p>
+
+<h3>Maximum A Posteriori (MAP)</h3>
+
+<div class="formula-block">
+$$\hat{\boldsymbol{\theta}}_{MAP} = \arg\max_{\boldsymbol{\theta}} \log p(\mathcal{D} \mid \boldsymbol{\theta}) + \log p(\boldsymbol{\theta})$$
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Rule — MLE / MAP / Full Bayes</div>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr><th>Method</th><th>Optimises</th><th>Output</th><th>Uncertainty</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>MLE</td><td>\(p(\mathcal{D}\mid\boldsymbol{\theta})\)</td><td>Point estimate</td><td>None</td></tr>
+      <tr><td>MAP</td><td>\(p(\mathcal{D}\mid\boldsymbol{\theta})p(\boldsymbol{\theta})\)</td><td>Point estimate</td><td>None</td></tr>
+      <tr><td>Full Bayes</td><td>\(p(\boldsymbol{\theta}\mid\mathcal{D})\)</td><td>Posterior distribution</td><td>Full posterior UQ</td></tr>
+    </tbody>
+  </table>
+  </div>
+  MAP with Gaussian prior \(p(\boldsymbol{\theta}) = \mathcal{N}(\mathbf{0}, \lambda^{-1}\mathbf{I})\) <strong>is Ridge regression</strong>. Laplace prior → Lasso (L1 regularisation).
+</div>
+
+<p>For censored data (reliability analysis), the MLE likelihood accounts for right-censored observations:</p>
+<div class="formula-block">
+$$\mathcal{L}(\eta,\beta) = \prod_{i:\text{failed}} f(t_i;\eta,\beta) \prod_{j:\text{censored}} [1 - F(t_j;\eta,\beta)]$$
+</div>
+
+<!-- =========================================================== -->
+<h2>3. Bias-Variance-Noise Decomposition</h2>
+
+<p>The single most important theoretical result for applied ML. It tells you <em>why</em> a model fails and <em>what to do about it</em>.</p>
+
+<div class="formula-block">
+$$\mathbb{E}_{\mathcal{D},\varepsilon}\!\left[(y - \hat{f}(\mathbf{x}))^2\right]
+= \underbrace{\left(\mathbb{E}_\mathcal{D}[\hat{f}(\mathbf{x})] - f(\mathbf{x})\right)^2}_{\textbf{Bias}^2}
++ \underbrace{\mathrm{Var}_\mathcal{D}\!\left(\hat{f}(\mathbf{x})\right)}_{\textbf{Variance}}
++ \underbrace{\sigma_\varepsilon^2}_{\textbf{Noise}}$$
+</div>
+
+<p><strong>Bias²</strong>: systematic error. Model consistently predicts the wrong value regardless of training data. Causes: wrong model family, missing features, over-regularisation. Fix: more expressive model, better features, less regularisation.</p>
+<p><strong>Variance</strong>: sensitivity to training data. Different training sets give different predictions. Causes: too many parameters, too little data. Fix: more data, more regularisation, ensembles.</p>
+<p><strong>Noise</strong> \(\sigma_\varepsilon^2\): irreducible. Cannot be reduced by any modelling choice — only by improving instrumentation.</p>
+
+<div class="box-rule">
+  <div class="box-label">Rule — Diagnosing model failure</div>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr><th>Symptom</th><th>Diagnosis</th><th>Fix</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Train error low, test error high</td><td>High variance</td><td>More data, regularise, simpler model</td></tr>
+      <tr><td>Both train and test error high</td><td>High bias</td><td>Better features, more complex model</td></tr>
+      <tr><td>Test error ≈ train error, both high</td><td>Irreducible noise</td><td>Better sensors</td></tr>
+      <tr><td>Test error ≪ train error</td><td>Data leakage</td><td>Fix train/test split</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Optimal complexity is not universal</div>
+  In engineering: bias dominates when fitting a linear response surface model (RSM) to a highly nonlinear combustion process. Variance dominates when using a deep MLP with 200 training points. The right model for the problem depends on your specific \(n\) and the true function complexity — not on general intuitions about "deep learning is better".
+</div>
+
+<!-- =========================================================== -->
+<h2>4. Information Theory Essentials</h2>
+
+<h3>Entropy and KL Divergence</h3>
+
+<p><strong>Shannon entropy</strong>: \(H(p) = -\mathbb{E}_p[\log p(x)]\). For \(\mathcal{N}(\mu,\sigma^2)\): \(H = \frac{1}{2}\log(2\pi e \sigma^2)\). More variance → more entropy.</p>
+
+<p><strong>KL divergence</strong> from \(q\) to \(p\): \(D_{KL}(p \| q) = \int p(x)\log\frac{p(x)}{q(x)}\,dx \geq 0\), with equality iff \(p = q\). Minimised in variational inference when approximating the true posterior \(p\) with simpler \(q\).</p>
+
+<h3>Expected Information Gain (EIG) and BOED</h3>
+
+<p>The EIG for a proposed experiment at \(\mathbf{x}^*\) is the expected KL divergence from prior to posterior:</p>
+<div class="formula-block">
+$$\text{EIG}(\mathbf{x}^*) = \mathbb{E}_{p(y^*|\mathbf{x}^*)}\!\left[D_{KL}\!\left(p(\boldsymbol{\theta} \mid y^*, \mathbf{x}^*) \;\big\|\; p(\boldsymbol{\theta})\right)\right]$$
+</div>
+
+<p>For a Gaussian surrogate, EIG reduces to expected posterior variance reduction. The Expected Improvement (EI) acquisition function in Bayesian optimisation (Ch. 15) is a special case where the parameter of interest is the location of the global optimum.</p>
+
+<h3>Cross-Entropy as a Loss Function</h3>
+
+<div class="formula-block">
+$$\mathcal{L}_{CE} = -\sum_{i=1}^n \sum_{k=1}^K y_{ik} \log \hat{p}_{ik}$$
+</div>
+
+<p>Minimising cross-entropy is equivalent to MLE under a categorical distribution. Binary cross-entropy (\(K=2\)) is the default loss for binary classifiers. If your model minimises cross-entropy, it is doing MLE — full stop.</p>
+
+<!-- =========================================================== -->
+<h2>5. Linear Algebra for ML</h2>
+
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr><th>Operation</th><th>Cost</th><th>ML application</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Matrix multiply \(\mathbf{AB}\)</td><td>\(\mathcal{O}(nmp)\)</td><td>Forward pass, kernel computation</td><td>\(\mathbf{A}\in\mathbb{R}^{n\times m}\), \(\mathbf{B}\in\mathbb{R}^{m\times p}\)</td></tr>
+    <tr><td>Matrix inverse \(\mathbf{A}^{-1}\)</td><td>\(\mathcal{O}(n^3)\)</td><td>GP posterior, OLS</td><td><strong>Never compute explicitly</strong> — use Cholesky</td></tr>
+    <tr><td>Cholesky \(\mathbf{A} = \mathbf{L}\mathbf{L}^\top\)</td><td>\(\mathcal{O}(n^3/3)\)</td><td>GP training (cost dominant)</td><td>Numerically stable for PD matrices</td></tr>
+    <tr><td>SVD \(\mathbf{A} = \mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^\top\)</td><td>\(\mathcal{O}(\min(n,p)^2\max(n,p))\)</td><td>PCA, low-rank approx</td><td>Truncated SVD is cheaper</td></tr>
+    <tr><td>QR decomposition</td><td>\(\mathcal{O}(np^2)\), \(n\geq p\)</td><td>OLS (numerically stable)</td><td>Preferred over normal equations</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson — Why Cholesky for GP</div>
+  GP training requires \(\mathbf{K}^{-1}\mathbf{y}\) and \(\log|\mathbf{K}|\) where \(\mathbf{K}\in\mathbb{R}^{n\times n}\) is the kernel matrix. Computing \(\mathbf{K}^{-1}\) directly is numerically unstable. Cholesky: \(\mathbf{K} = \mathbf{L}\mathbf{L}^\top\). Then \(\mathbf{K}^{-1}\mathbf{y}\) is solved by forward/backward substitution (\(\mathcal{O}(n^2)\)) and \(\log|\mathbf{K}| = 2\sum_i \log L_{ii}\). This is the standard GP training algorithm.
+</div>
+
+<h3>SVD and Dimensionality</h3>
+
+<ul>
+  <li><strong>PCA</strong>: principal components are the columns of \(\mathbf{V}\) (right singular vectors). Variance explained by component \(j\): \(\sigma_j^2 / \sum_k \sigma_k^2\).</li>
+  <li><strong>Rank</strong>: near-zero singular values indicate near-collinearity — a numerical warning in regression and kernel methods.</li>
+  <li><strong>Low-rank approximation</strong>: best rank-\(k\) approximation by Eckart-Young theorem: \(\mathbf{U}_k\boldsymbol{\Sigma}_k\mathbf{V}_k^\top\). Basis of sparse GP inducing point methods.</li>
+</ul>
+
+<h3>Positive Definiteness and Kernels</h3>
+
+<p>Kernel matrices must be positive definite (PD) for GP regression to be well-posed. Valid kernels (Matérn-5/2, RBF, polynomial) guarantee PD matrices for any input set. Testing PD: Cholesky factorisation succeeds iff the matrix is PD. A failed Cholesky is a numerical red flag — add jitter \(\epsilon \mathbf{I}\).</p>
+
+<!-- =========================================================== -->
+<h2>6. Hypothesis Testing and Confidence Intervals</h2>
+
+<h3>Framework</h3>
+
+<ol>
+  <li><strong>Null hypothesis</strong> \(H_0\): conservative claim (e.g., "Model A and B have equal test RMSE")</li>
+  <li><strong>p-value</strong>: \(P(\text{data as extreme} \mid H_0)\). <em>Not</em> the probability that \(H_0\) is true.</li>
+  <li><strong>Significance level</strong> \(\alpha = 0.05\): pre-specified false positive rate.</li>
+</ol>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — p-values in model comparison</div>
+  With \(n = 10{,}000\) test points, an RMSE difference of 0.001% may be statistically significant (\(p < 0.05\)) but practically meaningless. Always report <strong>both</strong> the p-value and the effect size (absolute improvement). A model that is 0.3% better on a regulatory metric matters; 0.001% better does not.
+</div>
+
+<h3>Tests Used in the Handbook</h3>
+
+<p><strong>Paired t-test</strong> for comparing two models on the same test set:</p>
+<div class="formula-block">
+$$t = \frac{\bar{d}}{\hat{s}_d / \sqrt{n}}, \qquad \bar{d} = \frac{1}{n}\sum_{i=1}^n (e_i^A - e_i^B)$$
+</div>
+<p>Under \(H_0\): \(t \sim t_{n-1}\).</p>
+
+<p><strong>Diebold-Mariano test</strong> (Ch. 9 — time series): accounts for temporal autocorrelation in forecast errors, which the paired t-test ignores. Use this for any time series model comparison.</p>
+
+<p><strong>Kolmogorov-Smirnov test</strong>: checks whether two distributions are the same. Used in concept drift detection (Ch. 8) and reliability analysis.</p>
+
+<h3>Confidence vs. Prediction Intervals</h3>
+
+<p>CI for OLS coefficient \(\hat{\beta}_j\): \(\hat{\beta}_j \pm t_{n-p,\,\alpha/2} \cdot \hat{\mathrm{se}}(\hat{\beta}_j)\).</p>
+
+<p>PI for a new observation \(y^*\):</p>
+<div class="formula-block">
+$$\hat{y}^* \pm t_{n-p,\,\alpha/2} \cdot \hat{\sigma}\sqrt{1 + \mathbf{x}^{*\top}(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{x}^*}$$
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Rule — CI vs. PI in virtual sensors</div>
+  A <strong>confidence interval</strong> covers the mean prediction — insufficient for regulatory compliance. A <strong>prediction interval</strong> covers a new observation — the PI is always wider and is what you report for virtual sensor deployment. Conflating the two leads to systematically overconfident uncertainty claims.
+</div>
+
+<!-- =========================================================== -->
+<h2>7. Model Evaluation Metrics</h2>
+
+<h3>Regression Metrics</h3>
+
+<div class="formula-block">
+$$\text{RMSE} = \sqrt{\frac{1}{n}\sum_i(y_i-\hat{y}_i)^2}, \quad \text{MAE} = \frac{1}{n}\sum_i|y_i-\hat{y}_i|, \quad R^2 = 1 - \frac{\sum_i(y_i-\hat{y}_i)^2}{\sum_i(y_i-\bar{y})^2}$$
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Rule — Which regression metric to use</div>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr><th>Metric</th><th>Use when</th><th>Engineering example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>RMSE</td><td>Errors in original units; penalises large errors</td><td>NOx (g/km): target RMSE &lt; 0.05 g/km</td></tr>
+      <tr><td>MAE</td><td>Robust to outliers; median-like</td><td>Catalyst conversion: MAE &lt; 2%</td></tr>
+      <tr><td>MAPE</td><td>Relative error; target &gt; 0</td><td>Fuel consumption: MAPE &lt; 3%</td></tr>
+      <tr><td>\(R^2\)</td><td>Quick check of explained variance</td><td>\(R^2 > 0.99\): excellent for DOE surrogate</td></tr>
+      <tr><td>Max Error</td><td>Regulatory limit at any point</td><td>OBD: max error &lt; 30% of limit</td></tr>
+    </tbody>
+  </table>
+  </div>
+  \(R^2 = 1\): perfect. \(R^2 = 0\): model predicts mean everywhere. \(R^2 < 0\): model is worse than the mean — likely data leakage.
+</div>
+
+<h3>Classification Metrics</h3>
+
+<div class="formula-block">
+$$\text{Precision} = \frac{TP}{TP+FP}, \quad \text{Recall} = \frac{TP}{TP+FN}, \quad F_1 = 2\cdot\frac{\text{Prec}\cdot\text{Recall}}{\text{Prec}+\text{Recall}}$$
+</div>
+
+<p><strong>ROC-AUC</strong>: probability that the model ranks a random positive higher than a random negative. AUC = 0.5: random; AUC = 1.0: perfect. For fault detection (e.g., catalyst fault), set Recall ≥ 0.95 first, then tune threshold — AUC summarises discrimination ability independently of threshold.</p>
+
+<p><strong>Calibration</strong>: a classifier predicting 80% probability of compressor surge must be right 80% of the time. Test with reliability diagrams and Expected Calibration Error (ECE). Uncalibrated models are not safe for engineering deployment.</p>
+
+<!-- =========================================================== -->
+<h2>8. Cross-Validation Strategies</h2>
+
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr><th>Strategy</th><th>When to use</th><th>Implementation</th><th>Risk if ignored</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Random KFold</td><td>i.i.d. data (rare in engineering)</td><td><code>KFold(n_splits=5)</code></td><td>Almost never correct</td></tr>
+    <tr><td>GroupKFold</td><td>Data from distinct campaigns/batches</td><td><code>GroupKFold(n_splits=5)</code></td><td>Optimistic RMSE by 20–60%</td></tr>
+    <tr><td>TimeSeriesSplit</td><td>Sequential time series</td><td><code>TimeSeriesSplit(n_splits=5)</code></td><td>Temporal leakage</td></tr>
+    <tr><td>Leave-One-Out</td><td>Very small \(n < 30\)</td><td><code>LeaveOneOut()</code></td><td>High variance estimate</td></tr>
+    <tr><td>Nested CV</td><td>Hyperparameter tuning + model selection</td><td>Outer KFold + inner search</td><td>Double-dipping bias</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Random KFold on engineering data</div>
+  Engineering datasets almost always have temporal or batch structure. Using random KFold splits temporally adjacent points into train and validation sets — the model sees the "future" during training. This gives optimistic RMSE estimates by 20–60%. Use <code>GroupKFold</code> with groups = measurement campaign ID, test rig, or batch number.
+</div>
+
+<!-- =========================================================== -->
+<h2>9. Weak Correlations and the Scientific Method</h2>
+
+<div class="box-example">
+  <div class="box-label">Example — Hidden signal in the wrong coordinate system</div>
+  Rocket engine dataset, \(n=180\) hot-fire points. Pearson correlation between injector orifice diameter \(d_{or}\) and specific impulse \(I_{sp}\): \(r = 0.09\) (\(p = 0.24\), not significant). Naive conclusion: discard \(d_{or}\).
+  <br><br>
+  Physical hypothesis: the relevant variable is not \(d_{or}\) but injection velocity \(v_{inj} = \dot{m}/(\rho A_{or}) \propto d_{or}^{-2}\). Recompute: \(r(v_{inj}, I_{sp}) = 0.61\) (\(p < 10^{-18}\)).
+  <br><br>
+  <strong>Lesson</strong>: run EDA in dimensionless / physics-motivated coordinates (Ch. 3), not raw sensor units. A Pearson correlation of \(r = 0.09\) in the wrong space is a strong signal of \(r = 0.61\) in the right space.
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Rule — Interpreting weak correlations</div>
+  <ol>
+    <li><strong>Effect size, not p-value.</strong> \(r^2 = 0.02\) explains 2% of variance. Whether that matters is an application decision, not a statistics decision.</li>
+    <li><strong>Conditional correlation.</strong> A weak marginal \(r(X,Y)\) may hide a strong \(r(X,Y|Z)\). Check partial correlations for known physical confounders.</li>
+    <li><strong>Physical plausibility screen.</strong> If a weak correlation has a physical explanation, invest in testing it. If not, suspect confounding.</li>
+    <li><strong>Bootstrap CIs for small \(n\).</strong> For \(n < 100\): report 95% bootstrap CI on \(r\) rather than a p-value. \(r = 0.25\) with CI [0.05, 0.42] is informative.</li>
+    <li><strong>Mutual information</strong> \(I(X;Y)\) detects nonlinear dependence that Pearson \(r\) misses. Near-zero \(r\) with high MI is the signature of a nonlinear physical relationship. Use <code>sklearn.feature_selection.mutual_info_regression</code> (Kraskov k-NN estimator).</li>
+  </ol>
+</div>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Theorising before data</div>
+  SHAP values, permutation importance, and correlation coefficients all measure <em>predictive relevance in a fitted model</em> — not physical causation. Assigning physical meaning to them without a testable hypothesis is the "theorise before data" error in reverse. The scientific method demands: observe → hypothesise → predict → test → revise. The ML model is an instrument in steps 2–4, not a replacement for the method.
+</div>
+
+<h3>Correlation vs. Causation</h3>
+
+<p>Correlation is the <em>input</em> to the scientific method, not its output. A high correlation is a hypothesis prompt: "investigate whether \(X\) causes \(Y\) through mechanism \(M\)." Causal inference (Ch. 8 — Interpretability) then tests that hypothesis. A low correlation is also a hypothesis prompt: "is there a coordinate transformation that reveals the true relationship?"</p>
+
+<!-- =========================================================== -->
+<h2>Chapter Summary</h2>
+
+<div class="box-lesson">
+  <div class="box-label">Key takeaways</div>
+  <ul>
+    <li><strong>Bayes theorem</strong> is the unifying framework. OLS = MLE (Gaussian noise). Ridge = MAP (Gaussian prior). Lasso = MAP (Laplace prior). GP regression = Full Bayes over function space.</li>
+    <li><strong>Bias-variance decomposition</strong>: diagnose failure before choosing a fix. The correct action depends on whether you have high bias, high variance, or irreducible noise.</li>
+    <li><strong>Never invert a matrix directly</strong> — always use Cholesky for PD systems. This is not a style preference; it is a numerical stability requirement.</li>
+    <li><strong>GroupKFold</strong> is the default for engineering data. Random KFold on batch/temporal data is a systematic error.</li>
+    <li><strong>PI ≠ CI</strong>: virtual sensor deployment requires prediction intervals, not confidence intervals on the mean.</li>
+    <li><strong>Mutual information</strong> screens for nonlinear relationships that Pearson misses. Physics-motivated coordinates surface hidden strong correlations.</li>
+  </ul>
+</div>
+
+<nav class="chapter-nav">
+  <a href="ch01-introduction.html">← Ch 1: Introduction</a>
+  <a href="index.html">Table of Contents</a>
+  <a href="ch03-eda.html">Ch 3: EDA →</a>
+</nav>
+
+</div><!-- .container -->
+
+<footer>
+  The Engineer's Handbook of Machine Learning &nbsp;·&nbsp; Leonardo Pulga PhD &nbsp;·&nbsp;
+  <a href="index.html">All chapters</a>
+</footer>
+
+</body>
+</html>

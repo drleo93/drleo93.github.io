@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtual Sensors: From Concept to Deployment | ML Handbook</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root {
+  --bg:      #0d1117;
+  --surface: #161b22;
+  --border:  #2d333b;
+  --text:    #b8c0cc;
+  --muted:   #6e7890;
+  --accent:  #6da5cc;
+  --green:   #5a9e72;
+  --amber:   #c49a3c;
+  --red:     #c97b76;
+  --code-bg: #13191f;
+  --tag-bg:  #1a2d40;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Georgia', serif; font-size: 16px; line-height: 1.7; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+header { border-bottom: 1px solid var(--border); padding: 2rem 0 1.5rem; text-align: center; }
+.series-label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; font-family: monospace; }
+h1 { color: var(--accent); font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+.subtitle { color: var(--muted); font-size: 1rem; }
+.tags { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.tag { background: var(--tag-bg); color: var(--accent); padding: 0.2rem 0.7rem; border-radius: 3px; font-size: 0.75rem; font-family: monospace; border: 1px solid var(--border); }
+main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+.tldr { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 4px; padding: 1.2rem 1.5rem; margin-bottom: 2.5rem; }
+.tldr h2 { color: var(--accent); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.75rem; }
+.tldr ul { padding-left: 1.2rem; }
+.tldr li { margin-bottom: 0.35rem; }
+h2 { color: var(--accent); font-size: 1.35rem; margin: 2.5rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+h3 { color: #8db4c8; font-size: 1.1rem; margin: 1.8rem 0 0.7rem; }
+p { margin-bottom: 1rem; }
+ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+li { margin-bottom: 0.3rem; }
+.box-lesson  { background: #0c2316; border-left: 4px solid var(--green);  border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-pitfall { background: #2a1600; border-left: 4px solid var(--amber); border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-rule    { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid #6e7681; border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-example { background: #131220; border-left: 4px solid #7c6fad; border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.5rem; font-weight: 700; }
+.box-lesson .box-label  { color: var(--green); }
+.box-pitfall .box-label { color: var(--amber); }
+.box-rule .box-label    { color: #8b949e; }
+.box-example .box-label { color: #9d8fd4; }
+.math-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; margin: 1.2rem 0; overflow-x: auto; }
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; overflow-x: auto; margin: 1.2rem 0; }
+code { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #a8c4d8; }
+p code, li code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 2px; font-size: 0.85em; }
+table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+thead th { background: var(--surface); color: var(--accent); padding: 0.6rem 0.8rem; text-align: left; border-bottom: 2px solid var(--border); font-family: monospace; font-size: 0.8rem; }
+tbody td { padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:hover { background: #1a1f27; }
+.nav-links { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.9rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 1rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="series-label">The Engineer's Handbook of Machine Learning</div>
+  <h1>Virtual Sensors: From Concept to Deployment</h1>
+  <div class="subtitle">Chapter 12 &mdash; Design, Grey-Box NOx, EKF Fusion, CUSUM Monitoring</div>
+  <div class="tags">
+    <span class="tag">Virtual Sensors</span>
+    <span class="tag">Grey-Box</span>
+    <span class="tag">NOx</span>
+    <span class="tag">EKF</span>
+    <span class="tag">CUSUM</span>
+    <span class="tag">ONNX</span>
+    <span class="tag">OBD</span>
+    <span class="tag">Regulatory</span>
+  </div>
+</header>
+
+<main>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>A virtual sensor estimates a physical quantity from available signals. Design the observability analysis first — if $I(\mathbf{x}; y_v) \approx 0$, no model will help.</li>
+    <li>Grey-box (physics steady-state + ML transient correction) requires 40% less data than pure black-box and is physically consistent — mandatory for regulatory applications.</li>
+    <li>EKF fuses physics-based state-space dynamics with sensor observations; use it for battery core temperature where safety margins matter.</li>
+    <li>CUSUM detects model drift in production with a defined average run length (ARL&sub;0; = 370 at $k=0.5$, $h=5$). Always deploy a monitoring chart alongside the model.</li>
+    <li>Regulatory deployment (Euro 7 OBD, EASA LAL-B) requires model cards, calibration traceability, uncertainty budget (GUM), and documented ARL.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>1. The 8-Step Virtual Sensor Design Process</h2>
+
+<div class="box-rule">
+  <div class="box-label">Design Process</div>
+  <ol>
+    <li><strong>Target identification</strong>: which physical quantity $y_v$ is to be estimated? What accuracy and latency are required?</li>
+    <li><strong>Observability analysis</strong>: can $y_v$ be uniquely determined from available signals $\mathbf{x}$? Check mutual information $I(\mathbf{x}; y_v)$ and physical causality.</li>
+    <li><strong>Signal selection</strong>: select the minimal set $\mathbf{x}^* \subset \mathbf{x}$ using mutual information + Granger causality + domain knowledge.</li>
+    <li><strong>Architecture selection</strong>: 0D static (GP, XGBoost) vs. dynamic (LSTM, TCN, EKF+LSTM).</li>
+    <li><strong>Calibration</strong>: train on labelled dataset; apply nested CV; ensure generalisation to all operating regimes.</li>
+    <li><strong>Validation</strong>: 15-step protocol plus regulatory requirements (MAPE, residual whiteness, simulation error).</li>
+    <li><strong>Deployment</strong>: ONNX export, latency profiling, memory footprint verification.</li>
+    <li><strong>Production monitoring</strong>: CUSUM/EWMA drift detection; scheduled recalibration protocol.</li>
+  </ol>
+</div>
+
+<!-- ================================================================== -->
+<h2>2. Virtual NOx Sensor: A Complete Case Study</h2>
+
+<h3>Physical Background</h3>
+
+<p>NOx in diesel combustion follows the thermal Zeldovich mechanism. The rate constant $k_1 = 1.8\times 10^{11} \exp(-38{,}370/T)$ makes NOx formation an exponential function of peak combustion temperature. The 7 ECU inputs that physically drive NOx:</p>
+
+<table>
+  <thead><tr><th>Signal</th><th>Symbol</th><th>Physical Role</th></tr></thead>
+  <tbody>
+    <tr><td>Engine speed</td><td>$N$ [rpm]</td><td>Residence time and charge motion</td></tr>
+    <tr><td>Fuel quantity</td><td>$q_f$ [mg/cyc]</td><td>Chemical energy input</td></tr>
+    <tr><td>Injection timing</td><td>$\phi_{SOI}$ [°CA]</td><td>Heat release phasing</td></tr>
+    <tr><td>Rail pressure</td><td>$p_{rail}$ [bar]</td><td>Mixture preparation quality</td></tr>
+    <tr><td>EGR rate</td><td>$x_{EGR}$ [%]</td><td>Directly reduces $T_{peak}$</td></tr>
+    <tr><td>Boost pressure</td><td>$p_{boost}$ [bar]</td><td>Charge density</td></tr>
+    <tr><td>Air-fuel ratio</td><td>$\lambda$ [-]</td><td>Excess oxygen for NOx formation</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Regulatory context</strong>: EU 715/2007 (Euro 6d) mandates on-board NOx monitoring. Virtual NOx sensor must achieve MAPE &lt;10% on the WLTC to satisfy OBD requirements (no physical PEMS analyser needed, saving ~50,000 €).</p>
+
+<h3>Grey-Box Architecture</h3>
+
+<p>The virtual sensor combines a GP steady-state component with an LSTM transient correction:</p>
+
+<div class="math-block">
+$$\hat{y}_{\text{NOx}}(t) = \underbrace{\hat{f}_{\text{GP}}(\mathbf{x}_{SS}(t))}_{\text{steady-state map}} + \underbrace{\hat{\delta}_{\text{LSTM}}(\mathbf{x}(t-W:t))}_{\text{transient correction}}$$
+</div>
+
+<pre><code>class GreyBoxNOxSensor(nn.Module):
+    """Grey-box virtual NOx sensor: GP steady-state + LSTM transient correction."""
+    def __init__(self, n_ss_features=7, n_ts_features=10, window=50, lstm_hidden=64):
+        super().__init__()
+        self.lstm = nn.LSTM(n_ts_features, lstm_hidden,
+                            num_layers=2, batch_first=True, dropout=0.1)
+        self.delta_head = nn.Sequential(
+            nn.Linear(lstm_hidden, 32), nn.GELU(), nn.Linear(32, 1)
+        )
+
+    def forward(self, x_window, gp_ss):
+        out, _ = self.lstm(x_window)
+        delta = self.delta_head(out[:, -1, :]).squeeze(-1)
+        return gp_ss + delta
+
+# Training protocol:
+# 1. Train GP on steady-state (transient-removed) data
+# 2. Compute GP predictions on full dataset
+# 3. Train LSTM on residuals: y_true - y_GP
+# Note: LSTM only learns what the physics GP cannot explain</code></pre>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson</div>
+  Always log-transform NOx before GP fitting: <code>gpflow.models.GPR(data=(X_norm, np.log1p(y)))</code>. NOx is log-normally distributed — a GP on raw NOx values will underperform significantly. Back-transform with <code>np.expm1()</code>.
+</div>
+
+<!-- ================================================================== -->
+<h2>3. Three Virtual Sensor Architectures</h2>
+
+<table>
+  <thead>
+    <tr><th>Architecture</th><th>Structure</th><th>Accuracy</th><th>Data Needed</th><th>Best For</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>A: Pure ML</strong></td>
+      <td>ECU signals → LSTM → $\hat{y}$</td>
+      <td>Highest (if data-rich)</td>
+      <td>Large (2,000+ cycles)</td>
+      <td>Black-box, internal R&amp;D</td>
+    </tr>
+    <tr>
+      <td><strong>B: Grey-box</strong></td>
+      <td>Physics + ML residual</td>
+      <td>Near-highest; physically consistent</td>
+      <td>40% less than A</td>
+      <td><strong>Regulatory (Euro 7, EASA)</strong></td>
+    </tr>
+    <tr>
+      <td><strong>C: KF-ML Fusion</strong></td>
+      <td>Kalman filter + ML correction</td>
+      <td>Optimal under Gaussian noise</td>
+      <td>Moderate</td>
+      <td>Safety-critical + formal UQ</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ================================================================== -->
+<h2>4. Extended Kalman Filter for Battery Temperature</h2>
+
+<p>The EKF handles nonlinear state-space models by linearising at the current estimate. For battery core temperature (state $\mathbf{x} = [T_{core}, T_{surf}]^\top$):</p>
+
+<div class="math-block">
+<strong>EKF Update Step:</strong>
+$$\hat{\mathbf{x}}_{t|t} = \hat{\mathbf{x}}_{t|t-1} + \mathbf{K}_t\bigl(y_t - h(\hat{\mathbf{x}}_{t|t-1})\bigr)$$
+$$\mathbf{K}_t = \mathbf{P}_{t|t-1}\mathbf{H}_t^\top(\mathbf{H}_t\mathbf{P}_{t|t-1}\mathbf{H}_t^\top + \mathbf{R})^{-1}$$
+<strong>Lumped thermal model (Prediction Step):</strong>
+$$\dot{T}_{core} = \frac{I^2 R_0}{C_c} - \frac{T_{core} - T_{surf}}{R_{cc} C_c}$$
+$$\dot{T}_{surf} = \frac{T_{core} - T_{surf}}{R_{cc} C_s} - \frac{T_{surf} - T_{amb}}{R_{su} C_s}$$
+</div>
+
+<p>The EKF observation model: $y = T_{surf,meas}$ (only surface temperature is measured). The EKF fuses this observation with the physics-based prediction to estimate the unobservable core temperature — critical for thermal runaway prevention.</p>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson</div>
+  Use EKF (not a pure neural network) for battery core temperature. The physical thermal model provides hard constraints on heat flow — a black-box NN may predict physically impossible temperature gradients that lead to incorrect safety decisions. The Kalman gain $\mathbf{K}_t$ automatically weights model vs. measurement uncertainty.
+</div>
+
+<!-- ================================================================== -->
+<h2>5. Production Monitoring with CUSUM</h2>
+
+<p>The CUSUM chart accumulates evidence for a mean shift $\delta$ in the normalised model residuals $\{e_t\}$:</p>
+
+<div class="math-block">
+$$C_t^+ = \max(0,\, C_{t-1}^+ + e_t - k) \quad \text{(upper — positive shift)}$$
+$$C_t^- = \max(0,\, C_{t-1}^- - e_t - k) \quad \text{(lower — negative shift)}$$
+$$\text{Alarm when } C_t^+ > h \text{ or } C_t^- > h$$
+</div>
+
+<p>Standard parameters: $k = \delta/2$ (reference value), $h = 5$ → ARL$_0 \approx 370$ (on average 370 samples before a false alarm under in-control conditions).</p>
+
+<pre><code>from dataclasses import dataclass, field
+
+@dataclass
+class CUSUMMonitor:
+    """CUSUM control chart for virtual sensor drift detection."""
+    k: float = 0.5      # reference value (delta/2 of shift to detect)
+    h: float = 5.0      # decision threshold (ARL~370 for standard normal)
+    C_pos: float = field(default=0.0, init=False)
+    C_neg: float = field(default=0.0, init=False)
+
+    def update(self, residual: float) -> bool:
+        """Update with normalised residual. Returns True if alarm."""
+        self.C_pos = max(0.0, self.C_pos + residual - self.k)
+        self.C_neg = max(0.0, self.C_neg - residual - self.k)
+        return (self.C_pos > self.h) or (self.C_neg > self.h)
+
+    def reset(self):
+        self.C_pos = self.C_neg = 0.0
+
+# Usage in production pipeline
+monitor = CUSUMMonitor(k=0.5, h=5.0)
+for i, (y_true, y_pred, std_dev) in enumerate(production_stream):
+    norm_residual = (y_true - y_pred) / std_dev   # standardise by model sigma
+    if monitor.update(norm_residual):
+        trigger_recalibration_alert(sensor_id='NOx_VS_01', cycle=i)
+        monitor.reset()</code></pre>
+
+<!-- ================================================================== -->
+<h2>6. Regulatory Deployment Checklist</h2>
+
+<div class="box-rule">
+  <div class="box-label">Regulatory Deployment Requirements</div>
+  <ol>
+    <li><strong>Model card</strong>: document training data provenance, preprocessing pipeline (with scaler state), hyperparameters, validation results, and known operating range.</li>
+    <li><strong>Calibration traceability</strong>: every training run is version-controlled (DVC). Model hash stored in ECU software manifest.</li>
+    <li><strong>Uncertainty budget</strong>: specify combined uncertainty $u_c$ following GUM. For Euro 7 OBD: $u_c &lt; 5\%$ required.</li>
+    <li><strong>ASIL decomposition</strong>: if the virtual sensor feeds a safety function, decompose ISO 26262 ASIL across the sensor chain; document the QM contribution of the ML model.</li>
+    <li><strong>Monitoring architecture</strong>: deploy CUSUM with documented ARL$_0 \geq 370$. Log all alarm events. Define recalibration triggers upfront.</li>
+  </ol>
+</div>
+
+<!-- ================================================================== -->
+<h2>7. Key Takeaways</h2>
+
+<ul>
+  <li>The 8-step process is not optional — skipping observability analysis or signal selection leads to a model that cannot generalise.</li>
+  <li><strong>Grey-box = physics steady-state + ML transient correction</strong>. Almost always the right architecture for regulated engineering domains.</li>
+  <li>EKF for safety-critical state estimation (battery temperature, SoC): physical model provides hard constraints; Kalman gain weights model vs. observation uncertainty.</li>
+  <li>CUSUM is the production monitoring standard: $k=0.5$, $h=5$, ARL$_0 \approx 370$. Normalise residuals by model predictive uncertainty $\sigma$.</li>
+  <li>For Euro 7/EASA certification: model card + traceability + GUM uncertainty budget + documented ARL are all mandatory, not optional.</li>
+  <li>ONNX export is the standard for cross-platform deployment. Always profile latency on the target hardware, not the development machine.</li>
+</ul>
+
+<div class="nav-links">
+  <a href="ch11-system-identification.html">&larr; Ch11: System Identification</a>
+  <a href="ch13-anomaly-detection.html">Ch13: Anomaly Detection &rarr;</a>
+</div>
+
+</main>
+
+<footer>
+  <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
+  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+</footer>
+
+</body>
+</html>

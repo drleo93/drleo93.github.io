@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Identification | ML Handbook</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root {
+  --bg:      #0d1117;
+  --surface: #161b22;
+  --border:  #2d333b;
+  --text:    #b8c0cc;
+  --muted:   #6e7890;
+  --accent:  #6da5cc;
+  --green:   #5a9e72;
+  --amber:   #c49a3c;
+  --red:     #c97b76;
+  --code-bg: #13191f;
+  --tag-bg:  #1a2d40;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Georgia', serif; font-size: 16px; line-height: 1.7; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+header { border-bottom: 1px solid var(--border); padding: 2rem 0 1.5rem; text-align: center; }
+.series-label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; font-family: monospace; }
+h1 { color: var(--accent); font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+.subtitle { color: var(--muted); font-size: 1rem; }
+.tags { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.tag { background: var(--tag-bg); color: var(--accent); padding: 0.2rem 0.7rem; border-radius: 3px; font-size: 0.75rem; font-family: monospace; border: 1px solid var(--border); }
+
+main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+
+.tldr { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 4px; padding: 1.2rem 1.5rem; margin-bottom: 2.5rem; }
+.tldr h2 { color: var(--accent); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.75rem; }
+.tldr ul { padding-left: 1.2rem; }
+.tldr li { margin-bottom: 0.35rem; color: var(--text); }
+
+h2 { color: var(--accent); font-size: 1.35rem; margin: 2.5rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+h3 { color: #8db4c8; font-size: 1.1rem; margin: 1.8rem 0 0.7rem; }
+p { margin-bottom: 1rem; }
+ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+li { margin-bottom: 0.3rem; }
+
+.box-lesson  { background: #0c2316; border-left: 4px solid var(--green);  border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-pitfall { background: #2a1600; border-left: 4px solid var(--amber); border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-rule    { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid #6e7681; border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-example { background: #131220; border-left: 4px solid #7c6fad; border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.5rem; font-weight: 700; }
+.box-lesson .box-label  { color: var(--green); }
+.box-pitfall .box-label { color: var(--amber); }
+.box-rule .box-label    { color: #8b949e; }
+.box-example .box-label { color: #9d8fd4; }
+
+.math-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; margin: 1.2rem 0; overflow-x: auto; }
+
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; overflow-x: auto; margin: 1.2rem 0; }
+code { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #a8c4d8; }
+p code, li code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 2px; font-size: 0.85em; }
+
+table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+thead th { background: var(--surface); color: var(--accent); padding: 0.6rem 0.8rem; text-align: left; border-bottom: 2px solid var(--border); font-family: monospace; font-size: 0.8rem; letter-spacing: 0.05em; }
+tbody td { padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:hover { background: #1a1f27; }
+
+.nav-links { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.9rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 1rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="series-label">The Engineer's Handbook of Machine Learning</div>
+  <h1>System Identification</h1>
+  <div class="subtitle">Chapter 11 &mdash; ARX, ARMAX, N4SID, NARX, and Neural State-Space Models</div>
+  <div class="tags">
+    <span class="tag">SysID</span>
+    <span class="tag">ARX</span>
+    <span class="tag">ARMAX</span>
+    <span class="tag">N4SID</span>
+    <span class="tag">NARX</span>
+    <span class="tag">PRBS</span>
+    <span class="tag">Hammerstein-Wiener</span>
+    <span class="tag">Input Design</span>
+  </div>
+</header>
+
+<main>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>System identification is the science of building dynamic models from input-output data. Choose the model structure <em>before</em> looking at data — this is not optional.</li>
+    <li>Input signal design is as important as model selection. Use PRBS for linear systems, multisine for frequency-specific excitation, GBN for systems with bandwidth constraints.</li>
+    <li><strong>ARX</strong>: closed-form LS solution, but noise enters through $1/A(q)$ — biased if noise is correlated. Use for one-step prediction. Use <strong>OE</strong> for simulation.</li>
+    <li>BIC, not AIC, for model order selection in engineering (penalises overparameterisation more strongly).</li>
+    <li>N4SID provides a consistent, non-iterative subspace identification method for state-space models — the right starting point for MIMO systems.</li>
+    <li>NARX and Hammerstein-Wiener handle nonlinear dynamics; neural state-space models are the data-driven limit.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>1. The SysID Framework</h2>
+
+<p>System identification follows a four-step loop that must be executed in order:</p>
+
+<ol>
+  <li><strong>Experiment design</strong>: select input signals that maximally excite the system dynamics of interest. A poorly designed experiment cannot be recovered by better modelling.</li>
+  <li><strong>Model structure selection</strong>: choose between ARX, ARMAX, OE, BJ, state-space, or nonlinear structures based on the physical system and intended use.</li>
+  <li><strong>Parameter estimation</strong>: minimise the prediction error (PEM) or use subspace methods (N4SID).</li>
+  <li><strong>Validation</strong>: distinguish one-step prediction error (easy) from simulation error (hard, but what matters for controllers and virtual sensors).</li>
+</ol>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Prediction vs. Simulation Error</div>
+  A model validated only on one-step prediction error (residual analysis, whiteness test) may still diverge catastrophically in simulation. <strong>Always</strong> perform a simulation validation: apply the identified model in open-loop simulation and compare against held-out data. This is the definitive test.
+</div>
+
+<!-- ================================================================== -->
+<h2>2. Input Signal Design</h2>
+
+<p>The quality of identification is bounded by the richness of the input signal. The Fisher information matrix $\mathcal{I}(\theta)$ is maximised by choosing $u(t)$ such that its power spectral density covers the dynamically significant frequency band $[f_{min}, f_{max}]$.</p>
+
+<table>
+  <thead>
+    <tr><th>Signal</th><th>Properties</th><th>Best For</th><th>Engineering Use</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>PRBS</strong></td>
+      <td>Flat spectrum up to $f_{max} = 1/(2T_{clock})$; binary ±amplitude; maximal length shift register</td>
+      <td>Linear systems, broadband excitation</td>
+      <td>Engine ECU, industrial actuators</td>
+    </tr>
+    <tr>
+      <td><strong>Multisine</strong></td>
+      <td>Sum of sinusoids at selected frequencies; exact spectral shaping; crest factor optimisable</td>
+      <td>Frequency-specific excitation; nonlinear analysis (odd harmonics)</td>
+      <td>Structural dynamics, impedance spectroscopy</td>
+    </tr>
+    <tr>
+      <td><strong>GBN</strong> (Generalized Binary Noise)</td>
+      <td>Binary signal with programmable switching probability; tunable bandwidth</td>
+      <td>Systems with bandwidth constraints (rate limiters, actuator saturation)</td>
+      <td>Hydraulic systems, HVAC</td>
+    </tr>
+    <tr>
+      <td><strong>Chirp</strong></td>
+      <td>Linearly increasing frequency; easy to interpret in time-frequency domain</td>
+      <td>Systems with known natural frequencies; resonance detection</td>
+      <td>Vibration testing, structural health monitoring</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box-rule">
+  <div class="box-label">Input Design Rule</div>
+  <ul>
+    <li>PRBS clock period $T_{clock}$: set to 3&ndash;10&times; the system settling time. Too short = input changes faster than system can respond; too long = insufficient spectral richness.</li>
+    <li>Signal amplitude: stay within the linear operating region if a linear model is intended. If nonlinear, sweep multiple amplitude levels.</li>
+    <li>Multisine: optimise phases (Schroeder or random) to minimise crest factor and avoid actuator saturation.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>3. Linear Model Structures</h2>
+
+<p>All linear SysID model structures are members of the general Box-Jenkins family:</p>
+
+<div class="math-block">
+$$y(t) = \frac{B(q)}{F(q)} u(t) + \frac{C(q)}{A(q) D(q)} e(t)$$
+</div>
+
+<p>where $q$ is the shift operator ($q^{-1} x(t) = x(t-1)$), $A, B, C, D, F$ are polynomials in $q^{-1}$, and $e(t)$ is white noise. Different structures arise from constraints on these polynomials:</p>
+
+<table>
+  <thead>
+    <tr><th>Model</th><th>Structure</th><th>Estimation</th><th>Use When</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>ARX</strong></td>
+      <td>$A(q)y = B(q)u + e$ ($F=C=D=1$)</td>
+      <td>Closed-form LS; fast, global optimum</td>
+      <td>One-step prediction; low-noise systems</td>
+    </tr>
+    <tr>
+      <td><strong>ARMAX</strong></td>
+      <td>$A(q)y = B(q)u + C(q)e$ ($F=D=1$)</td>
+      <td>Iterative PEM</td>
+      <td>Correlated noise; moving average disturbances</td>
+    </tr>
+    <tr>
+      <td><strong>OE</strong></td>
+      <td>$y = [B(q)/F(q)]u + e$ ($A=C=D=1$)</td>
+      <td>Iterative PEM</td>
+      <td><strong>Simulation</strong>; when noise model not needed</td>
+    </tr>
+    <tr>
+      <td><strong>BJ</strong></td>
+      <td>Full Box-Jenkins; separate noise model $C/D$</td>
+      <td>Iterative PEM; most flexible</td>
+      <td>When noise structure is physically known</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>ARX: Closed-Form Solution and Its Limitation</h3>
+
+<div class="math-block">
+$$\text{ARX model: } y(t) + a_1 y(t-1) + \ldots + a_{n_a} y(t-n_a) = b_1 u(t-1) + \ldots + b_{n_b} u(t-n_b) + e(t)$$
+$$\text{LS solution: } \hat{\theta}_{ARX} = (\Phi^\top \Phi)^{-1} \Phi^\top Y$$
+</div>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — ARX Bias</div>
+  In ARX, the noise enters as $e(t)/A(q)$ — the noise model is forced to be $1/A(q)$. If the actual noise is correlated differently, the parameter estimates are <strong>biased</strong> even with infinite data. Use ARX for one-step prediction tasks; use OE for simulation tasks where model accuracy (not noise model accuracy) matters.
+</div>
+
+<h3>Model Order Selection: BIC over AIC</h3>
+
+<div class="math-block">
+$$\text{AIC} = -2\ln\hat{L} + 2p \qquad \text{BIC} = -2\ln\hat{L} + p\ln N$$
+</div>
+
+<p>where $p$ is the number of parameters and $N$ is the number of samples. BIC penalises complexity more strongly for large $N$. In engineering, where overparameterised models cause simulation drift, prefer BIC. Fit multiple orders $(n_a, n_b) \in \{1,\ldots,6\}^2$, select by BIC, validate by residual whiteness and simulation error.</p>
+
+<!-- ================================================================== -->
+<h2>4. N4SID: Subspace Identification</h2>
+
+<p>For MIMO systems and state-space representations, N4SID (Numerical Subspace State-Space Identification) avoids the non-convex optimisation of PEM by working directly with oblique projections of the block Hankel matrix of input-output data.</p>
+
+<div class="math-block">
+<strong>State-space target model:</strong>
+$$x(t+1) = Ax(t) + Bu(t) + w(t)$$
+$$y(t) = Cx(t) + Du(t) + v(t)$$
+</div>
+
+<p>N4SID constructs the block Hankel matrices from data and uses the oblique projection $\mathcal{O}_i \hat{X}_i = \mathcal{Y}_i^{f} / \mathcal{U}_i^{f} | \mathcal{W}_i^{p}$ to extract the state sequence $\hat{X}_i$ via SVD. The system matrices $A, B, C, D$ are then recovered by least squares from the state sequence.</p>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson</div>
+  N4SID provides a consistent, non-iterative estimator — no initialisation required, no local optima. Use it as the starting point for MIMO systems (&ge;2 inputs, &ge;2 outputs). For scalar SISO problems with known polynomial structure, PEM (ARMAX/OE) is simpler and more interpretable. Refine N4SID solutions with PEM for maximum likelihood estimates.
+</div>
+
+<!-- ================================================================== -->
+<h2>5. Nonlinear System Identification</h2>
+
+<h3>NARX: Nonlinear ARX</h3>
+
+<p>NARX extends ARX by replacing the linear regression with a nonlinear function:</p>
+
+<div class="math-block">
+$$y(t) = f(y(t-1),\ldots,y(t-n_a), u(t-1),\ldots,u(t-n_b)) + e(t)$$
+</div>
+
+<p>The function $f$ can be a neural network, polynomial, or Gaussian process. NARX is the standard nonlinear SysID approach for moderate nonlinearity. Key properties: the regressor space is fixed by the lag orders $(n_a, n_b)$; model selection reduces to choosing $f$ and lag orders.</p>
+
+<h3>Hammerstein-Wiener: Block-Structured Nonlinear Models</h3>
+
+<p>Block-structured models assume a specific cascade of static nonlinearities and linear dynamics — physically motivated for many engineering systems:</p>
+
+<div class="math-block">
+$$\text{Hammerstein: } \quad u \xrightarrow{f_{NL}} v \xrightarrow{G(q)} y$$
+$$\text{Wiener: } \quad u \xrightarrow{G(q)} v \xrightarrow{f_{NL}} y$$
+$$\text{Hammerstein-Wiener: } \quad u \xrightarrow{f_{NL,1}} v \xrightarrow{G(q)} w \xrightarrow{f_{NL,2}} y$$
+</div>
+
+<div class="box-example">
+  <div class="box-label">Example — Hammerstein Model for Throttle-to-Airflow</div>
+  <p><strong>Physical structure</strong>: throttle position $\alpha$ drives a nonlinear discharge coefficient $C_d(\alpha)$ (static nonlinearity), followed by the linear intake manifold filling dynamics $G(q)$ (first-order lag), followed by a nonlinear air density correction $\rho(p, T)$ (static nonlinearity).</p>
+  <p><strong>Identification</strong>: the static nonlinearity $C_d(\alpha)$ is identified from steady-state sweep data. The linear dynamics $G(q)$ are identified from PRBS excitation around operating points. The density correction uses the ideal gas law.</p>
+  <p><strong>Advantage over black-box NARX</strong>: each block has physical meaning; the linear block is identifiable with standard methods; the nonlinear blocks need only steady-state data.</p>
+</div>
+
+<h3>Neural State-Space Models</h3>
+
+<p>The data-driven limit: replace the linear state-space matrices with neural networks:</p>
+
+<div class="math-block">
+$$x(t+1) = f_\theta(x(t), u(t)) \qquad y(t) = g_\phi(x(t), u(t))$$
+</div>
+
+<p>where $f_\theta$ and $g_\phi$ are MLPs or LSTMs. Training requires backpropagation through the state recursion — equivalent to rollout training from chapter 10. Key challenge: the state $x(t)$ is latent and must be initialised; use a separate encoder network $x(0) = \text{enc}_\psi(y_{0:T_0}, u_{0:T_0})$ trained jointly.</p>
+
+<div class="box-rule">
+  <div class="box-label">Nonlinear SysID Decision Tree</div>
+  <ul>
+    <li>Mild nonlinearity (Hammerstein/Wiener structure physically plausible): use block-structured model</li>
+    <li>Moderate nonlinearity, scalar output: NARX with GP or neural network $f$</li>
+    <li>Strong nonlinearity, multiple states, known latent structure: neural state-space model</li>
+    <li>Known physics with uncertain parameters: grey-box ODE + PEM (see Ch07)</li>
+    <li>When in doubt: start with ARX/OE linear model and examine simulation error. If simulation RMSE &gt;3&times; one-step RMSE, the residual is structured — introduce nonlinearity.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>6. Validation Protocol for SysID Models</h2>
+
+<table>
+  <thead>
+    <tr><th>Test</th><th>Method</th><th>Pass Criterion</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Residual whiteness</td><td>ACF of $\epsilon(t) = y(t) - \hat{y}(t|t-1)$; Ljung-Box test</td><td>No significant autocorrelation outside $\pm 1.96/\sqrt{N}$ bounds</td></tr>
+    <tr><td>Residual independence from input</td><td>Cross-correlation $\hat{R}_{\epsilon u}(\tau)$ for $\tau = 0, \pm1, \ldots, \pm 20$</td><td>Within $\pm 1.96/\sqrt{N}$ bounds for all lags</td></tr>
+    <tr><td>Simulation fit</td><td>NRMSE on held-out validation set (5-fold, no teacher forcing)</td><td>NRMSE &gt; 85% for engineering applications</td></tr>
+    <tr><td>Pole-zero analysis</td><td>Check poles of $A(q)/F(q)$ inside unit circle</td><td>All poles $|z_i| &lt; 1$ (stable model)</td></tr>
+    <tr><td>Extrapolation check</td><td>Test at operating points not in training data</td><td>Graceful degradation; no sign reversal in gain</td></tr>
+  </tbody>
+</table>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Overfitting in SysID</div>
+  Increasing model order always improves one-step fit. Always split data: identification set (60%), model selection set (20%, BIC), and simulation validation set (20%, never touched until final model). The simulation validation set is sacred — accessing it for model selection invalidates the validation.
+</div>
+
+<!-- ================================================================== -->
+<h2>7. Key Takeaways</h2>
+
+<ul>
+  <li><strong>Design the experiment first</strong>: PRBS for broadband linear ID; multisine for frequency-specific; GBN for bandwidth-constrained systems.</li>
+  <li><strong>ARX for prediction, OE for simulation</strong>: ARX bias is irrelevant for one-step prediction but fatal for closed-loop simulation.</li>
+  <li><strong>BIC over AIC</strong> for model order selection in engineering — penalises overparameterisation more strongly.</li>
+  <li><strong>N4SID</strong>: start here for MIMO state-space identification. Non-iterative, consistent, no local optima.</li>
+  <li><strong>Hammerstein-Wiener</strong> when the physical structure implies cascaded static nonlinearity and linear dynamics (most actuator + flow systems).</li>
+  <li><strong>Neural state-space</strong>: the data-driven limit. Requires rollout training and a state encoder. Use only when block-structured or NARX models are insufficient.</li>
+  <li>The definitive validation is <strong>simulation error on held-out data</strong>. Residual whiteness is necessary but not sufficient.</li>
+</ul>
+
+<div class="nav-links">
+  <a href="ch10-deep-time-series.html">&larr; Ch10: Deep Learning for Time Series</a>
+  <a href="ch12-virtual-sensors.html">Ch12: Virtual Sensors &rarr;</a>
+</div>
+
+</main>
+
+<footer>
+  <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
+  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 6: Deep Learning for Engineering Regression | Engineer's ML Handbook</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root {
+  --bg:      #0d1117;
+  --surface: #161b22;
+  --border:  #2d333b;
+  --text:    #b8c0cc;
+  --muted:   #6e7890;
+  --accent:  #6da5cc;
+  --green:   #5a9e72;
+  --amber:   #c49a3c;
+  --red:     #c97b76;
+  --code-bg: #13191f;
+  --tag-bg:  #1a2d40;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.7}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:1.4rem 2rem}
+header .breadcrumb{font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem}
+header h1{font-size:1.7rem;font-weight:700;color:#d0dae8;line-height:1.25}
+header .meta{font-size:0.82rem;color:var(--muted);margin-top:0.5rem}
+.tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin:0.9rem 0}
+.tag{background:var(--tag-bg);color:var(--accent);font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;border:1px solid #2a4a66}
+.container{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
+.tldr{background:#0c1e30;border:1px solid #2a4a66;border-left:4px solid var(--accent);border-radius:6px;padding:1.1rem 1.4rem;margin:1.5rem 0}
+.tldr h3{color:var(--accent);font-size:0.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:0.5rem}
+.tldr ul{padding-left:1.2rem}
+.tldr li{margin-bottom:0.25rem;font-size:0.92rem}
+h2{color:#c8d6e5;font-size:1.3rem;margin:2.2rem 0 0.8rem;padding-bottom:0.35rem;border-bottom:1px solid var(--border)}
+h3{color:#a8bcd0;font-size:1.05rem;margin:1.6rem 0 0.5rem}
+p{margin-bottom:0.9rem}
+ul,ol{padding-left:1.5rem;margin-bottom:0.9rem}
+li{margin-bottom:0.3rem}
+code{background:var(--code-bg);color:#a8d4a8;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.85em;padding:0.1em 0.4em;border-radius:3px}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto;margin:1rem 0}
+pre code{background:none;padding:0;font-size:0.88em}
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-rule{background:#161b22;border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-label{font-size:0.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:0.5rem}
+.box-lesson .box-label{color:var(--green)}
+.box-pitfall .box-label{color:var(--amber)}
+.box-rule .box-label{color:#8b9aaa}
+.box-example .box-label{color:#9d8fd4}
+.tbl-wrap{overflow-x:auto;margin:1.2rem 0}
+table{width:100%;border-collapse:collapse;font-size:0.87rem}
+th{background:#1c2636;color:#c8d6e5;padding:0.6rem 0.85rem;text-align:left;border-bottom:2px solid var(--border)}
+td{padding:0.55rem 0.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#161d28}
+td:first-child{color:#9bafc4}
+.formula-block{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:0.9rem 1.2rem;margin:1rem 0;text-align:center;overflow-x:auto}
+nav.chapter-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0;margin-top:2rem;border-top:1px solid var(--border);font-size:0.88rem}
+nav.chapter-nav a{color:var(--accent)}
+footer{background:var(--surface);border-top:1px solid var(--border);padding:1.2rem 2rem;text-align:center;font-size:0.8rem;color:var(--muted);margin-top:3rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="breadcrumb"><a href="index.html">Engineer's ML Handbook</a> › Part II: Models</div>
+  <h1>Ch 6: Deep Learning for Engineering Regression</h1>
+  <div class="meta">Chapter 6 of 23 &nbsp;·&nbsp; ~35 min read &nbsp;·&nbsp; Deep learning is a hammer — make sure your problem is a nail</div>
+  <div class="tags">
+    <span class="tag">MLP</span>
+    <span class="tag">ResNet</span>
+    <span class="tag">PINN</span>
+    <span class="tag">AdamW</span>
+    <span class="tag">LayerNorm</span>
+    <span class="tag">residual blocks</span>
+    <span class="tag">regularisation</span>
+    <span class="tag">CNN</span>
+    <span class="tag">Optuna</span>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="tldr">
+  <h3>TL;DR</h3>
+  <ul>
+    <li>For static 0D tabular regression below 10,000 samples, deep learning is almost never the best first choice. GP or XGBoost will win.</li>
+    <li>DL crossover point: MLP becomes competitive above \(n \approx 5{,}000\) for tabular data; always competitive for structured inputs (time series, fields, spectra).</li>
+    <li><strong>AdamW + cosine LR + gradient clipping + early stopping</strong> is the universal starting recipe. Non-negotiable.</li>
+    <li><strong>LayerNorm</strong> over BatchNorm for engineering: works with batch size = 1 (ECU inference), stateless, robust to distribution shift.</li>
+    <li><strong>Pre-Norm residual blocks</strong> (\(\mathbf{h}_{out} = \mathbf{h}_{in} + f(\mathrm{LN}(\mathbf{h}_{in}))\)) for \(L > 4\) layers. Post-Norm creates vanishing gradient in deep networks.</li>
+    <li><strong>PINNs</strong> can learn accurate field predictions from very sparse measurements — but convergence is fragile. Always cross-validate against held-out physical measurements.</li>
+  </ul>
+</div>
+
+<!-- =========================================================== -->
+<h2>1. When Deep Learning Is Justified</h2>
+
+<div class="box-rule">
+  <div class="box-label">Rule — DL thresholds for engineering tabular regression</div>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr><th>Data regime</th><th>Recommended model</th><th>Why DL fails</th><th>DL justified if</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>\(n < 200\), \(d \leq 6\)</td><td>GP (Matérn-5/2)</td><td>More parameters than data; MLP memorises</td><td>Never</td></tr>
+      <tr><td>\(n < 500\), tabular</td><td>GP or XGBoost</td><td>Over-parametrised; CV variance \(> 2\times\)</td><td>Only with pre-trained backbone</td></tr>
+      <tr><td>\(500 \leq n < 5000\)</td><td>XGBoost default</td><td>MLP training unstable without large batch</td><td>Time series / field inputs</td></tr>
+      <tr><td>\(n \geq 5000\)</td><td>XGBoost or MLP</td><td>—</td><td>Always evaluate both</td></tr>
+      <tr><td>\(n \geq 10{,}000\)</td><td>MLP or ResNet</td><td>—</td><td>Tabular or structured</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<p>Deep learning is justified when <em>at least one</em> of the following holds:</p>
+<ol>
+  <li>\(n > 10{,}000\) samples and XGBoost performance has plateaued</li>
+  <li>Input is a high-dimensional structured object: time series, 2D/3D field, vibration spectrum, mesh</li>
+  <li>Physics structure can be encoded in the architecture (PINNs, monotone NNs, port-Hamiltonian NNs)</li>
+  <li>Transfer learning from a large pre-trained model is possible</li>
+</ol>
+
+<!-- =========================================================== -->
+<h2>2. MLP Architecture for Engineering Regression</h2>
+
+<h3>Anatomy</h3>
+
+<div class="formula-block">
+$$\mathbf{h}_l = \sigma\!\left(\mathbf{W}_l \mathbf{h}_{l-1} + \mathbf{b}_l\right), \quad l = 1,\ldots,L, \qquad \hat{y} = \mathbf{W}_{L+1} \mathbf{h}_L + \mathbf{b}_{L+1}$$
+</div>
+
+<p>Output layer is <strong>linear</strong> (no activation) for regression. For bounded outputs: sigmoid for \([0,1]\) targets (SoC, efficiency); softplus for non-negative outputs (rates, distances).</p>
+
+<h3>Depth and Width</h3>
+<ul>
+  <li><strong>Default start</strong>: 3 hidden layers, 128 units each</li>
+  <li>\(n > 10{,}000\): try 4–5 layers, 256–512 units</li>
+  <li>\(n < 5{,}000\): 2 layers, 64–128 units, heavy dropout</li>
+  <li>Prefer constant width (all layers same) over tapering</li>
+</ul>
+
+<h3>Activation Functions</h3>
+
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr><th>Function</th><th>Formula</th><th>Best for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>ReLU</td><td>\(\max(0,x)\)</td><td>Shallow networks; ECU deployment</td></tr>
+    <tr><td>GELU</td><td>\(x\Phi(x)\)</td><td>Deep networks; tabular data; Transformers</td></tr>
+    <tr><td>SiLU/Swish</td><td>\(x\sigma(x)\)</td><td>Modern MLPs; time series</td></tr>
+    <tr><td>Sigmoid</td><td>\(1/(1+e^{-x})\)</td><td><strong>Output only</strong> for \([0,1]\) targets</td></tr>
+    <tr><td>Softplus</td><td>\(\log(1+e^x)\)</td><td>Non-negative outputs</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — ReLU in PINNs</div>
+  For physics-informed networks (PINNs), GELU or SiLU are <strong>mandatory</strong>. Their second derivatives \(\partial^2 f/\partial x^2\) are non-zero and smooth everywhere — required for PDE residuals involving second-order spatial derivatives (diffusion terms, Laplacians). ReLU has zero second derivative almost everywhere and a Dirac delta at \(x=0\), making it unsuitable for computing \(\nabla^2 u\) in a PDE loss.
+</div>
+
+<!-- =========================================================== -->
+<h2>3. Normalisation Layers</h2>
+
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr><th>Layer</th><th>Normalises over</th><th>Deployment</th><th>Use when</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>BatchNorm</td><td>Batch statistics</td><td>Requires running mean/var; fragile with small batches</td><td>Large batches; CNNs on images</td></tr>
+    <tr><td><strong>LayerNorm</strong></td><td>Feature dimension</td><td>Stateless; same at train/inference</td><td><strong>Default for tabular MLP and LSTM</strong></td></tr>
+    <tr><td>GroupNorm</td><td>Channel groups</td><td>Between Batch/Layer</td><td>CNNs with small batch</td></tr>
+    <tr><td>RMSNorm</td><td>RMS of features</td><td>Simpler than LayerNorm</td><td>Transformers; LLMs</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson — LayerNorm for engineering deployment</div>
+  LayerNorm does not depend on batch statistics at inference time. It works correctly with batch size = 1 (single-sample ECU inference), and is stable under distribution shift between training and deployment conditions. BatchNorm at inference uses running statistics from training — if the deployment distribution shifts (new sensor, different operating regime), BatchNorm statistics become incorrect while LayerNorm adapts automatically.
+</div>
+
+<!-- =========================================================== -->
+<h2>4. Residual Connections (Pre-Norm)</h2>
+
+<p>The Pre-Norm residual block — the standard in all modern production models:</p>
+
+<div class="formula-block">
+$$\mathbf{h}_{out} = \mathbf{h}_{in} + f(\mathrm{LN}(\mathbf{h}_{in}))$$
+</div>
+
+<p>Post-Norm (\(\mathrm{LN}(\mathbf{h}_{in} + f(\mathbf{h}_{in}))\)) normalises the output including the residual, creating a vanishing gradient problem in deep networks. Pre-Norm leaves the skip connection gradient path clean.</p>
+
+<pre><code>class ResidualBlock(nn.Module):
+    def __init__(self, width, dropout):
+        self.norm = nn.LayerNorm(width)
+        self.fc1  = nn.Linear(width, 4 * width)   # 4x expansion (MLP block)
+        self.fc2  = nn.Linear(4 * width, width)
+        self.act  = nn.GELU()
+        self.drop = nn.Dropout(dropout)
+
+    def forward(self, x):
+        residual = x
+        x = self.norm(x)           # Pre-Norm: normalise before branch
+        x = self.fc2(self.drop(self.act(self.fc1(x))))
+        return x + residual        # skip connection: clean gradient path</code></pre>
+
+<p>In PyTorch Transformer: <code>norm_first=True</code> in <code>nn.TransformerEncoderLayer</code>. <strong>Use pre-norm for all engineering regression networks with \(L > 4\) layers.</strong></p>
+
+<!-- =========================================================== -->
+<h2>5. Training Recipe</h2>
+
+<div class="box-rule">
+  <div class="box-label">Rule — Universal training starting configuration</div>
+  <ol>
+    <li><strong>Optimiser</strong>: AdamW with \(\eta_0 = 10^{-3}\), weight decay \(\lambda = 10^{-4}\). Never Adam + L2 penalty (AdamW decouples weight decay from gradient adaptation).</li>
+    <li><strong>LR schedule</strong>: cosine annealing from \(\eta_0\) to \(\eta_{min} = 10^{-5}\).</li>
+    <li><strong>Gradient clipping</strong>: <code>clip_grad_norm_(params, max_norm=1.0)</code> before each optimizer step.</li>
+    <li><strong>Early stopping</strong>: patience = 20–50 epochs on validation loss. Non-negotiable.</li>
+    <li><strong>Batch size</strong>: 256–512 for \(n > 5{,}000\); 32–64 for smaller datasets.</li>
+  </ol>
+  For PINNs: use L-BFGS with full-batch mode for final fine-tuning (Adam for initial convergence).
+</div>
+
+<h3>Regularisation Hierarchy</h3>
+
+<ol>
+  <li><strong>Weight decay (L2) in AdamW</strong>: \(\lambda \in [10^{-5}, 10^{-2}]\). Include in every model. Always ON.</li>
+  <li><strong>Early stopping</strong>: always ON. The training checkpoint at minimum validation loss is the deployed model.</li>
+  <li><strong>Dropout</strong>: rate \(p \in [0.1, 0.5]\). Higher for smaller datasets. Apply after LayerNorm. Disable at inference.</li>
+  <li><strong>Data augmentation</strong>: for time series, add Gaussian noise (\(\sigma \approx 0.01\sigma_{signal}\)) + random time warping. For tabular, Mixup interpolation.</li>
+  <li><strong>Label smoothing</strong>: for classification, replace hard targets with \(y = 1 - \varepsilon + \varepsilon/K\), \(\varepsilon \in [0.05, 0.15]\).</li>
+</ol>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Adding too many regularisers simultaneously</div>
+  Never apply more than 2 regularisers simultaneously. Debugging becomes impossible when weight decay, dropout, label smoothing, and data augmentation all interact. Add regularisers one at a time, measure the effect of each.
+</div>
+
+<!-- =========================================================== -->
+<h2>6. CNN for Structured Inputs</h2>
+
+<p>When the input has spatial or spectral structure, a CNN exploits translation invariance to reduce parameters and improve generalisation.</p>
+
+<ul>
+  <li><strong>1D CNN for vibration and process signals</strong>: stacked dilated convolutions (TCN-style) give receptive field \(\mathcal{O}(2^L \cdot K)\) with \(\mathcal{O}(L \cdot K)\) parameters — correct for vibration spectra, combustion pressure traces, mass flow transients</li>
+  <li><strong>2D CNN for structured field surrogates</strong>: U-Net combining encoder (downsampling + max-pool) and decoder (upsampling + skip connections) for 2D flow field prediction on uniform grids</li>
+  <li><strong>When NOT to use CNNs</strong>: tabular data with no spatial structure (use MLP/XGBoost); irregular sensors/unstructured meshes (use GNN, Ch. 18); long sequences with non-local dependencies (use Transformer, Ch. 10)</li>
+</ul>
+
+<h3>Architecture Selection by Input Type</h3>
+
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr><th>Input type</th><th>Output type</th><th>Architecture</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Tabular (\(n > 5k\))</td><td>Scalar / vector</td><td>Residual MLP</td><td>LayerNorm; GELU; AdamW</td></tr>
+    <tr><td>Time series (short)</td><td>Next step(s)</td><td>LSTM / GRU</td><td>seq_len ≈ 3× decay time; Ch. 9</td></tr>
+    <tr><td>Time series (long)</td><td>Next step(s)</td><td>Transformer / TCN</td><td>\(n > 10k\) ts; Ch. 10</td></tr>
+    <tr><td>Vibration spectrum</td><td>Fault class</td><td>1D CNN + MLP head</td><td>Dilated convolutions; known fault freqs</td></tr>
+    <tr><td>2D structured field</td><td>Field output</td><td>U-Net / FNO</td><td>Regular grid required; Ch. 18</td></tr>
+    <tr><td>Irregular mesh</td><td>Field output</td><td>GNN / Transolver</td><td>Ch. 18</td></tr>
+    <tr><td>Sparse PDE data</td><td>Field output</td><td>PINN</td><td>Very few labels; physics known</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- =========================================================== -->
+<h2>7. Physics-Informed Neural Networks (PINNs)</h2>
+
+<p>PINNs embed the governing PDE as a residual loss term:</p>
+
+<div class="formula-block">
+$$L_{PIML}(\boldsymbol{\theta}) = w_d\,L_{data} + w_r\,L_{phys} + w_b\,L_{bc}$$
+</div>
+
+<div class="formula-block">
+$$L_{data} = \frac{1}{n_d}\sum_i (u_{\boldsymbol{\theta}}(\mathbf{x}_i) - u_i)^2, \qquad L_{phys} = \frac{1}{n_r}\sum_j \mathcal{N}[u_{\boldsymbol{\theta}};\mathbf{x}_j]^2$$
+</div>
+
+<div class="box-example">
+  <div class="box-label">Example — Packed-bed reactor temperature profile (PINN vs. MLP)</div>
+  8 thermocouple measurements along a 2 m packed-bed methanol synthesis reactor. Governing equation known: \(\rho c_p u \partial T/\partial z = \lambda_{eff}\partial^2T/\partial z^2 + (-\Delta H_r)r(T,p)\).
+  <br><br>
+  PINN trained on 8 measurements + 500 collocation points: RMSE = 4 K, hot-spot location correct, energy balance to ±0.5%.
+  <br>
+  Pure data-driven MLP: RMSE = 19 K, hot-spot location wrong.
+  <br><br>
+  The PINN extrapolates physically because the PDE constrains the solution everywhere; the MLP can only interpolate between the 8 measurement points.
+</div>
+
+<h3>PINN Training Challenges</h3>
+
+<ul>
+  <li><strong>Loss weight imbalance</strong>: \(L_{data} \gg L_{PDE}\) in early training. Use adaptive weighting: \(w_r = L_{data} / L_{PDE}\).</li>
+  <li><strong>Spectral bias</strong>: standard MLPs learn low-frequency components first. Use Fourier feature embedding \(\gamma(\mathbf{x}) = [\cos(2\pi\mathbf{B}\mathbf{x}), \sin(2\pi\mathbf{B}\mathbf{x})]\) to resolve high-frequency components.</li>
+  <li><strong>Stiff equations</strong>: use L-BFGS instead of Adam for final fine-tuning; curriculum training (increase collocation points progressively).</li>
+  <li><strong>Convergence not guaranteed</strong>: always cross-validate against a few held-out physical measurements.</li>
+</ul>
+
+<!-- =========================================================== -->
+<h2>8. Hyperparameter Optimisation with Optuna</h2>
+
+<pre><code>def objective(trial):
+    depth    = trial.suggest_int("depth", 2, 6)
+    width    = trial.suggest_categorical("width", [64,128,256,512])
+    dropout  = trial.suggest_float("dropout", 0.0, 0.4)
+    lr       = trial.suggest_float("lr", 1e-4, 1e-2, log=True)
+    wd       = trial.suggest_float("wd", 1e-5, 1e-2, log=True)
+    act      = trial.suggest_categorical("act", ["gelu","silu"])
+
+    model = MLP(depth, width, dropout, act)
+    train(model, AdamW(lr=lr, weight_decay=wd),
+          scheduler=CosineAnnealingLR, early_stopping=20)
+    return validation_rmse
+
+study = optuna.create_study(
+    direction="minimize",
+    sampler=optuna.samplers.TPESampler(seed=42),
+    pruner=optuna.pruners.MedianPruner()  # 30% compute savings
+)
+study.optimize(objective, n_trials=100)</code></pre>
+
+<div class="box-rule">
+  <div class="box-label">Rule — Optuna search budget</div>
+  <ul>
+    <li>XGBoost: 50–100 trials (fast evaluation)</li>
+    <li>MLP with \(n < 5000\): 30–50 trials; each trial &lt;30 s</li>
+    <li>LSTM with \(n \approx 100k\): 20–30 trials; use GPU</li>
+    <li>MedianPruner: prunes trials whose validation loss exceeds the median of completed trials at the same epoch — ~30% compute savings</li>
+    <li>Log all trials to a database (<code>storage=</code>RDB URL): enables resuming interrupted studies</li>
+  </ul>
+</div>
+
+<!-- =========================================================== -->
+<h2>Chapter Summary</h2>
+
+<div class="box-lesson">
+  <div class="box-label">Key takeaways</div>
+  <ul>
+    <li><strong>DL crossover at \(n \approx 5{,}000\)</strong> for tabular data. Below this: GP or XGBoost wins. Above: evaluate both.</li>
+    <li><strong>AdamW + cosine LR + gradient clipping + early stopping</strong>: mandatory starting configuration. Deviating without reason is not justified.</li>
+    <li><strong>LayerNorm</strong> is the default normalisation layer for engineering surrogates — stateless, batch-size-agnostic, robust to distribution shift.</li>
+    <li><strong>Pre-Norm residual blocks</strong> for \(L > 4\) layers. Post-Norm creates vanishing gradient. This is established engineering practice, not a nuance.</li>
+    <li><strong>PINNs</strong>: use when physics is known and data is sparse. They outperform data-driven models in these regimes, but convergence requires careful loss balancing and curriculum training.</li>
+    <li><strong>ReLU</strong> must not be used in PINNs — zero second derivative breaks PDE residuals. Use GELU or SiLU.</li>
+  </ul>
+</div>
+
+<nav class="chapter-nav">
+  <a href="ch05-supervised-learning.html">← Ch 5: Supervised Learning</a>
+  <a href="index.html">Table of Contents</a>
+  <a href="ch07-uncertainty-quantification.html">Ch 7: Uncertainty Quantification →</a>
+</nav>
+
+</div><!-- .container -->
+
+<footer>
+  The Engineer's Handbook of Machine Learning &nbsp;·&nbsp; Leonardo Pulga PhD &nbsp;·&nbsp;
+  <a href="index.html">All chapters</a>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ch. 1 — Introduction: The Engineering Case for ML · Engineer's ML Handbook</title>
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(','\\)'], ['$','$']], displayMath: [['\\[','\\]']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <style>
+    :root {
+      --bg:         #0d1117;
+      --surface:    #161b22;
+      --border:     #2d333b;
+      --text:       #b8c0cc;
+      --muted:      #6e7890;
+      --accent:     #6da5cc;
+      --green:      #5a9e72;
+      --amber:      #c49a3c;
+      --red:        #c97b76;
+      --code-bg:    #13191f;
+      --tag-bg:     #1a2d40;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.75;
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 6rem;
+    }
+
+    /* ── Nav ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    nav a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    nav a:hover { text-decoration: underline; }
+
+    /* ── Header ── */
+    .part-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+    .tagline {
+      font-size: 1.05rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 1.5rem;
+      border-left: 3px solid var(--border);
+      padding-left: 1rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 2rem;
+    }
+    .tag {
+      background: var(--tag-bg);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── TL;DR ── */
+    .tldr {
+      background: #0b1d2e;
+      border: 1px solid #1d3a5a;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 1.2rem 1.5rem;
+      margin: 1.5rem 0 2.5rem;
+    }
+    .tldr .box-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.7rem;
+    }
+    .tldr ul { padding-left: 1.25rem; }
+    .tldr li { margin-bottom: 0.45rem; font-size: 0.94rem; }
+
+    /* ── Section headings ── */
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 2.75rem 0 0.65rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #e6edf3;
+      margin: 1.75rem 0 0.4rem;
+    }
+    p { margin-bottom: 0.9rem; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 0.9rem; }
+    li { margin-bottom: 0.35rem; }
+
+    /* ── Callout boxes ── */
+    .box {
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .box .box-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .box-lesson  { background: #0c2316; border-left: 4px solid var(--green); }
+    .box-lesson  .box-label { color: var(--green); }
+    .box-pitfall { background: #2a1600; border-left: 4px solid var(--amber); }
+    .box-pitfall .box-label { color: var(--amber); }
+    .box-rule    { background: #161b22; border-left: 4px solid #6e7681; }
+    .box-rule    .box-label { color: #8b949e; }
+    .box-example { background: #131220; border-left: 4px solid #7c6fad; }
+    .box-example .box-label { color: #9d8fd4; }
+
+    /* ── Formula ── */
+    .formula {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.5rem;
+      margin: 1.25rem 0;
+      overflow-x: auto;
+      font-size: 1rem;
+    }
+
+    /* ── Code ── */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+      font-size: 0.84rem;
+      line-height: 1.6;
+      margin: 1.25rem 0;
+    }
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+      font-size: 0.84em;
+      background: var(--code-bg);
+      padding: 0.15em 0.45em;
+      border-radius: 3px;
+      color: #e6edf3;
+    }
+    pre code { background: none; padding: 0; }
+
+    /* ── Tables ── */
+    .table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    th {
+      background: var(--surface);
+      color: var(--accent);
+      padding: 0.55rem 0.85rem;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    td {
+      padding: 0.5rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:hover td { background: #161e2e; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 1.45rem; }
+      nav { flex-direction: column; gap: 0.4rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html">← The Engineer's Handbook of ML</a>
+  <span>Part I — The Engineering Data Foundation · Ch. 1</span>
+</nav>
+
+<div class="part-label">Part I — The Engineering Data Foundation · Chapter 1</div>
+<h1>Introduction: The Engineering Case for Machine Learning, Problem Framing, and the Baseline Discipline</h1>
+<p class="tagline">"A problem well-stated is a problem half-solved. A baseline well-chosen is a project half-completed." — after Kettering &amp; Deming</p>
+
+<div class="tags">
+  <span class="tag">problem framing</span>
+  <span class="tag">surrogate models</span>
+  <span class="tag">baseline discipline</span>
+  <span class="tag">ODD / OOD</span>
+  <span class="tag">value of information</span>
+  <span class="tag">generative AI limits</span>
+  <span class="tag">economics of ML</span>
+</div>
+
+<div class="tldr">
+  <div class="box-label">TL;DR — Five-Minute Version</div>
+  <ul>
+    <li>Engineering ML differs from generic ML in <strong>three irreducible ways</strong>: physical laws are hard constraints (not soft regularisation), data is expensive (not free from the internet), and deployment is the most constrained step (not an afterthought).</li>
+    <li>Before touching any data, answer <strong>eight framing questions</strong>. The most common project failure is not a bad algorithm — it is a badly framed problem. Framing takes one day; bad framing costs three months.</li>
+    <li>Define and build the <strong>baseline model <em>before</em> the complex model</strong>. A sophisticated surrogate that does not convincingly beat a default XGBoost on held-out GroupKFold data is solving the wrong problem.</li>
+    <li>Generative AI can accelerate boilerplate and documentation, but <strong>cannot reason about your data's physical structure</strong>, detect ODD violations, or be accountable for a safety-critical deployment decision. The fundamentals are not optional.</li>
+  </ul>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>Why Engineering ML Is Not Generic ML</h2>
+
+<p>Consider two scenarios. A propulsion engineer fits a Gaussian Process surrogate to 47 LOX/methane hot-fire tests (&euro;25,000–80,000 each) and uses Bayesian optimisation to find the optimal mixture ratio in 30 more tests — cutting a 256-run full-factorial campaign by 70%, from three years to three weeks. A second engineer trains a 5-layer LSTM on an 80/20 random split of test-bench data, achieves CV RMSE = 7.2%, deploys it in a health management system, and watches it trigger false alarms on throttle transients — because the random split put correlated runs in both train and test sets (temporal leakage), and because the model was never exercised on the throttle-down regime. The first engineer applied engineering methodology. The second applied generic ML methodology. The difference is not algorithmic — it is methodological.</p>
+
+<p>Three properties of engineering problems make every step of the ML workflow fundamentally different:</p>
+
+<div class="box box-lesson">
+  <div class="box-label">The Three Irreducible Differences</div>
+  <ol>
+    <li><strong>Physical laws are hard constraints, not soft regularisation.</strong> Mass is conserved. Entropy increases. Isentropic efficiency cannot exceed unity. A neural network predicting negative species concentrations or specific impulse above the thermodynamic ceiling is not merely inaccurate — it is physically meaningless and may drive a control system to a dangerous state.</li>
+    <li><strong>Data is precious, expensive, and physically structured.</strong> A single RANS CFD simulation of a combustion chamber takes 6–48 hours on a 128-core cluster. A test-bench point costs €500–2,000. There is no ImageNet equivalent for reactor kinetics data. Every point must be planned, justified, and documented.</li>
+    <li><strong>Deployment constraints are non-negotiable.</strong> A surrogate that cannot run in a vehicle ECU within 1 ms with 64 KB of memory, or pass EASA Learning Assurance Level review, or be exported as an FMU compatible with GT-Power, is irrelevant regardless of its RMSE.</li>
+  </ol>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>The Four Surrogate Model Families</h2>
+
+<p>Every engineering surrogate belongs to one of four families. Choosing the wrong family wastes months. The decision is governed by sample size \(n\), input dimension \(d\), and whether calibrated uncertainty is a hard requirement.</p>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Family</th>
+        <th>Uncertainty</th>
+        <th>Interpretability</th>
+        <th>Min. data</th>
+        <th>Best for</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>RSM (polynomial)</strong></td>
+        <td>None</td>
+        <td>Highest — explicit equations</td>
+        <td>\(3p\) points</td>
+        <td>Regulatory docs, \(d \le 6\)</td>
+      </tr>
+      <tr>
+        <td><strong>GP / Kriging</strong></td>
+        <td>Exact analytic</td>
+        <td>Medium</td>
+        <td>\(10d\) points</td>
+        <td>UQ, active learning, DOE</td>
+      </tr>
+      <tr>
+        <td><strong>Tree ensembles (XGBoost)</strong></td>
+        <td>Partial (conformal)</td>
+        <td>Medium</td>
+        <td>\(50d\) points</td>
+        <td>Tabular data, physical constraints</td>
+      </tr>
+      <tr>
+        <td><strong>Deep learning (MLP/LSTM)</strong></td>
+        <td>Partial (ensemble)</td>
+        <td>Low</td>
+        <td>\(500d\) points or \(n > 5000\)</td>
+        <td>Time series, images, \(n > 5000\)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p>The model selection decision tree reads as follows: if \(n < 200\) and \(d \le 6\) with a smooth response, use RSM or GP. If calibrated uncertainty is required regardless of \(n\), use a GP (sparse for \(n > 5000\)). For data-rich tabular problems, start with XGBoost. For time series and image data, use LSTM/TCN or MLP. <strong>Critically: consult this chart only after the baseline cascade (§ Baseline Protocol below) has been run.</strong></p>
+
+<div class="box box-rule">
+  <div class="box-label">Model Selection Rule of Thumb</div>
+  <p style="margin:0">If GP beats Default XGBoost by &lt;5% RMSE and you have no UQ requirement, use XGBoost. It is faster to train, faster to deploy, and requires no hyperparameter tuning.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>Engineering ML Economics and the Value-of-Information Framework</h2>
+
+<p>The economic question for a data acquisition decision is not "how much does this test cost?" but "how much variance in the surrogate prediction does this test eliminate?" This is the <strong>Value of Information (VoI)</strong> framework.</p>
+
+<div class="formula">
+\[
+\text{VoI}(\mathbf{x}^*) = \underbrace{\sigma^2_{\text{prior}}(\mathbf{x}_{\text{target}})}_{\text{current variance}} - \mathbb{E}_{p(y^* \mid \mathbf{x}^*, \mathcal{D})}\!\left[\sigma^2_{\text{post}}(\mathbf{x}_{\text{target}}) \mid y(\mathbf{x}^*)\right]
+\]
+</div>
+
+<p>For a GP surrogate, the expected posterior variance reduction from one new observation at \(\mathbf{x}^*\) is analytic:</p>
+
+<div class="formula">
+\[
+\Delta\sigma^2(\mathbf{x}_{\text{target}}) = \frac{k(\mathbf{x}_{\text{target}},\,\mathbf{x}^*)^2}{k(\mathbf{x}^*,\,\mathbf{x}^*) + \sigma_n^2}
+\]
+</div>
+
+<p>Compare this quantity to the test cost to decide whether the experiment is economically justified. The Expected Improvement acquisition function in Bayesian optimisation is a special case of VoI where the target is the global optimum rather than a specific prediction point.</p>
+
+<div class="box box-example">
+  <div class="box-label">Example — ROI Calculation for a Hot-Fire Test Campaign</div>
+  <p>A LOX/methane surrogate has current prediction uncertainty \(\sigma = 4.2\,\text{s}\) on \(I_{sp}\). Qualification requires \(\sigma \le 1.5\,\text{s}\).</p>
+  <ul style="margin:0">
+    <li><strong>Option A:</strong> 5 hot-fire tests (Sobol' design, €200,000). Expected \(\sigma = 1.1\,\text{s}\). Qualification passed.</li>
+    <li><strong>Option B:</strong> 2 CFD runs (€5,000). Expected \(\sigma = 1.8\,\text{s}\). Misses target.</li>
+    <li><strong>Option C:</strong> 2 CFD + 2 hot-fire (€120,000). Expected \(\sigma = 1.3\,\text{s}\). Qualification passed at 60% of Option A's cost.</li>
+  </ul>
+  <p style="margin-top:0.6rem;margin-bottom:0">The marginal value of the 3 additional hot-fire tests in Option A is €80,000 for 0.2 s of additional precision — below the qualification threshold anyway. Option C is the correct engineering decision.</p>
+</div>
+
+<h3>When ML Is Not the Right Tool</h3>
+<p>The economic analysis sometimes returns the right answer: do not build an ML model. ML is wrong when:</p>
+<ul>
+  <li>The physics model already meets the accuracy requirement. A validated Zeldovich NOx correlation at ±8% beats an LSTM at ±7% — the LSTM adds complexity without meaningful benefit.</li>
+  <li>The data acquisition cost exceeds the value of the improved prediction.</li>
+  <li>The deployment environment prohibits ML (e.g., IEC 61508 SIL-3 nuclear safety systems).</li>
+  <li>Explainability is legally required and the model cannot provide it.</li>
+</ul>
+
+<div class="box box-rule">
+  <div class="box-label">The ML Go/No-Go Checklist</div>
+  <ol style="margin:0">
+    <li>Does the best existing physics model meet the accuracy requirement? If yes: use it.</li>
+    <li>Is the cost of sufficient data less than the value of the improved prediction? If no: use GP, RSM, or a calibrated correlation.</li>
+    <li>Can the deployment environment run the required model class? If no: define the constraint first, select the model second.</li>
+    <li>Can the model be validated to the required standard? If no: the project is regulatory-limited, not ML-limited.</li>
+  </ol>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>The Eight Problem Framing Questions</h2>
+
+<p>Answer these questions <em>in writing</em> before opening a Python notebook. Share them with your team. Revisit them when the project hits a wall. The most common engineering ML failure mode is not a bad algorithm — it is a badly framed problem that took three months to reveal itself.</p>
+
+<ol>
+  <li><strong>What decision does the model serve?</strong> A reformer conversion surrogate for offline optimisation has completely different accuracy, latency, and uncertainty requirements than the same surrogate used in real-time process control.</li>
+  <li><strong>What is the target variable, in what units, and what is its physically meaningful range?</strong> "NOx" is insufficient. "Tailpipe NOx in g/km, expected range 0.01–2.0 g/km, regulatory limit 0.060 g/km under Euro VII" is a proper specification.</li>
+  <li><strong>What does success look like, quantitatively?</strong> State the metric, the target value, and <em>why</em> that target was chosen. "MAPE &lt; 7% on WLTC because the OBD tolerance budget is 10% and we allocate 3% to sensor uncertainty" is a proper success criterion.</li>
+  <li><strong>What data is available, and what is the marginal cost of one more point?</strong> Inventory size, provenance, sampling rate, calibration certificates, missing fraction, and cost of the next experiment.</li>
+  <li><strong>What does the simplest possible model look like?</strong> Linear regression? A lookup table? The Zeldovich correlation? Define the baseline before defining the model.</li>
+  <li><strong>What physical constraints must the model respect?</strong> Monotonicity requirements, conservation laws, bounds, stability requirements. These constrain architecture choices.</li>
+  <li><strong>Where will the model run, and what are the resource constraints?</strong> A model on a cloud server and one in a FADEC computer with 256 KB RAM are architecturally incompatible. Know the deployment target before training.</li>
+  <li><strong>How will the model be validated, and to what standard?</strong> ASME V&amp;V 10? EASA CM-0064? ISO 26262 ASIL-B? Know the regulatory requirements before the project starts, not after.</li>
+</ol>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>The Five Canonical Problem Formulations</h2>
+
+<p>Every engineering ML problem reduces to one of five formulations. Identify yours before choosing any algorithm — the formulation determines the loss function, validation strategy, and deployment architecture.</p>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Formulation</th>
+        <th>Output</th>
+        <th>Chemical engineering example</th>
+        <th>Aerospace / propulsion example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Regression</strong></td>
+        <td>Continuous scalar</td>
+        <td>Reactor conversion, selectivity, heat duty</td>
+        <td>Turbine blade temperature, NOx, SFC</td>
+      </tr>
+      <tr>
+        <td><strong>Classification</strong></td>
+        <td>Discrete label</td>
+        <td>Catalyst activity state (active / deactivating / deactivated)</td>
+        <td>Combustion stability (stable / roughness / hard-start)</td>
+      </tr>
+      <tr>
+        <td><strong>Anomaly detection</strong></td>
+        <td>Score / binary</td>
+        <td>Column flooding onset, heat exchanger fouling</td>
+        <td>Combustor instability, blade crack initiation</td>
+      </tr>
+      <tr>
+        <td><strong>Time series</strong></td>
+        <td>Sequence</td>
+        <td>H₂S soft sensor in absorber, H₂ yield trajectory</td>
+        <td>Thrust chamber temperature, feed system pressure transient</td>
+      </tr>
+      <tr>
+        <td><strong>Sequential decision</strong></td>
+        <td>Action sequence</td>
+        <td>Real-time setpoint optimisation in a CSTR cascade</td>
+        <td>Throttle scheduling, mission propellant budget optimisation</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>The Baseline Protocol: A Non-Negotiable Discipline</h2>
+
+<p>The baseline model is not a warm-up exercise. It is the hypothesis test that your complex model must pass. No surrogate leaves the lab without convincingly beating the baseline cascade on the <em>correct</em> GroupKFold split.</p>
+
+<div class="box box-lesson">
+  <div class="box-label">The Four-Step Baseline Cascade (Regression)</div>
+  <ol>
+    <li><strong>Naïve:</strong> predict the training mean \(\hat{y} = \bar{y}\). RMSE\(_\text{naïve} = s_y\). Any model with higher RMSE has negative skill and must be discarded.</li>
+    <li><strong>Linear OLS:</strong> all features. If \(R^2 > 0.99\): stop here. It is interpretable, deployable, and certifiable.</li>
+    <li><strong>RSM / lookup table:</strong> second-order polynomial or interpolated table. This is the industry standard in powertrain calibration and chemical process control.</li>
+    <li><strong>Default XGBoost:</strong> shallow trees at library defaults, no hyperparameter tuning, GroupKFold CV with your physical groups. <strong>Your GP or LSTM must beat this before it is considered.</strong></li>
+  </ol>
+  <p style="margin-top:0.6rem;margin-bottom:0">If your complex model does not beat Default XGBoost by &gt;20% RMSE on the correct GroupKFold split, one of three things is true: (a) the problem is simple — use XGBoost; (b) your complex model has a data leak; (c) the data does not contain enough information. All three discoveries are valuable.</p>
+</div>
+
+<div class="box box-example">
+  <div class="box-label">Example — Baseline Cascade: LOX/Methane I<sub>sp</sub> Surrogate (n = 47, d = 4)</div>
+  <div class="table-wrap" style="margin:0.5rem 0 0">
+    <table>
+      <thead>
+        <tr><th>Model</th><th>CV RMSE</th><th>R²</th><th>Training time</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Naïve (mean)</td><td>8.1%</td><td>0.000</td><td>&lt;1 ms</td></tr>
+        <tr><td>Linear OLS</td><td>4.2%</td><td>0.730</td><td>&lt;1 ms</td></tr>
+        <tr><td>Quadratic RSM</td><td>2.1%</td><td>0.933</td><td>&lt;1 ms</td></tr>
+        <tr><td>Default XGBoost</td><td>0.87%</td><td>0.988</td><td>3.2 s</td></tr>
+        <tr><td><strong>GP (ARD Matérn-5/2)</strong></td><td><strong>0.63%</strong></td><td><strong>0.993</strong></td><td>28 s</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:0.6rem;margin-bottom:0">GP wins, but only by 28% over Default XGBoost. The decision to use GP is justified here by the UQ requirement for active learning in the next pilot campaign. Without that requirement, Default XGBoost is the correct engineering choice.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>Defining the Operational Design Domain (ODD)</h2>
+
+<p>The Operational Design Domain is the set of input conditions within which the model is asserted to produce reliable predictions. Defining it correctly is as important as training the model. Under EASA CP-003 (2023) and ISO 26262, <strong>silent extrapolation beyond the ODD is a regulatory violation</strong>.</p>
+
+<div class="box box-lesson">
+  <div class="box-label">ODD Requirements (EASA-aligned)</div>
+  <ol style="margin:0">
+    <li><strong>Explicit:</strong> every input variable has stated minimum and maximum bounds.</li>
+    <li><strong>Tested:</strong> a validation dataset covers the ODD boundaries.</li>
+    <li><strong>Enforced:</strong> at inference time, inputs outside the ODD trigger a defined fallback — conservative value, alarm, or explicit OOD flag. Never silent extrapolation.</li>
+  </ol>
+</div>
+
+<div class="box box-rule">
+  <div class="box-label">ODD Definition Checklist</div>
+  <ol style="margin:0">
+    <li>List all input variables with physical min/max (hard bounds from physics or hardware).</li>
+    <li>List the <em>operational</em> bounds — the subset representing normal operation (narrower than physical bounds).</li>
+    <li>Identify nonlinear feasibility constraints between inputs (e.g., high \(T\) + low \(S/C\) causes carbon deposition — infeasible even if each is individually within bounds).</li>
+    <li>At inference: hard-reject inputs outside physical bounds; warn on inputs outside operational bounds.</li>
+    <li>Re-validate when: a new operating regime is requested, a hardware change occurs, or the input distribution shifts &gt;10% in any direction (detected by CUSUM monitoring).</li>
+  </ol>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>On Generative AI in Engineering ML</h2>
+
+<div class="box box-pitfall">
+  <div class="box-label">Pitfall — The Most Expensive Shortcut</div>
+  <p style="margin:0">An LLM told an engineer that GroupKFold was "an optional refinement for time series." It is not. It is the correct cross-validation strategy for any dataset with physical measurement groups, and ignoring it produces optimistic RMSE estimates that collapse on deployment. The LLM was confident, fluent, and wrong — because it was producing statistically likely text about cross-validation, not reasoning about hot-fire test data from a rocket engine campaign.</p>
+</div>
+
+<p>A language model produces output by completing patterns observed in its training corpus. It is systematically unreliable for tasks where the correct answer requires:</p>
+
+<ul>
+  <li><strong>Reasoning about your specific data.</strong> A model can say "GPs generalise well with small datasets." It cannot say whether <em>your</em> 47 hot-fire points adequately cover <em>your</em> engine's operational envelope at <em>your</em> throttle schedule. The engineer who knows Sobol' sensitivity analysis can answer that from the data. The engineer who asked an LLM cannot.</li>
+  <li><strong>Identifying when physics constraints are violated.</strong> A surrogate predicting \(I_{sp}\) above the thermodynamic ceiling for LOX/methane is physically impossible. An LLM will not flag this without very specific prompting — and may hallucinate a plausible-sounding but incorrect thermodynamic justification.</li>
+  <li><strong>Distinguishing data leakage from clean validation.</strong> Random KFold looks syntactically identical to GroupKFold. The difference is conceptual: GroupKFold is correct <em>because</em> test-bench runs share temporal correlation. Understanding why requires knowing the physical origin of the data.</li>
+  <li><strong>Making safety-critical decisions under uncertainty.</strong> The decision to deploy a virtual sensor for turbopump health monitoring requires calibrated uncertainty, domain knowledge, and accountability. No language model can be accountable for a propulsion system.</li>
+</ul>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Task</th><th>LLM Reliability</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Boilerplate code (sklearn pipelines, ONNX export)</td><td style="color:var(--green)">Safe</td><td>Verifiable by running the code</td></tr>
+      <tr><td>API documentation queries</td><td style="color:var(--green)">Safe</td><td>Verifiable against official docs</td></tr>
+      <tr><td>Explaining an unfamiliar algorithm</td><td style="color:var(--amber)">Requires verification</td><td>May oversimplify or conflate variants</td></tr>
+      <tr><td>Suggesting hyperparameter ranges</td><td style="color:var(--amber)">Requires verification</td><td>Generic defaults; ignores your data structure</td></tr>
+      <tr><td>Reviewing a CV pipeline for leakage</td><td style="color:var(--red)"><strong>Unreliable</strong></td><td>Cannot reason about physical data groups</td></tr>
+      <tr><td>Interpreting SHAP values for a physical problem</td><td style="color:var(--red)"><strong>Unreliable</strong></td><td>Lacks the causal DAG of the physical system</td></tr>
+      <tr><td>Deciding if a prediction interval is wide enough</td><td style="color:var(--red)"><strong>Unreliable</strong></td><td>Requires knowledge of operational risk context</td></tr>
+      <tr><td>Evaluating ODD compliance</td><td style="color:var(--red)"><strong>Unreliable</strong></td><td>Requires knowledge of regulatory framework</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="box box-lesson">
+  <div class="box-label">Best Practice — Safe LLM Use in Engineering ML</div>
+  <ol style="margin:0">
+    <li>Verify everything in the "Requires verification" tier against a primary source before using it.</li>
+    <li>Never delegate "Unreliable" tier decisions to an LLM without independent expert review.</li>
+    <li>Use LLMs to generate options, not to select them. "What CV strategies exist?" is safe. "Which CV strategy should I use for my data?" is not.</li>
+    <li>Treat LLM output as a first draft, not a final answer. The speed gain is real. The intellectual shortcut is an illusion with a deferred cost.</li>
+  </ol>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>Key Takeaways</h2>
+
+<div class="box box-lesson">
+  <div class="box-label">Chapter Summary</div>
+  <ul style="margin:0">
+    <li>Engineering ML fails on three fronts generic ML does not face: violated physics, expensive data, and demanding deployment constraints. Every chapter in this book addresses all three.</li>
+    <li>Problem framing precedes data collection. The eight framing questions prevent the most common and expensive project failures.</li>
+    <li>The baseline protocol is not optional. Define the four-step cascade before training any complex model; beat it convincingly on GroupKFold before deploying.</li>
+    <li>The Operational Design Domain is a regulatory deliverable under EASA and ISO 26262. Silent extrapolation outside the ODD is a safety violation, not a modelling choice.</li>
+    <li>Data-first discipline: weak correlations between physical variables are often the most important ones. Examine the data in physics-motivated coordinate systems before running any model. Observe first, hypothesise second, model third.</li>
+    <li>The methods in this book connect into a <strong>Digital Twin</strong> architecture: surrogate modelling + system identification + virtual sensors + condition monitoring + optimisation + reliability. The Digital Twin chapter maps the full lifecycle and shows how every chapter in the book contributes.</li>
+  </ul>
+</div>
+
+<footer>
+  <span>The Engineer's Handbook of Machine Learning — L. Pulga PhD</span>
+  <span><a href="index.html">Table of Contents</a> · <a href="ch02-mathematics-statistics.html">Ch. 2: Mathematics &amp; Statistics →</a></span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anomaly Detection and Condition Monitoring | ML Handbook</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root {
+  --bg:      #0d1117;
+  --surface: #161b22;
+  --border:  #2d333b;
+  --text:    #b8c0cc;
+  --muted:   #6e7890;
+  --accent:  #6da5cc;
+  --green:   #5a9e72;
+  --amber:   #c49a3c;
+  --red:     #c97b76;
+  --code-bg: #13191f;
+  --tag-bg:  #1a2d40;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Georgia', serif; font-size: 16px; line-height: 1.7; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+header { border-bottom: 1px solid var(--border); padding: 2rem 0 1.5rem; text-align: center; }
+.series-label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; font-family: monospace; }
+h1 { color: var(--accent); font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+.subtitle { color: var(--muted); font-size: 1rem; }
+.tags { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.tag { background: var(--tag-bg); color: var(--accent); padding: 0.2rem 0.7rem; border-radius: 3px; font-size: 0.75rem; font-family: monospace; border: 1px solid var(--border); }
+main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+.tldr { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 4px; padding: 1.2rem 1.5rem; margin-bottom: 2.5rem; }
+.tldr h2 { color: var(--accent); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.75rem; }
+.tldr ul { padding-left: 1.2rem; }
+.tldr li { margin-bottom: 0.35rem; }
+h2 { color: var(--accent); font-size: 1.35rem; margin: 2.5rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+h3 { color: #8db4c8; font-size: 1.1rem; margin: 1.8rem 0 0.7rem; }
+p { margin-bottom: 1rem; }
+ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+li { margin-bottom: 0.3rem; }
+.box-lesson  { background: #0c2316; border-left: 4px solid var(--green);  border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-pitfall { background: #2a1600; border-left: 4px solid var(--amber); border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-rule    { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid #6e7681; border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-example { background: #131220; border-left: 4px solid #7c6fad; border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.5rem; font-weight: 700; }
+.box-lesson .box-label  { color: var(--green); }
+.box-pitfall .box-label { color: var(--amber); }
+.box-rule .box-label    { color: #8b949e; }
+.box-example .box-label { color: #9d8fd4; }
+.math-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; margin: 1.2rem 0; overflow-x: auto; }
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; overflow-x: auto; margin: 1.2rem 0; }
+code { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #a8c4d8; }
+p code, li code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 2px; font-size: 0.85em; }
+table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+thead th { background: var(--surface); color: var(--accent); padding: 0.6rem 0.8rem; text-align: left; border-bottom: 2px solid var(--border); font-family: monospace; font-size: 0.8rem; }
+tbody td { padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:hover { background: #1a1f27; }
+.nav-links { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.9rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 1rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="series-label">The Engineer's Handbook of Machine Learning</div>
+  <h1>Anomaly Detection and Condition Monitoring</h1>
+  <div class="subtitle">Chapter 13 &mdash; SPC, Isolation Forest, Autoencoders, Bearing Diagnostics, and RUL</div>
+  <div class="tags">
+    <span class="tag">CUSUM</span>
+    <span class="tag">EWMA</span>
+    <span class="tag">Isolation Forest</span>
+    <span class="tag">LSTM Autoencoder</span>
+    <span class="tag">VAE</span>
+    <span class="tag">Bearing Faults</span>
+    <span class="tag">Spectral Analysis</span>
+    <span class="tag">RUL</span>
+  </div>
+</header>
+
+<main>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>Any ML anomaly detector must beat SPC baseline first — CUSUM/EWMA are extremely powerful for scalar statistics and often all you need.</li>
+    <li>Three anomaly types require different detectors: <strong>point</strong> (CUSUM, Z-score), <strong>collective</strong> (LSTM autoencoder), <strong>contextual</strong> (conditional autoencoder).</li>
+    <li>Isolation Forest for multivariate point anomalies: $\mathcal{O}(n \log n)$, no distance metric, works in high dimensions. Preferred over One-Class SVM for $d > 5$.</li>
+    <li>LSTM autoencoder: train on normal sequences only; anomaly score = reconstruction MSE. Set threshold at 99.5th percentile of normal training scores (FAR = 0.5%).</li>
+    <li>Bearing faults: use spectral kurtosis to find the resonance band, then envelope analysis at $f_{BPFO/BPFI/BSF}$ harmonics.</li>
+    <li>VAE regularises the latent space — prevents memorising outliers. Better than deterministic AE for anomaly detection.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>1. Anomaly Types and Detection Strategy</h2>
+
+<p>Engineering anomalies are classified along two dimensions:</p>
+
+<ul>
+  <li><strong>By temporal structure</strong>: <em>Point</em> — single timestep. <em>Collective</em> — a subsequence (e.g., compressor surge onset). <em>Contextual</em> — normal globally, anomalous given context (high coolant temperature at full load is normal; at idle it is an anomaly).</li>
+  <li><strong>By mechanism</strong>: <em>Sensor fault</em> — drift, bias, spike, stuck. <em>Component degradation</em> — bearing wear, fouling, seal leakage. <em>Process upset</em> — external disturbance, wrong setpoint, feedstock change.</li>
+</ul>
+
+<table>
+  <thead>
+    <tr><th>Anomaly Type</th><th>Best Method(s)</th><th>Training Data</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Point, univariate</td><td>Modified Z-score, CUSUM, EWMA</td><td>Normal only</td></tr>
+    <tr><td>Point, multivariate</td><td>Isolation Forest, Mahalanobis $D^2$, OCSVM</td><td>Normal only</td></tr>
+    <tr><td>Collective (short)</td><td>LSTM autoencoder, TCN autoencoder</td><td>Normal sequences</td></tr>
+    <tr><td>Collective (long trend)</td><td>EWMA on health index, Prophet</td><td>Normal + trend</td></tr>
+    <tr><td>Contextual</td><td>Conditional autoencoder, Normalising flows</td><td>Normal per context</td></tr>
+    <tr><td>Sensor fault (spike/drift)</td><td>Statistical tests + gradient check</td><td>&mdash;</td></tr>
+    <tr><td>Rotating machinery</td><td>Spectral analysis + CNN classifier</td><td>Labelled if available</td></tr>
+  </tbody>
+</table>
+
+<!-- ================================================================== -->
+<h2>2. Statistical Process Control: The Baseline</h2>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall</div>
+  Never skip SPC as a baseline. If your LSTM autoencoder cannot outperform a well-tuned CUSUM chart, your model is not adding value. SPC charts are auditable, have formal statistical guarantees, and are accepted by regulators.
+</div>
+
+<h3>Shewhart, CUSUM, and EWMA</h3>
+
+<p>For individual observations, Shewhart uses moving range to estimate $\sigma$: $\hat{\sigma} = \overline{MR}/d_2$ where $d_2 \approx 1.128$ and $MR_t = |x_t - x_{t-1}|$. Control limits at $\pm 3\hat{\sigma}$ give FAR = 0.27% under normality.</p>
+
+<div class="math-block">
+<strong>CUSUM:</strong> $C_t^+ = \max(0, C_{t-1}^+ + e_t - k)$, $C_t^- = \max(0, C_{t-1}^- - e_t - k)$, alarm when $C_t^\pm > h$
+<br><br>
+<strong>EWMA:</strong> $Z_t = \lambda x_t + (1-\lambda)Z_{t-1}$, limits: $\mu_0 \pm L\sigma\sqrt{\lambda/(2-\lambda)}$
+</div>
+
+<div class="box-rule">
+  <div class="box-label">SPC Parameter Selection</div>
+  <table style="margin:0">
+    <thead><tr><th>Goal</th><th>Chart</th><th>Parameters</th></tr></thead>
+    <tbody>
+      <tr><td>Detect sudden large shifts (&gt;3σ)</td><td>Shewhart $\bar{x}$</td><td>Default 3-sigma</td></tr>
+      <tr><td>Detect small sustained shifts (&lt;1.5σ)</td><td>CUSUM</td><td>$k=0.5$, $h=5$</td></tr>
+      <tr><td>Balance (detect 1–3σ quickly)</td><td>EWMA</td><td>$\lambda=0.1$, $L=2.7$</td></tr>
+      <tr><td>Correlated multivariate observations</td><td>MEWMA</td><td>$\lambda=0.1$, $h=10$</td></tr>
+      <tr><td>Non-Gaussian monitoring statistic</td><td>Kernel density SPC</td><td>Percentile threshold</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ================================================================== -->
+<h2>3. Multivariate Anomaly Detection</h2>
+
+<h3>Isolation Forest</h3>
+
+<p>Isolation Forest scores anomalies by how quickly they can be isolated in random splits. Anomalies require fewer splits because they occupy sparse regions. Score is inversely proportional to average path length across the ensemble of trees.</p>
+
+<h3>One-Class SVM</h3>
+
+<div class="math-block">
+$$\min_{\mathbf{w}, \xi, \rho} \frac{1}{2}\|\mathbf{w}\|^2 - \rho + \frac{1}{\nu n}\sum_i \xi_i, \quad \text{s.t. } \langle\mathbf{w}, \phi(x_i)\rangle \geq \rho - \xi_i, \xi_i \geq 0$$
+$$\text{Anomaly score: } s(\mathbf{x}) = -[\langle\mathbf{w},\phi(\mathbf{x})\rangle - \rho]$$
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Isolation Forest vs. One-Class SVM</div>
+  <table style="margin:0">
+    <thead><tr><th>Property</th><th>Isolation Forest</th><th>One-Class SVM</th></tr></thead>
+    <tbody>
+      <tr><td>Speed</td><td>$\mathcal{O}(n \log n)$</td><td>$\mathcal{O}(n^2)$&ndash;$\mathcal{O}(n^3)$</td></tr>
+      <tr><td>High-dimensional data ($d>10$)</td><td>Excellent</td><td>Degrades (curse of dim.)</td></tr>
+      <tr><td>Interpretability</td><td>Path length = score</td><td>Kernel (opaque)</td></tr>
+      <tr><td>Hyperparameters</td><td>1 ($\nu$ = contamination)</td><td>2 ($\nu$, kernel params)</td></tr>
+      <tr><td>Use case</td><td>$d>5$, $n>1000$</td><td>$d\leq10$, $n\leq5000$</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ================================================================== -->
+<h2>4. Temporal Anomaly Detection with Autoencoders</h2>
+
+<h3>LSTM Autoencoder</h3>
+
+<p>The LSTM autoencoder learns to reconstruct normal sequences. Anomaly score:</p>
+
+<div class="math-block">
+$$s_t = \frac{1}{W}\sum_{\tau=t-W}^{t} \|\mathbf{x}_\tau - \hat{\mathbf{x}}_\tau\|_2^2$$
+</div>
+
+<pre><code>class LSTMAutoEncoder(nn.Module):
+    """LSTM Autoencoder for temporal anomaly detection."""
+    def __init__(self, n_features, seq_len, hidden_size=64, latent_size=16, n_layers=2):
+        super().__init__()
+        self.seq_len = seq_len
+        self.encoder = nn.LSTM(n_features, hidden_size, n_layers,
+                               batch_first=True, dropout=0.1)
+        self.enc_fc  = nn.Linear(hidden_size, latent_size)
+        self.dec_fc  = nn.Linear(latent_size, hidden_size)
+        self.decoder = nn.LSTM(hidden_size, hidden_size, n_layers,
+                               batch_first=True, dropout=0.1)
+        self.out_fc  = nn.Linear(hidden_size, n_features)
+
+    def encode(self, x):
+        _, (h_n, _) = self.encoder(x)
+        return self.enc_fc(h_n[-1])   # (batch, latent_size)
+
+    def decode(self, z):
+        h0 = self.dec_fc(z).unsqueeze(0).repeat(2, 1, 1)
+        dec_in = self.dec_fc(z.unsqueeze(1).repeat(1, self.seq_len, 1))
+        out, _ = self.decoder(dec_in, (h0, torch.zeros_like(h0)))
+        return self.out_fc(out)
+
+    @torch.no_grad()
+    def anomaly_score(self, x):
+        x_hat, _ = self(x)
+        return ((x - x_hat) ** 2).mean(dim=(1, 2)).cpu().numpy()
+
+def set_threshold(model, X_normal, percentile=99.5):
+    """Set threshold at percentile of reconstruction errors on normal data."""
+    scores = model.anomaly_score(torch.FloatTensor(X_normal))
+    return float(np.percentile(scores, percentile))</code></pre>
+
+<h3>Variational Autoencoder (VAE) for Anomaly Detection</h3>
+
+<p>The VAE learns a generative model of normal data. The latent space is regularised (Gaussian), preventing the encoder from memorising outliers:</p>
+
+<div class="math-block">
+$$\text{Anomaly score: } s(\mathbf{x}) = -\log p_\theta(\mathbf{x}|z), \quad z \sim q_\phi(z|\mathbf{x})$$
+$$\mathcal{L}_{VAE} = \underbrace{\mathbb{E}_{q_\phi}[\log p_\theta(\mathbf{x}|z)]}_{\text{reconstruction}} - \underbrace{D_{KL}[q_\phi(z|\mathbf{x}) \| \mathcal{N}(0,\mathbf{I})]}_{\text{regularisation}}$$
+</div>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson — VAE vs. AE for Anomaly Detection</div>
+  A deterministic AE can memorise anomalies seen during training (if any contaminate the normal dataset) — it learns to reconstruct them well. The VAE KL term forces the latent space to be compact and Gaussian, so rare patterns cannot be embedded without cost. Use VAE when the normal training set may contain occasional anomalies (contamination fraction &lt;5%).
+</div>
+
+<!-- ================================================================== -->
+<h2>5. Rotating Machinery Diagnostics</h2>
+
+<h3>Bearing Fault Frequencies</h3>
+
+<p>Bearing defects produce characteristic frequency components determined by geometry:</p>
+
+<div class="math-block">
+$$f_{BPFO} = \frac{N_b f_r}{2}\left(1 - \frac{d_b}{d_p}\cos\alpha\right) \quad \text{(Ball Pass Frequency, Outer race)}$$
+$$f_{BPFI} = \frac{N_b f_r}{2}\left(1 + \frac{d_b}{d_p}\cos\alpha\right) \quad \text{(Ball Pass Frequency, Inner race)}$$
+$$f_{BSF}  = \frac{d_p f_r}{2 d_b}\left(1 - \left(\frac{d_b}{d_p}\cos\alpha\right)^2\right) \quad \text{(Ball Spin Frequency)}$$
+</div>
+
+<p>where $N_b$ = number of balls, $f_r$ = shaft frequency, $d_b$ = ball diameter, $d_p$ = pitch diameter, $\alpha$ = contact angle.</p>
+
+<h3>Envelope Analysis Procedure</h3>
+
+<ol>
+  <li>Compute <strong>Spectral Kurtosis</strong> (SK) via STFT to find the resonance band with highest impulsiveness.</li>
+  <li>Bandpass filter around the peak SK frequency.</li>
+  <li>Extract the envelope via Hilbert transform: $envelope = |\text{analytic signal}|$.</li>
+  <li>Compute PSD of the envelope signal.</li>
+  <li>Identify peaks at $f_{BPFO}$, $f_{BPFI}$, $f_{BSF}$ and harmonics. Alarm if SNR &gt; 10 dB.</li>
+</ol>
+
+<pre><code>import numpy as np
+from scipy import signal
+from scipy.signal import hilbert
+
+def bearing_fault_detection(x, fs, f_fault, n_harmonics=5):
+    """Envelope analysis + spectral kurtosis for bearing fault detection."""
+    # 1. Spectral Kurtosis via STFT
+    f_stft, _, Zxx = signal.stft(x, fs=fs, nperseg=256, noverlap=192)
+    power = np.abs(Zxx)**2
+    sk    = (power**2).mean(axis=1) / (power.mean(axis=1)**2 + 1e-12) - 2
+
+    # Find peak SK band
+    peak_idx = np.argmax(sk)
+    f_center = f_stft[peak_idx]
+    bw       = max(50.0, f_center * 0.1)
+
+    # 2. Bandpass filter
+    b, a = signal.butter(4, [max(10, f_center - bw), min(fs/2 - 10, f_center + bw)],
+                         btype='bandpass', fs=fs)
+    x_filt = signal.filtfilt(b, a, x)
+
+    # 3. Envelope via Hilbert transform
+    envelope = np.abs(hilbert(x_filt))
+
+    # 4. PSD of envelope
+    f_env, S_env = signal.welch(envelope - envelope.mean(), fs=fs, nperseg=1024)
+
+    # 5. SNR at fault harmonics
+    noise_floor = np.median(S_env)
+    snr_list = []
+    for k in range(1, n_harmonics + 1):
+        idx = np.argmin(np.abs(f_env - f_fault * k))
+        band_energy = S_env[max(0, idx-3):idx+4].max()
+        snr_list.append(10 * np.log10(band_energy / (noise_floor + 1e-12)))
+
+    return {
+        'fault_score_dB':  max(snr_list),
+        'fault_detected':  max(snr_list) > 10,   # 10 dB threshold
+        'sk_peak_freq_Hz': float(f_center),
+        'harmonic_snr_dB': snr_list,
+    }</code></pre>
+
+<!-- ================================================================== -->
+<h2>6. Remaining Useful Life (RUL) Prediction</h2>
+
+<p>RUL estimation is a regression problem where the target is time-to-failure. Key requirements that distinguish it from standard regression:</p>
+
+<ul>
+  <li><strong>Monotonic degradation constraint</strong>: physically, RUL should not increase (use monotone constraints in XGBoost or penalise non-monotone predictions).</li>
+  <li><strong>Censored data</strong>: most run-to-failure datasets have components that were removed before failure. Use survival analysis (Cox proportional hazards) or treat as right-censored regression.</li>
+  <li><strong>Uncertainty quantification</strong>: always report a prediction interval, not just a point estimate. RUL at 80% confidence (conservative) is more actionable than the median RUL.</li>
+  <li><strong>Health Index (HI)</strong>: construct a scalar HI from multivariate sensor data (using PCA or autoencoder bottleneck) and monitor HI degradation trend with EWMA. RUL threshold: when HI drops below a defined failure threshold.</li>
+</ul>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — RUL Prediction Without Uncertainty</div>
+  Reporting RUL = 47 hours without a confidence interval is useless for maintenance scheduling. The decision to pull a component depends on the cost of false alarm (unnecessary replacement) vs. false miss (failure in service). Only a calibrated prediction interval enables the correct cost-optimal decision.
+</div>
+
+<!-- ================================================================== -->
+<h2>7. Key Takeaways</h2>
+
+<ul>
+  <li><strong>SPC first</strong>: CUSUM ($k=0.5$, $h=5$, ARL$_0=370$) and EWMA ($\lambda=0.1$, $L=2.7$) are your baselines. Beat them before deploying ML.</li>
+  <li><strong>Anomaly type determines method</strong>: point → CUSUM/Isolation Forest; collective → LSTM AE; contextual → conditional AE.</li>
+  <li>Isolation Forest &gt; One-Class SVM for $d > 5$: $\mathcal{O}(n \log n)$ complexity, no kernel, interpretable path length score.</li>
+  <li>LSTM autoencoder: train on normal sequences only; set threshold at 99.5th percentile of training reconstruction errors.</li>
+  <li>VAE regularises latent space — use when training data may contain a small fraction of anomalies (&lt;5%).</li>
+  <li>Bearing faults: spectral kurtosis → resonance band → Hilbert envelope → SNR at $f_{BPFO/BPFI/BSF}$. This pipeline is provably optimal for detecting cyclostationary impulses.</li>
+  <li>RUL prediction without calibrated uncertainty intervals is incomplete — always report confidence bounds for maintenance decisions.</li>
+</ul>
+
+<div class="nav-links">
+  <a href="ch12-virtual-sensors.html">&larr; Ch12: Virtual Sensors</a>
+  <a href="ch14-deployment.html">Ch14: Deployment &rarr;</a>
+</div>
+
+</main>
+
+<footer>
+  <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
+  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+</footer>
+
+</body>
+</html>

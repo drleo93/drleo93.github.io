@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Learning for Engineering Time Series | ML Handbook</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root {
+  --bg:      #0d1117;
+  --surface: #161b22;
+  --border:  #2d333b;
+  --text:    #b8c0cc;
+  --muted:   #6e7890;
+  --accent:  #6da5cc;
+  --green:   #5a9e72;
+  --amber:   #c49a3c;
+  --red:     #c97b76;
+  --code-bg: #13191f;
+  --tag-bg:  #1a2d40;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Georgia', serif; font-size: 16px; line-height: 1.7; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+header { border-bottom: 1px solid var(--border); padding: 2rem 0 1.5rem; text-align: center; }
+.series-label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; font-family: monospace; }
+h1 { color: var(--accent); font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+.subtitle { color: var(--muted); font-size: 1rem; }
+.tags { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.tag { background: var(--tag-bg); color: var(--accent); padding: 0.2rem 0.7rem; border-radius: 3px; font-size: 0.75rem; font-family: monospace; border: 1px solid var(--border); }
+
+main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+
+.tldr { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 4px; padding: 1.2rem 1.5rem; margin-bottom: 2.5rem; }
+.tldr h2 { color: var(--accent); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.75rem; }
+.tldr ul { padding-left: 1.2rem; }
+.tldr li { margin-bottom: 0.35rem; color: var(--text); }
+
+h2 { color: var(--accent); font-size: 1.35rem; margin: 2.5rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+h3 { color: #8db4c8; font-size: 1.1rem; margin: 1.8rem 0 0.7rem; }
+p { margin-bottom: 1rem; }
+ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+li { margin-bottom: 0.3rem; }
+
+.box-lesson  { background: #0c2316; border-left: 4px solid var(--green);  border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-pitfall { background: #2a1600; border-left: 4px solid var(--amber); border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-rule    { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid #6e7681; border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-example { background: #131220; border-left: 4px solid #7c6fad; border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.5rem; font-weight: 700; }
+.box-lesson .box-label  { color: var(--green); }
+.box-pitfall .box-label { color: var(--amber); }
+.box-rule .box-label    { color: #8b949e; }
+.box-example .box-label { color: #9d8fd4; }
+
+.math-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; margin: 1.2rem 0; overflow-x: auto; }
+
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; overflow-x: auto; margin: 1.2rem 0; }
+code { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #a8c4d8; }
+p code, li code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 2px; font-size: 0.85em; }
+
+table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+thead th { background: var(--surface); color: var(--accent); padding: 0.6rem 0.8rem; text-align: left; border-bottom: 2px solid var(--border); font-family: monospace; font-size: 0.8rem; letter-spacing: 0.05em; }
+tbody td { padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:hover { background: #1a1f27; }
+
+.nav-links { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.9rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 1rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="series-label">The Engineer's Handbook of Machine Learning</div>
+  <h1>Deep Learning for Engineering Time Series</h1>
+  <div class="subtitle">Chapter 10 &mdash; LSTM, TCN, Transformers, and Grey-Box Dynamics</div>
+  <div class="tags">
+    <span class="tag">LSTM</span>
+    <span class="tag">TCN</span>
+    <span class="tag">Transformer</span>
+    <span class="tag">Self-Attention</span>
+    <span class="tag">Virtual Sensors</span>
+    <span class="tag">Simulation Error</span>
+    <span class="tag">Grey-Box</span>
+    <span class="tag">ECU Deployment</span>
+  </div>
+</header>
+
+<main>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>For causal virtual sensors on ECU hardware (&lt;1 ms budget): LSTM with 1&ndash;2 layers, hidden size 32&ndash;64.</li>
+    <li>For cloud analytics with long sequences (&gt;200 steps): TCN or Transformer (PatchTST / TFT).</li>
+    <li><strong>Always train on simulation error</strong> (multi-step rollout) when the model runs in closed-loop. One-step RMSE and simulation RMSE can differ by 5&times;.</li>
+    <li>Gradient clipping (max norm = 1.0) and AdamW are non-negotiable for recurrent models. Without clipping, LSTM training on engineering transients diverges within 50 epochs.</li>
+    <li>Grey-box (physics + ML residual) consistently outperforms pure black-box with half the training data.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>1. LSTM: Architecture and Engineering Implementation</h2>
+
+<p>The LSTM cell maintains two state vectors: the <strong>cell state</strong> $\mathbf{c}_t \in \mathbb{R}^h$ (long-term memory) and the <strong>hidden state</strong> $\mathbf{h}_t \in \mathbb{R}^h$ (short-term context).</p>
+
+<div class="math-block">
+<strong>LSTM Forward Pass — let $[\mathbf{h}_{t-1}, \mathbf{x}_t]$ denote their concatenation:</strong>
+$$\mathbf{f}_t = \sigma(\mathbf{W}_f[\mathbf{h}_{t-1},\mathbf{x}_t] + \mathbf{b}_f) \quad \text{(forget gate: what to erase from } \mathbf{c}_{t-1}\text{)}$$
+$$\mathbf{i}_t = \sigma(\mathbf{W}_i[\mathbf{h}_{t-1},\mathbf{x}_t] + \mathbf{b}_i) \quad \text{(input gate: what new info to write)}$$
+$$\tilde{\mathbf{c}}_t = \tanh(\mathbf{W}_c[\mathbf{h}_{t-1},\mathbf{x}_t] + \mathbf{b}_c) \quad \text{(candidate cell)}$$
+$$\mathbf{c}_t = \mathbf{f}_t \odot \mathbf{c}_{t-1} + \mathbf{i}_t \odot \tilde{\mathbf{c}}_t \quad \text{(cell state update)}$$
+$$\mathbf{o}_t = \sigma(\mathbf{W}_o[\mathbf{h}_{t-1},\mathbf{x}_t] + \mathbf{b}_o) \quad \text{(output gate)}$$
+$$\mathbf{h}_t = \mathbf{o}_t \odot \tanh(\mathbf{c}_t) \quad \text{(hidden state output)}$$
+</div>
+
+<p><strong>Why LSTM solves the vanishing gradient problem.</strong> Vanilla RNN backpropagation through time (BPTT) computes:</p>
+
+<div class="math-block">
+$$\frac{\partial \mathcal{L}}{\partial \mathbf{h}_0} = \prod_{t=1}^T \frac{\partial \mathbf{h}_t}{\partial \mathbf{h}_{t-1}} \cdot \frac{\partial \mathcal{L}}{\partial \mathbf{h}_T}$$
+</div>
+
+<p>For $T > 50$ and $\|\partial \mathbf{h}_t/\partial \mathbf{h}_{t-1}\| < 1$, the product vanishes exponentially. The LSTM cell state path $\mathbf{c}_t = \mathbf{f}_t \odot \mathbf{c}_{t-1} + \ldots$ has gradient $\partial \mathbf{c}_t / \partial \mathbf{c}_{t-1} \approx \mathbf{f}_t$, which stays close to 1 for many timesteps when the forget gate saturates high.</p>
+
+<h3>Hyperparameter Reference</h3>
+
+<table>
+  <thead>
+    <tr><th>Parameter</th><th>Range</th><th>Engineering Effect</th><th>Start Value</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Hidden size $h$</td><td>16&ndash;512</td><td>Memory capacity; larger = longer context captured</td><td>64</td></tr>
+    <tr><td>Num. layers</td><td>1&ndash;4</td><td>Depth of recurrent hierarchy; rarely need &gt;3</td><td>2</td></tr>
+    <tr><td>Dropout</td><td>0.0&ndash;0.4</td><td>Between layers only (not inside cell); variance reduction</td><td>0.1</td></tr>
+    <tr><td>Bidirectional</td><td>True/False</td><td>Only for offline analysis (non-causal!); <strong>forbidden for ECU</strong></td><td>False</td></tr>
+    <tr><td>Sequence length $W$</td><td>10&ndash;500</td><td>Context window; longer = more memory needed</td><td>50</td></tr>
+    <tr><td>Output activation</td><td>linear/sigmoid</td><td>Linear for unbounded (NOx, T); sigmoid for [0,1] (SoC)</td><td>Linear</td></tr>
+    <tr><td>Optimizer</td><td>AdamW</td><td>Decoupled weight decay; essential for regularisation</td><td>AdamW</td></tr>
+    <tr><td>Learning rate</td><td>$10^{-4}$&ndash;$10^{-3}$</td><td>Start higher than for MLP; cosine decay</td><td>$3\times10^{-4}$</td></tr>
+    <tr><td><strong>Gradient clip</strong></td><td>0.5&ndash;2.0</td><td><strong>Mandatory</strong> for LSTM; prevents exploding gradients</td><td>1.0</td></tr>
+    <tr><td>Warmup epochs</td><td>5&ndash;15%</td><td>Ramp LR from 0; prevents early divergence on transients</td><td>10%</td></tr>
+  </tbody>
+</table>
+
+<!-- ================================================================== -->
+<h2>2. Simulation Error vs. One-Step Prediction Error</h2>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall</div>
+  <strong>Training on one-step MSE for dynamic models.</strong>
+  <p style="margin-top:0.5rem">A model trained on $\mathcal{L}_{1step} = \sum_t (y_t - \hat{y}(y_{t-1},\ldots,x_{t-1},\ldots))^2$ performs well at forecasting $t+1$ but <strong>diverges rapidly in closed-loop simulation</strong>. Accumulated error grows $\mathcal{O}(T^2)$ for mismatched dynamics. Always test simulation RMSE (100+ step rollout with no teacher forcing). If simulation RMSE &gt;5&times; one-step RMSE, the model is not suitable for dynamic simulation.</p>
+</div>
+
+<p>The fix: train on simulation (rollout) error directly, backpropagating through the entire window:</p>
+
+<div class="math-block">
+$$\mathcal{L}_{rollout} = \sum_{t=1}^{T_{rollout}} \bigl\| y_t - \hat{y}_t^{(rollout)} \bigr\|^2, \quad \hat{y}_{t+1}^{(rollout)} = f_\theta(\hat{y}_t^{(rollout)}, x_t)$$
+</div>
+
+<pre><code>import torch
+
+def rollout_loss(model, X_seq, Y_seq, T_rollout=20):
+    batch, T, d_in = X_seq.shape
+    loss = torch.tensor(0.0)
+    h = None
+
+    # Teacher forcing for first (T - T_rollout) steps to stabilise training
+    for t in range(T - T_rollout):
+        y_hat, h = model(X_seq[:, t:t+1, :], h)
+        h = h.detach() if isinstance(h, torch.Tensor) else \
+            tuple(hi.detach() for hi in h)
+
+    # Rollout window: no teacher forcing, backprop through all T_rollout steps
+    y_prev = Y_seq[:, T - T_rollout - 1:T - T_rollout, :]
+    for t in range(T - T_rollout, T):
+        x_t = torch.cat([X_seq[:, t:t+1, :], y_prev], dim=-1)
+        y_hat, h = model(x_t, h)
+        loss += torch.nn.functional.mse_loss(y_hat.squeeze(1), Y_seq[:, t, :])
+        y_prev = y_hat
+
+    return loss / T_rollout
+
+# Curriculum: start T_rollout=1, increase by 1 every 20 epochs
+for epoch in range(n_epochs):
+    optimizer.zero_grad()
+    T_roll = min(1 + epoch // 20, T_max_rollout)
+    loss = rollout_loss(model, X_batch, Y_batch, T_rollout=T_roll)
+    loss.backward()
+    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+    optimizer.step()</code></pre>
+
+<div class="box-rule">
+  <div class="box-label">Rollout Training Protocol</div>
+  <ol>
+    <li><strong>Curriculum</strong>: start $T_{rollout}=1$ and increase by 1 every 20 epochs. Direct training with large $T_{rollout}$ from epoch 0 causes vanishing gradients.</li>
+    <li><strong>Gradient clipping</strong>: always clip at norm 1.0 when backpropagating through long rollout windows.</li>
+    <li><strong>Validation diagnostic</strong>: report both one-step RMSE and 100-step simulation RMSE. Ratio &gt;3&times; indicates rollout window too short during training.</li>
+    <li><strong>TCN advantage</strong>: TCN gradients through rollout avoid LSTM vanishing-gradient issues since convolutions are fully differentiable without recurrence.</li>
+  </ol>
+</div>
+
+<!-- ================================================================== -->
+<h2>3. Temporal Convolutional Networks (TCN)</h2>
+
+<p>A TCN uses <strong>dilated causal convolutions</strong> — causal ensures no future leakage, dilation exponentially expands the receptive field:</p>
+
+<div class="math-block">
+$$\text{Dilated causal convolution: } (f *_d g)(t) = \sum_{j=0}^{k-1} w_j \cdot x_{t - d \cdot j}$$
+$$\text{Receptive field with } L \text{ layers, dilation } d_\ell = 2^\ell: \quad \text{RF} = 1 + 2(k-1)(2^L - 1)$$
+$$\text{Example: } k=3, L=8 \Rightarrow \text{RF} = 1021 \text{ timesteps at } \mathcal{O}(1) \text{ depth}$$
+</div>
+
+<p>Key TCN advantages over LSTM: fully parallelisable during training, no hidden state to initialise at inference, gradients flow cleanly through dilated conv layers without vanishing.</p>
+
+<!-- ================================================================== -->
+<h2>4. Transformers and Self-Attention</h2>
+
+<p>The self-attention mechanism allows the model to attend to the entire input sequence simultaneously, solving the long-range dependency problem that limits LSTMs to ~200 steps.</p>
+
+<div class="math-block">
+<strong>Scaled dot-product attention:</strong>
+$$\mathbf{Q} = \mathbf{X}\mathbf{W}^Q, \quad \mathbf{K} = \mathbf{X}\mathbf{W}^K, \quad \mathbf{V} = \mathbf{X}\mathbf{W}^V$$
+$$\text{Attention}(\mathbf{Q},\mathbf{K},\mathbf{V}) = \text{softmax}\!\left(\frac{\mathbf{Q}\mathbf{K}^\top}{\sqrt{d_k}}\right)\!\mathbf{V}$$
+</div>
+
+<p><strong>Physical interpretation (NOx prediction from $(T_{peak}, p_{cyl}, \lambda, \dot{m})$):</strong></p>
+<ul>
+  <li><strong>Query</strong> at timestep $t$: "which past states are relevant for predicting NOx now?"</li>
+  <li><strong>Key</strong> at $t'$: "what information is available here to answer queries?"</li>
+  <li><strong>Value</strong> at $t'$: the actual content to retrieve.</li>
+  <li>The softmax produces attention weights $a_{tt'} \geq 0$, $\sum_{t'} a_{tt'} = 1$. High $a_{tt'}$ means $t'$ strongly drives the prediction at $t$.</li>
+  <li>Scaling by $1/\sqrt{d_k}$ prevents dot products from saturating the softmax.</li>
+</ul>
+
+<h3>Causal Masking for Autoregressive Prediction</h3>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Data Leakage</div>
+  Without causal masking, the model attends to future timesteps during training. For forecasting applications, set the upper triangle of the attention matrix to $-\infty$ before softmax:
+  $$\tilde{a}_{tt'} = \begin{cases} \mathbf{q}_t^\top \mathbf{k}_{t'} / \sqrt{d_k} & \text{if } t' \leq t \\ -\infty & \text{if } t' > t \end{cases}$$
+  After softmax, $a_{tt'} = 0$ for all $t' > t$. Default for all virtual sensor and forecasting applications.
+</div>
+
+<h3>Multi-Head Attention</h3>
+
+<div class="math-block">
+$$\text{MultiHead}(\mathbf{Q},\mathbf{K},\mathbf{V}) = \text{Concat}(\text{head}_1, \ldots, \text{head}_H)\mathbf{W}^O$$
+$$\text{where } \text{head}_h = \text{Attention}(\mathbf{Q}\mathbf{W}^Q_h, \mathbf{K}\mathbf{W}^K_h, \mathbf{V}\mathbf{W}^V_h)$$
+</div>
+
+<p>Different heads specialise: one may capture short-range temporal correlations (adjacent timesteps), another long-range dependencies (periodic injection events), another cross-variable correlations ($T_{peak}$&ndash;$\lambda$ interaction affecting NOx). Standard config: $H=8$ heads, $d_{model}=256$, $d_k = d_v = 32$.</p>
+
+<h3>Positional Encoding</h3>
+
+<p>Attention is permutation-invariant — positional encoding injects temporal position:</p>
+
+<div class="math-block">
+$$\text{Sinusoidal: } PE(t, 2i) = \sin\!\left(\frac{t}{10000^{2i/d_{model}}}\right), \quad PE(t, 2i+1) = \cos\!\left(\frac{t}{10000^{2i/d_{model}}}\right)$$
+</div>
+
+<p>Alternatives: <strong>Learnable embeddings</strong> (preferred for fixed-length windows); <strong>RoPE</strong> (rotary, encodes relative positions — preferred when generalising to sequence lengths not seen during training).</p>
+
+<!-- ================================================================== -->
+<h2>5. Architecture Comparison</h2>
+
+<table>
+  <thead>
+    <tr><th>Property</th><th>LSTM</th><th>TCN</th><th>Transformer</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Causality</td><td>Built-in</td><td>Via padding</td><td>Requires causal mask</td></tr>
+    <tr><td>Parallelism (training)</td><td>Sequential</td><td>Fully parallel</td><td>Fully parallel</td></tr>
+    <tr><td>Long-range memory</td><td>~200 steps</td><td>Excellent (RF 1000+)</td><td>Excellent (global attn.)</td></tr>
+    <tr><td>ECU-deployable</td><td>Yes (small models)</td><td>Yes (lightweight)</td><td>Rarely (large)</td></tr>
+    <tr><td>Data requirement</td><td>~1k sequences</td><td>~5k sequences</td><td>~50k sequences</td></tr>
+    <tr><td>Online/streaming</td><td>Natural (update hidden state)</td><td>Requires full window</td><td>Requires full context</td></tr>
+    <tr><td>Grey-box hybrid</td><td>Easy (concat physics residual)</td><td>Possible</td><td>More complex</td></tr>
+    <tr><td><strong>Best for</strong></td><td>Virtual sensors, ECU</td><td>Offline analytics</td><td>Large industrial datasets</td></tr>
+  </tbody>
+</table>
+
+<div class="box-rule">
+  <div class="box-label">Architecture Selection Rule</div>
+  <ul>
+    <li>Sequence length $T > 200$: Transformer (PatchTST or Informer)</li>
+    <li>Multi-step forecasting with mixed static/dynamic covariates: Temporal Fusion Transformer (TFT)</li>
+    <li>Real-time ECU deployment, strict memory (&lt;256 KB): LSTM or TCN</li>
+    <li>Small dataset ($n &lt; 5{,}000$ windows): LSTM; Transformers underfit</li>
+    <li>Need interpretability (which timesteps drive prediction?): Transformer with attention weight visualisation</li>
+    <li>Grey-box hybrid with physics residual: LSTM (simpler concatenation)</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>6. Engineering-Specific Transformer Variants</h2>
+
+<h3>Informer (Zhou et al., 2021)</h3>
+<p>Sparse self-attention: selects only top-$u$ queries based on a statistical importance measure. Reduces complexity from $\mathcal{O}(T^2)$ to $\mathcal{O}(T \log T)$. Effective for long-horizon forecasting (SCADA, energy demand, degradation trajectories).</p>
+
+<h3>PatchTST (Nie et al., 2023)</h3>
+<p>Divides the time series into non-overlapping patches of size $P$ and treats each patch as a token. Reduces sequence length from $T$ to $T/P$, dramatically reducing attention cost. State-of-the-art on many multivariate forecasting benchmarks.</p>
+
+<h3>Temporal Fusion Transformer (TFT, Lim et al., 2021)</h3>
+<p>Designed for multi-horizon forecasting with static and dynamic covariates. Combines LSTM-based processing for local patterns with self-attention for long-range dependencies. Includes variable selection networks (attention-based feature importance), gating mechanisms, and quantile forecasting heads. Recommended for SCADA-based energy forecasting and multi-step process control.</p>
+
+<div class="box-example">
+  <div class="box-label">Example — Transformer for Combustion Engine NOx Forecasting</div>
+  <p><strong>Problem</strong>: predict NOx 500 ms ahead (50-step at 10 Hz) from engine variables $(n, \text{MAP}, T_{cyl}, \lambda, m_f)$ ($d=5$). Long-horizon requirement makes LSTM insufficient (forgets injection events 400 ms ago).</p>
+  <p><strong>Architecture</strong>: PatchTST, patch size $P=5$, $H=4$ attention heads, $d_{model}=128$, 3 encoder blocks, dropout 0.1. With patches: 10 tokens from 50 timesteps.</p>
+  <p><strong>Training</strong>: 8,000 drive cycle windows, GroupKFold by test bench session. AdamW, $\eta_0=5\times10^{-4}$, cosine LR, 100 epochs.</p>
+  <p><strong>Result</strong>: PatchTST RMSE = 5.8 mg/km vs. LSTM RMSE = 9.2 mg/km. Attention weights correctly focus on injection events 300&ndash;400 ms before the NOx measurement.</p>
+  <p><strong>Deployment</strong>: 10-token attention is small enough for inference on an automotive domain controller (Aurix TC397); not deployable on a basic MCU.</p>
+</div>
+
+<!-- ================================================================== -->
+<h2>7. The Grey-Box Approach for Engineering Dynamics</h2>
+
+<p>The most reliable engineering time series model combines known physics with a data-driven correction:</p>
+
+<div class="math-block">
+$$\hat{y}(t) = \underbrace{\hat{y}_{phys}(t;\,\boldsymbol{\theta}_p)}_{\text{physics model}} + \underbrace{\hat{\delta}_{ML}(\mathbf{x}_{t-W:t};\,\boldsymbol{\theta}_{ML})}_{\text{ML residual}}$$
+</div>
+
+<div class="box-example">
+  <div class="box-label">Example — Grey-Box NOx Virtual Sensor: Zeldovich + LSTM</div>
+  <p><strong>Physics component</strong>: simplified Zeldovich thermal NOx rate $\dot{n}_{NO} = A\exp(-E_a/RT_{peak})[O_2]^{0.5}[N_2]$, integrated over one engine cycle. Captures 70% of NOx variance with 0 training data.</p>
+  <p><strong>ML component</strong>: LSTM (2 layers, hidden=64) trained on the residual $y_{NOx,meas} - y_{NOx,Zeldovich}$ from 800 drive cycles. Corrects for transient effects (charge cooling, wall wetting, combustion phasing dynamics) not captured by the steady-state model.</p>
+  <p><strong>Result</strong>: Zeldovich alone: MAPE = 18.3%. Pure LSTM: MAPE = 12.1%. Grey-box: MAPE = 6.8% — below the 10% regulatory threshold with half the training data of the pure LSTM approach.</p>
+</div>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson</div>
+  The grey-box pattern is not optional for regulated engineering domains — it provides physical bounds on extrapolation behaviour, interpretable failure modes ("the physics is right but transient dynamics are wrong"), and dramatically reduced data requirements. The LSTM corrects; the physics model anchors.
+</div>
+
+<!-- ================================================================== -->
+<h2>8. Key Takeaways</h2>
+
+<ul>
+  <li><strong>Train on simulation error</strong> whenever the model will run in closed-loop — one-step MSE is a trap.</li>
+  <li><strong>Curriculum rollout</strong>: start $T_{rollout}=1$, increase by 1 every 20 epochs.</li>
+  <li><strong>LSTM default</strong>: hidden=64, 2 layers, AdamW, grad clip=1.0, cosine LR. This covers 80% of ECU virtual sensor problems.</li>
+  <li><strong>TCN</strong>: use when parallelism matters and sequences are long; receptive field = $1 + 2(k-1)(2^L-1)$.</li>
+  <li><strong>Transformers</strong>: prefer for $T > 200$ and $n > 5{,}000$ windows; always apply causal masking for forecasting.</li>
+  <li><strong>PatchTST</strong>: reduces attention cost from $\mathcal{O}(T^2)$ to $\mathcal{O}((T/P)^2)$; state-of-the-art for long sequences.</li>
+  <li><strong>Grey-box</strong>: physics model anchors extrapolation, ML corrects transient dynamics. Almost always beats pure black-box on engineering data.</li>
+  <li>Bidirectional LSTM is <strong>forbidden</strong> for causal (real-time) applications — it violates causality.</li>
+</ul>
+
+<div class="nav-links">
+  <a href="ch09-time-series.html">&larr; Ch09: Classical Time Series</a>
+  <a href="ch11-system-identification.html">Ch11: System Identification &rarr;</a>
+</div>
+
+</main>
+
+<footer>
+  <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
+  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+</footer>
+
+</body>
+</html>

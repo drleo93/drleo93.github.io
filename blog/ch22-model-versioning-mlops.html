@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 22 · Model Versioning & MLOps | ML Engineering Handbook</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+  :root {
+    --bg:      #0d1117;
+    --surface: #161b22;
+    --border:  #2d333b;
+    --text:    #b8c0cc;
+    --muted:   #6e7890;
+    --accent:  #6da5cc;
+    --green:   #5a9e72;
+    --amber:   #c49a3c;
+    --red:     #c97b76;
+    --code-bg: #13191f;
+    --tag-bg:  #1a2d40;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif;
+         font-size: 15px; line-height: 1.7; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  header { border-bottom: 1px solid var(--border); padding: 2rem 0 1.5rem; margin-bottom: 2.5rem; }
+  .container { max-width: 860px; margin: 0 auto; padding: 0 1.5rem; }
+  .chapter-label { font-size: 0.78rem; color: var(--muted); letter-spacing: .08em;
+                   text-transform: uppercase; margin-bottom: .4rem; }
+  h1 { font-size: 2rem; font-weight: 700; color: #dde3ec; line-height: 1.25; margin-bottom: .7rem; }
+  .subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 1rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; }
+  .tag { background: var(--tag-bg); color: var(--accent); font-size: 0.72rem;
+         padding: .2rem .6rem; border-radius: 3px; letter-spacing: .03em; }
+
+  h2 { font-size: 1.3rem; font-weight: 600; color: #cdd5e0; margin: 2.5rem 0 .8rem;
+       padding-bottom: .35rem; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.05rem; font-weight: 600; color: #b8c8d8; margin: 1.6rem 0 .5rem; }
+  p  { margin-bottom: 1rem; }
+  ul, ol { margin: .5rem 0 1rem 1.4rem; }
+  li { margin-bottom: .3rem; }
+
+  .tldr { background: var(--surface); border: 1px solid var(--border);
+          border-left: 4px solid var(--accent); border-radius: 4px;
+          padding: 1rem 1.2rem; margin-bottom: 2rem; }
+  .tldr strong { color: var(--accent); }
+
+  .math-block { overflow-x: auto; padding: .6rem 0; margin: 1rem 0; font-size: .97rem; }
+
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 5px;
+        padding: 1rem 1.2rem; overflow-x: auto; margin: 1rem 0; font-size: .82rem; line-height: 1.55; }
+  code { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; color: #aac8e4; }
+  pre code { color: #aac8e4; }
+
+  .box-lesson  { background:#0c2316; border-left:4px solid var(--green); border-radius:4px; padding:1rem 1.2rem; margin:1.5rem 0; }
+  .box-pitfall { background:#2a1600; border-left:4px solid var(--amber); border-radius:4px; padding:1rem 1.2rem; margin:1.5rem 0; }
+  .box-rule    { background:var(--surface); border:1px solid var(--border); border-left:4px solid #6e7681; border-radius:4px; padding:1rem 1.2rem; margin:1.5rem 0; }
+  .box-example { background:#131220; border-left:4px solid #7c6fad; border-radius:4px; padding:1rem 1.2rem; margin:1.5rem 0; }
+  .box-lesson strong, .box-rule strong { color: #8ecfa8; }
+  .box-pitfall strong { color: var(--amber); }
+  .box-example strong { color: #a89fd8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: .85rem; }
+  th { background: var(--surface); color: #cdd5e0; font-weight: 600;
+       padding: .55rem .8rem; border: 1px solid var(--border); text-align: left; }
+  td { padding: .5rem .8rem; border: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #10151c; }
+
+  nav.chapter-nav { display: flex; justify-content: space-between; margin: 3rem 0 1.5rem;
+                    border-top: 1px solid var(--border); padding-top: 1.5rem; font-size: .88rem; }
+  footer { text-align: center; color: var(--muted); font-size: .78rem;
+           padding: 2rem 0; border-top: 1px solid var(--border); margin-top: 2rem; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <div class="chapter-label">Chapter 22</div>
+  <h1>Model Versioning, Lifecycle Management, and MLOps</h1>
+  <div class="subtitle">From experiment tracking to certification evidence — the infrastructure that makes engineering ML auditable and reproducible.</div>
+  <div class="tags">
+    <span class="tag">MLflow</span><span class="tag">DVC</span><span class="tag">Model Registry</span>
+    <span class="tag">PSI</span><span class="tag">Rollback</span><span class="tag">DO-178C</span>
+    <span class="tag">ISO 26262</span><span class="tag">ONNX</span>
+  </div>
+</header>
+
+<div class="tldr">
+  <strong>TL;DR</strong> — A model that cannot be reproduced, audited, or rolled back is a liability.
+  Every deployed engineering model needs a unique version linking training-data hash, hyperparameters, validation results, and the code that produced it.
+  Use MLflow + DVC for tracking, a model registry for lifecycle management, PSI for drift detection, and maintain an immutable certification evidence package for regulated applications.
+</div>
+
+<!-- ============================================================ -->
+<h2>Why This Matters</h2>
+
+<p>
+  Software version control (Git) tracks code. Model versioning tracks the
+  <em>combination</em> of code, data, configuration, and environment that produced a specific artefact.
+  The same code run on a different dataset version, or a different random seed, produces a different model —
+  and that model may be deployed in safety-critical hardware.
+</p>
+
+<div class="box-pitfall">
+  <strong>Pitfall — "It worked on my machine"</strong><br>
+  An ML engineer trains a GP surrogate, achieves CV RMSE = 0.63%, and sends <code>model.pkl</code> to the ECU integration team.
+  Six months later, a safety audit requests: (1) the training data used, (2) the exact hyperparameters,
+  (3) the validation results, (4) proof that the deployed model matches the validated one.<br><br>
+  Without version control: none of this can be recovered. The audit fails. The certification timeline slips 4 months.<br>
+  With a model registry: all four items retrieved in 5 minutes.
+</div>
+
+<!-- ============================================================ -->
+<h2>Experiment Tracking with MLflow</h2>
+
+<p>
+  MLflow is the industry standard for engineering ML experiment tracking.
+  Every training run logs parameters, metrics, artefacts, and tags — forming a reproducible record of every model ever trained.
+</p>
+
+<pre><code>import mlflow, mlflow.sklearn
+import numpy as np
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import Matern, WhiteKernel
+
+mlflow.set_experiment("LOX_CH4_Isp_surrogate")
+
+with mlflow.start_run(run_name="GP_Matern52_ARD_v3"):
+    # Log parameters
+    mlflow.log_params({
+        "kernel":         "Matern52_ARD + WhiteKernel",
+        "n_restarts":     5,
+        "normalize_y":    True,
+        "training_data":  "campaign_2024_03_hash_a7f3c2",
+        "n_train":        47,
+        "features":       ["OF_ratio", "pc_bar", "dp_inj", "eps_c"],
+    })
+
+    # Train
+    kernel = Matern(nu=2.5) + WhiteKernel()
+    gp = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=5,
+                                  normalize_y=True)
+    gp.fit(X_train, y_train)
+
+    # Log metrics
+    rmse = np.sqrt(np.mean((y_val - gp.predict(X_val))**2))
+    mlflow.log_metrics({"cv_rmse_pct": rmse / y_val.std() * 100,
+                        "r2": gp.score(X_val, y_val)})
+
+    # Log artefact (model + scaler as a bundle)
+    mlflow.sklearn.log_model(gp, "gp_model",
+                             registered_model_name="IspSurrogate")
+    mlflow.log_artifact("validation_report.pdf")</code></pre>
+
+<h3>Data Versioning with DVC</h3>
+<p>
+  Use <strong>DVC</strong> (Data Version Control) alongside Git to version datasets.
+  <code>dvc add data/campaign_2024.csv</code> creates a <code>.dvc</code> pointer file that Git tracks;
+  the actual data lives in a remote store (S3, Azure Blob, NAS).
+  Every training run records which DVC-tracked dataset version it used — enabling exact reproduction.
+</p>
+
+<div class="box-rule">
+  <strong>Four artefacts to version for every model</strong>
+  <ol style="margin-top:.5rem">
+    <li><strong>Git commit hash</strong> — the exact code version</li>
+    <li><strong>DVC dataset hash</strong> — the exact training data</li>
+    <li><strong>MLflow run ID</strong> — the hyperparameter configuration and metrics</li>
+    <li><strong>ONNX model SHA-256</strong> — the deployed binary</li>
+  </ol>
+  All four must be linked in the model card. A certification audit that cannot verify all four fails.
+</div>
+
+<!-- ============================================================ -->
+<h2>The Model Registry</h2>
+
+<p>
+  The model registry is a versioned catalogue of model artefacts with lifecycle state.
+  MLflow Model Registry defines four stages — each with mandatory engineering exit criteria.
+</p>
+
+<table>
+  <thead>
+    <tr><th>Stage</th><th>Meaning and exit criteria</th><th>Engineering gate</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>None</strong> (dev)</td><td>Under development. No deployment. Exit: CV metrics meet target.</td><td>DQI ≥ 0.97, CV RMSE below threshold</td></tr>
+    <tr><td><strong>Staging</strong></td><td>Validated; awaiting integration test. Exit: HIL/SIL passed, model card signed.</td><td>HIL WCET &lt; budget; conformal coverage verified</td></tr>
+    <tr><td><strong>Production</strong></td><td>Live in deployed system. Exit: triggered by PSI drift alarm or scheduled retraining.</td><td>ODD monitor active; shadow candidate ready</td></tr>
+    <tr><td><strong>Archived</strong></td><td>Retired. Immutable record for audit. Never deleted.</td><td>Audit trail preserved per ISO 9001</td></tr>
+  </tbody>
+</table>
+
+<h3>Semantic Versioning for Models</h3>
+<p>Adopt <strong>MAJOR.MINOR.PATCH</strong> versioning:</p>
+<ul>
+  <li><strong>MAJOR</strong>: breaking change to input feature set — old ECU code cannot call the new model without update.</li>
+  <li><strong>MINOR</strong>: new training data, improved accuracy, same feature set.</li>
+  <li><strong>PATCH</strong>: hyperparameter refinement, no accuracy change, same data and features.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2>The Model Lifecycle: Development to Retirement</h2>
+
+<p>
+  The engineering model lifecycle has four phases. Each is separated by a mandatory quality gate.
+  Failed gates return to <em>Development</em> — not to the previous gate.
+</p>
+
+<div class="box-example">
+  <strong>Lifecycle phase flow</strong><br>
+  <strong>Development</strong> → [CV metrics met?] → <strong>Validation (SIL + HIL)</strong> → [HIL WCET passed?]
+  → <strong>Shadow Mode</strong> → [Shadow delta OK?] → <strong>Production</strong> → [Retire] → <strong>Archived</strong>
+  <br><br>
+  Failure at any gate loops back to Development, not just the previous phase — ensuring the entire validation chain is re-executed.
+</div>
+
+<!-- ============================================================ -->
+<h2>Continuous Monitoring and Retraining Triggers</h2>
+
+<p>Four signals trigger retraining or rollback in production:</p>
+
+<ol>
+  <li><strong>Data drift (covariate shift)</strong>: input distribution \(p(\mathbf{x})\) has changed.
+      Detect with Population Stability Index (PSI) or Maximum Mean Discrepancy (MMD).
+      PSI &gt; 0.20: trigger retraining.</li>
+  <li><strong>Prediction drift</strong>: output distribution \(p(\hat{y})\) shifts without input change —
+      may indicate physical process change (catalyst degradation).</li>
+  <li><strong>Performance degradation</strong>: RMSE on labelled production samples exceeds
+      \(1.5\times\) the deployment-time RMSE.</li>
+  <li><strong>ODD violation rate</strong>: fraction of production queries flagged as outside
+      the ODD exceeds 5% over a rolling 24-hour window.</li>
+</ol>
+
+<h3>Population Stability Index (PSI)</h3>
+
+<pre><code>import numpy as np
+
+def psi(expected: np.ndarray, actual: np.ndarray, bins=10) -> float:
+    """
+    Population Stability Index between expected (training) and actual (production).
+    PSI < 0.10: no significant change.
+    PSI 0.10-0.20: moderate change; monitor closely.
+    PSI > 0.20: significant change; retrain.
+    """
+    eps = 1e-9
+    edges = np.percentile(expected, np.linspace(0, 100, bins + 1))
+    edges[0] -= eps; edges[-1] += eps
+    p_exp = np.histogram(expected, bins=edges)[0] / len(expected) + eps
+    p_act = np.histogram(actual,   bins=edges)[0] / len(actual)   + eps
+    p_exp /= p_exp.sum(); p_act /= p_act.sum()
+    return float(np.sum((p_act - p_exp) * np.log(p_act / p_exp)))</code></pre>
+
+<div class="math-block">
+$$\text{PSI} = \sum_{i=1}^{B} (p_{act,i} - p_{exp,i}) \ln\!\frac{p_{act,i}}{p_{exp,i}}$$
+</div>
+
+<!-- ============================================================ -->
+<h2>Rollback Protocol</h2>
+
+<p>
+  A rollback is the immediate reactivation of the previous production model version.
+  It is not a failure — it is a designed safety mechanism.
+</p>
+
+<div class="box-rule">
+  <strong>Rollback decision criteria</strong>
+  <ol style="margin-top:.5rem">
+    <li>RMSE on labelled production samples &gt; 2× deployment-time RMSE.</li>
+    <li>ODD violation rate &gt; 10% over 1 hour.</li>
+    <li>Any safety-critical prediction differs from the previous model version by more than the pre-specified tolerance.</li>
+    <li>Automated rollback within one OPC-UA update cycle (≤ 100 ms): the model registry must store the ONNX binary of the previous version; the ECU must maintain both in memory during any A/B deployment.</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<h2>Shadow → Canary → Champion-Challenger Rollout</h2>
+
+<p>Never skip shadow mode for safety-critical models. The three-stage rollout:</p>
+
+<table>
+  <thead>
+    <tr><th>Stage</th><th>Traffic</th><th>Purpose</th><th>Exit criterion</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Shadow mode</strong></td><td>0% (inference only, no actuation)</td><td>Validate production predictions against champion without risk</td><td>4-week delta statistics within tolerance</td></tr>
+    <tr><td><strong>Canary</strong></td><td>5–10%</td><td>Real-world performance on limited traffic</td><td>No safety alerts; RMSE equal or better than champion</td></tr>
+    <tr><td><strong>Champion-Challenger</strong></td><td>50/50</td><td>Statistical significance test before full switchover</td><td>Challenger RMSE significantly better; rollback triggered if worse</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2>Certification Evidence Package</h2>
+
+<p>
+  For safety-critical deployment (DO-178C, ISO 26262, EASA CP-003), the certification evidence
+  package for model version \(v\) must contain:
+</p>
+
+<ol>
+  <li><strong>Version traceability</strong>: Git commit hash + DVC dataset hash + MLflow run ID + ONNX SHA-256. All four linked in the model card.</li>
+  <li><strong>Validation evidence</strong>: signed 15-step validation report run on the exact registered model artefact.</li>
+  <li><strong>HIL/SIL evidence</strong>: WCET measurement log from target hardware with pass/fail against timing budget.</li>
+  <li><strong>Shadow mode evidence</strong>: 4-week shadow mode log showing prediction delta statistics vs. current production model.</li>
+  <li><strong>Monitoring plan</strong>: PSI threshold, retraining trigger, and rollback criteria in force for this version.</li>
+  <li><strong>Retirement date</strong>: maximum calendar date or accumulated operating hours after which this version must be retrained or retired, regardless of monitoring alarms.</li>
+</ol>
+
+<div class="box-lesson">
+  <strong>Immutable model artefacts</strong><br>
+  Once a model transitions to <strong>Staging</strong> or above, its artefact (ONNX binary + metadata) must be <strong>immutable</strong>.
+  Overwriting a registered model is equivalent to destroying certification evidence.
+  Use append-only storage (S3 with object lock, Azure Immutable Blob Storage) for the model registry backend in regulated applications.
+</div>
+
+<!-- ============================================================ -->
+<h2>Key Takeaways</h2>
+
+<ul>
+  <li>Model versioning tracks code + data + config + environment — not just code. Use MLflow + DVC.</li>
+  <li>The four lifecycle stages (None → Staging → Production → Archived) each have mandatory engineering exit criteria.</li>
+  <li>PSI &gt; 0.20 triggers retraining. RMSE &gt; 2× triggers rollback. Both thresholds must be pre-specified before deployment.</li>
+  <li>Shadow mode is mandatory before any A/B exposure for safety-critical models.</li>
+  <li>Certification evidence = Git hash + DVC hash + MLflow run ID + ONNX SHA-256. All four. Always.</li>
+</ul>
+
+<nav class="chapter-nav">
+  <a href="ch21-reinforcement-learning.html">← Ch 21: Reinforcement Learning</a>
+  <a href="ch23-digital-twin.html">Ch 23: Digital Twin →</a>
+</nav>
+</div>
+<footer>
+  <div class="container">The Engineer's Handbook of Machine Learning · Leonardo Pulga PhD</div>
+</footer>
+</body>
+</html>

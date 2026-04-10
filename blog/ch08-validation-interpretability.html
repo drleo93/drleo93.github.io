@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 8: Model Validation &amp; Interpretability | Engineer's ML Handbook</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#2d333b;--text:#b8c0cc;--muted:#6e7890;--accent:#6da5cc;--green:#5a9e72;--amber:#c49a3c;--red:#c97b76;--code-bg:#13191f;--tag-bg:#1a2d40}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.7}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:1.4rem 2rem}
+header .breadcrumb{font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem}
+header h1{font-size:1.7rem;font-weight:700;color:#d0dae8;line-height:1.25}
+header .meta{font-size:0.82rem;color:var(--muted);margin-top:0.5rem}
+.tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin:0.9rem 0}
+.tag{background:var(--tag-bg);color:var(--accent);font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;border:1px solid #2a4a66}
+.container{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
+.tldr{background:#0c1e30;border:1px solid #2a4a66;border-left:4px solid var(--accent);border-radius:6px;padding:1.1rem 1.4rem;margin:1.5rem 0}
+.tldr h3{color:var(--accent);font-size:0.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:0.5rem}
+.tldr ul{padding-left:1.2rem}.tldr li{margin-bottom:0.25rem;font-size:0.92rem}
+h2{color:#c8d6e5;font-size:1.3rem;margin:2.2rem 0 0.8rem;padding-bottom:0.35rem;border-bottom:1px solid var(--border)}
+h3{color:#a8bcd0;font-size:1.05rem;margin:1.6rem 0 0.5rem}
+p{margin-bottom:0.9rem}ul,ol{padding-left:1.5rem;margin-bottom:0.9rem}li{margin-bottom:0.3rem}
+code{background:var(--code-bg);color:#a8d4a8;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.85em;padding:0.1em 0.4em;border-radius:3px}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto;margin:1rem 0}
+pre code{background:none;padding:0;font-size:0.88em}
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-rule{background:#161b22;border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-label{font-size:0.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:0.5rem}
+.box-lesson .box-label{color:var(--green)}.box-pitfall .box-label{color:var(--amber)}.box-rule .box-label{color:#8b9aaa}.box-example .box-label{color:#9d8fd4}
+.tbl-wrap{overflow-x:auto;margin:1.2rem 0}
+table{width:100%;border-collapse:collapse;font-size:0.87rem}
+th{background:#1c2636;color:#c8d6e5;padding:0.6rem 0.85rem;text-align:left;border-bottom:2px solid var(--border)}
+td{padding:0.55rem 0.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#161d28}td:first-child{color:#9bafc4}
+.formula-block{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:0.9rem 1.2rem;margin:1rem 0;text-align:center;overflow-x:auto}
+nav.chapter-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0;margin-top:2rem;border-top:1px solid var(--border);font-size:0.88rem}
+nav.chapter-nav a{color:var(--accent)}
+footer{background:var(--surface);border-top:1px solid var(--border);padding:1.2rem 2rem;text-align:center;font-size:0.8rem;color:var(--muted);margin-top:3rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="breadcrumb"><a href="index.html">Engineer's ML Handbook</a> › Part II: Models</div>
+  <h1>Ch 8: Model Trustworthiness — Validation &amp; Interpretability</h1>
+  <div class="meta">Chapter 8 of 23 &nbsp;·&nbsp; ~30 min read &nbsp;·&nbsp; A model with good CV RMSE can still be wrong for the right reasons</div>
+  <div class="tags">
+    <span class="tag">SHAP</span>
+    <span class="tag">PDP</span>
+    <span class="tag">ALE</span>
+    <span class="tag">permutation importance</span>
+    <span class="tag">model card</span>
+    <span class="tag">drift detection</span>
+    <span class="tag">EASA</span>
+    <span class="tag">ISO 26262</span>
+    <span class="tag">active learning</span>
+  </div>
+</header>
+<div class="container">
+
+<div class="tldr">
+  <h3>TL;DR</h3>
+  <ul>
+    <li>SHAP reveals what the model learned; the validation protocol confirms whether it is physically correct and sufficient for deployment. Both are required.</li>
+    <li>Conformal prediction is the only approach giving distribution-free, finite-sample coverage guarantees — decisive for regulatory applications (EASA CM-0064, ISO 26262 ASIL-B).</li>
+    <li>A model with good CV RMSE can still fail in deployment by learning spurious correlations. SHAP and permutation importance detect these before deployment.</li>
+    <li>The model card is a legal and regulatory document. Signing it without understanding every field is the engineering equivalent of signing a financial statement without reading it.</li>
+    <li>Use ALE plots when features are correlated (\(|\rho_{jk}| \geq 0.3\)) — PDPs create extrapolation artifacts in this case.</li>
+    <li>SHAP values are predictive relevance in the fitted model, not physical causation. Never assign causal meaning without a testable physical hypothesis.</li>
+  </ul>
+</div>
+
+<h2>1. Why Interpretability Matters in Engineering</h2>
+
+<p>Three distinct needs drive interpretability requirements in regulated engineering:</p>
+<ol>
+  <li><strong>Trust</strong>: an engineer who cannot understand why a surrogate predicts a specific value at a specific operating point will not use the model in safety-relevant decisions — a rational response, not a cultural failure.</li>
+  <li><strong>Debugging</strong>: a model with good CV RMSE can be wrong for the right reasons. A surrogate achieving low error by learning a spurious correlation (NOx correlated with the time of day of the test) will fail in deployment. Interpretability reveals this before shipping.</li>
+  <li><strong>Regulatory compliance</strong>: EASA CM-0064, ISO 26262 (ASIL-B and above), and IEC 61511 require ML models in safety functions to be explainable to qualified engineers. SHAP values and permutation importance are explicitly cited as acceptable explainability tools in EASA guidance.</li>
+</ol>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson — Interpretability vs. Explainability</div>
+  <strong>Interpretability</strong>: the degree to which a human can understand the cause of a decision <em>from the model structure itself</em>. Linear models (coefficient \(\hat{\beta}_j\) quantifies the effect of \(x_j\)), decision trees (if-then rules), GPs (length-scales encode feature relevance) are intrinsically interpretable.
+  <br><br>
+  <strong>Explainability</strong>: post-hoc methods that make a black-box model understandable without changing it. SHAP, LIME, PDP, ALE. Required when the best-performing model is a black box (XGBoost, neural networks).
+  <br><br>
+  For engineering: prefer interpretable models when complexity permits. Use explainability tools when the black box outperforms.
+</div>
+
+<h2>2. Intrinsically Interpretable Models</h2>
+
+<h3>Linear Models</h3>
+<p>Coefficient \(\beta_j\) directly quantifies the effect: a unit increase in \(x_j\) produces \(\beta_j\) change in \(\hat{y}\). Standardised coefficients \(\hat{\beta}_j^* = \hat{\beta}_j \cdot \hat{\sigma}_j / \hat{\sigma}_y\) are directly comparable (larger \(|\hat{\beta}_j^*|\) = more important). Interpretability holds only when the model is correctly specified and inputs are not collinear — both frequently violated in engineering data.</p>
+
+<h3>Generalised Additive Models (GAMs)</h3>
+<div class="formula-block">
+$$g(\mathbb{E}[Y|\mathbf{X}]) = \beta_0 + \sum_{j=1}^d f_j(x_j)$$
+</div>
+<p>Each \(f_j\) can be plotted independently, showing the marginal effect of \(x_j\). Used extensively for thermophysical property modelling: temperature dependence of viscosity, thermal conductivity, vapour pressure are well described by a univariate spline in \(1/T\), which a GAM learns naturally.</p>
+
+<h2>3. Permutation Feature Importance</h2>
+
+<div class="formula-block">
+$$\text{PI}_j = \mathcal{L}(\hat{f}, X^{\pi j}, y) - \mathcal{L}(\hat{f}, X, y)$$
+</div>
+
+<p>Permuting feature \(j\) breaks its association with the target; the increase in loss measures how much the model relied on feature \(j\). Advantages over MDI (Mean Decrease in Impurity):</p>
+<ul>
+  <li>Model-agnostic: works for GP, XGBoost, MLP, LSTM</li>
+  <li>Unbiased for high-cardinality features (MDI favours continuous features over binary ones)</li>
+  <li>Reflects test-set performance (MDI uses training data)</li>
+  <li>Can be computed with confidence intervals by repeating permutations</li>
+</ul>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Correlated features in permutation importance</div>
+  Permutation importance is unreliable when features are correlated: permuting \(x_j\) while holding correlated \(x_k\) fixed creates physically implausible combinations. Use <strong>conditional permutation importance</strong>: permute \(x_j\) within groups of similar \(x_k\) values. Available in <code>rfpimp</code> and custom implementations.
+</div>
+
+<div class="box-example">
+  <div class="box-label">Example — Permutation importance for steam reformer surrogate</div>
+  4-input GP surrogate (\(T\), \(p\), \(S/C\), GHSV) for methane conversion \(X_{CH_4}\):
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Feature</th><th>Mean PI (ΔRMSE)</th><th>95% CI</th><th>Physical interpretation</th></tr></thead>
+    <tbody>
+      <tr><td>\(T\)</td><td>+4.82%</td><td>[4.31, 5.33]</td><td>Arrhenius rate control: expected first</td></tr>
+      <tr><td>\(S/C\)</td><td>+2.14%</td><td>[1.88, 2.40]</td><td>Equilibrium shift: expected second</td></tr>
+      <tr><td>\(p\)</td><td>+1.23%</td><td>[0.97, 1.49]</td><td>Pressure effect on equilibrium</td></tr>
+      <tr><td>GHSV</td><td>+0.31%</td><td>[0.18, 0.44]</td><td>Residence time: moderate</td></tr>
+    </tbody>
+  </table>
+  </div>
+  The ranking matches the physical causal hierarchy. If GHSV had ranked first, this would indicate data leakage or model misspecification.
+</div>
+
+<h2>4. Partial Dependence Plots (PDP) and ALE</h2>
+
+<h3>PDP</h3>
+<div class="formula-block">
+$$\hat{f}_\mathcal{S}(x_\mathcal{S}) = \mathbb{E}_{X_C}\!\left[\hat{f}(x_\mathcal{S}, X_C)\right] \approx \frac{1}{n}\sum_{i=1}^n \hat{f}(x_\mathcal{S}, x_C^{(i)})$$
+</div>
+
+<p>Marginalises over all other features, showing the average effect of \(x_\mathcal{S}\). For the steam reformer surrogate, the PDP of \(X_{CH_4}\) vs. \(T\) should be monotone increasing with an S-curve (kinetics limited at low \(T\), equilibrium limited at high \(T\)). If the PDP shows a decrease at high \(T\): model error.</p>
+
+<h3>Accumulated Local Effects (ALE)</h3>
+<div class="formula-block">
+$$\hat{g}_{j,ALE}(x) = \int_{z_{0,j}}^x \mathbb{E}_{X_C|X_j=z}\!\left[\frac{\partial\hat{f}}{\partial x_j}\right]dz$$
+</div>
+
+<p>ALE computes the <em>local</em> effect within narrow bins, avoiding extrapolation to physically implausible feature combinations. Always unbiased for the local effect.</p>
+
+<div class="box-rule">
+  <div class="box-label">Rule — PDP vs. ALE selection</div>
+  <ul>
+    <li>\(|\rho_{jk}| < 0.3\): use PDP (simpler to explain to engineers)</li>
+    <li>\(|\rho_{jk}| \geq 0.3\): use ALE (avoids extrapolation bias)</li>
+    <li>ICE plots when individual heterogeneity matters: strong ICE divergence signals an interaction</li>
+    <li>Python: <code>alibi</code> library or <code>sklearn.inspection.PartialDependenceDisplay</code></li>
+  </ul>
+</div>
+
+<h2>5. SHAP: Shapley Additive Explanations</h2>
+
+<p>SHAP provides local explanations: for each prediction \(\hat{f}(\mathbf{x}^{(i)})\), it assigns contributions summing exactly to the prediction:</p>
+<div class="formula-block">
+$$\hat{f}(\mathbf{x}^{(i)}) = \mathbb{E}[\hat{f}] + \sum_{j=1}^d \phi_j^{(i)}$$
+</div>
+
+<div class="formula-block">
+$$\phi_j = \sum_{S \subseteq \mathcal{F} \setminus \{j\}} \frac{|S|!(d-|S|-1)!}{d!} \left[\hat{f}_{S \cup \{j\}}(x_{S \cup \{j\}}) - \hat{f}_S(x_S)\right]$$
+</div>
+
+<p>SHAP is the <strong>unique</strong> attribution method satisfying all three axioms: (1) local accuracy (contributions sum to prediction), (2) missingness (\(\phi_j = 0\) if feature has no effect), (3) consistency (more important feature → non-decreasing SHAP value).</p>
+
+<h3>TreeSHAP for XGBoost</h3>
+<p>TreeSHAP computes exact SHAP values for tree-based models in \(\mathcal{O}(TLD^2)\) time (vs. \(\mathcal{O}(2^d n)\) brute force) — practical for XGBoost and Random Forest in production. Available via <code>import shap; shap.TreeExplainer(model)</code>.</p>
+
+<h3>Engineering Reading of SHAP Plots</h3>
+<p><strong>Beeswarm summary plot</strong>: x-position is the SHAP value (positive = pushes prediction up); colour encodes the feature value (red = high, blue = low). If high feature values (red) always have positive SHAP → monotone increasing — physically expected for temperature in endothermic reactions. Interleaved colours → non-monotone — investigate physically.</p>
+
+<p><strong>Dependence plot</strong>: scatter of \(\phi_j\) vs. \(x_j\) coloured by a second feature. Slope encodes local average effect; colour gradient reveals which other feature moderates this effect.</p>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — SHAP is not causation</div>
+  SHAP values measure predictive relevance in the fitted model, not physical causation. High SHAP for a variable means the model used it — not that it causes the outcome. Assigning causal meaning without a testable physical hypothesis is the "theorise from the model" error. SHAP is a debugging tool and a regulatory explainability tool, not a substitute for domain knowledge.
+</div>
+
+<h2>6. Validation Protocol and Model Cards</h2>
+
+<div class="box-rule">
+  <div class="box-label">Rule — 15-step validation protocol for engineering surrogates</div>
+  <ol>
+    <li>Data audit with DQI ≥ 0.97 confirmed</li>
+    <li>Group-aware train/validation/test split documented</li>
+    <li>Baseline model (OLS or default XGBoost) evaluated and documented</li>
+    <li>Model training with GroupKFold CV; no data leakage verified</li>
+    <li>Hyperparameter selection via nested CV or Optuna</li>
+    <li>Residual plots: check for heteroscedasticity and systematic bias</li>
+    <li>Physical monotonicity check: verify PDP/SHAP monotone where expected</li>
+    <li>Feature importance matches physical hierarchy (permutation importance)</li>
+    <li>UQ calibration: empirical coverage matches nominal level</li>
+    <li>Conformal prediction intervals computed (regulatory requirement)</li>
+    <li>Independent test set evaluation (never used in any training decision)</li>
+    <li>Extrapolation detection: Mahalanobis distance or GP σ* threshold set</li>
+    <li>Concept drift monitoring protocol defined for deployment</li>
+    <li>Model card completed, signed, and version-controlled</li>
+    <li>Regulatory submission package prepared (if applicable)</li>
+  </ol>
+</div>
+
+<h3>Concept Drift Detection</h3>
+
+<p>In production, the input distribution \(p(\mathbf{x})\) or the target mapping \(p(y|\mathbf{x})\) may shift. Detection methods:</p>
+<ul>
+  <li><strong>Kolmogorov-Smirnov test</strong> on each input feature: sliding window vs. training reference. Alert when \(p < 0.01\).</li>
+  <li><strong>CUSUM (cumulative sum)</strong> on prediction residuals: detects gradual degradation of model accuracy.</li>
+  <li><strong>MMD (Maximum Mean Discrepancy)</strong>: compares full multivariate input distributions between training and deployment windows.</li>
+  <li><strong>Monitoring frequency</strong>: daily for safety-critical systems; weekly for advisory systems.</li>
+</ul>
+
+<h2>Chapter Summary</h2>
+
+<div class="box-lesson">
+  <div class="box-label">Key takeaways</div>
+  <ul>
+    <li><strong>Interpretability ≠ explainability</strong>: prefer intrinsically interpretable models (GP, decision tree) when possible; use SHAP/PDP for black boxes.</li>
+    <li><strong>Permutation importance over MDI</strong>: unbiased, model-agnostic, test-set-based. Report with 95% CI.</li>
+    <li><strong>ALE when features are correlated</strong>: PDP extrapolates to physically implausible combinations. \(|\rho_{jk}| \geq 0.3\) → ALE.</li>
+    <li><strong>SHAP = predictive relevance, not causation</strong>. Cross-check SHAP rankings against the physical causal hierarchy. Disagreement = model problem or spurious correlation.</li>
+    <li><strong>The model card is a legal document</strong>: it must include training data version, hyperparameters, CV strategy, test metrics, UQ method, deployment constraints, and drift monitoring protocol.</li>
+    <li><strong>EASA/ISO compliance</strong>: conformal prediction intervals are the required UQ method; SHAP is the required explainability tool. Both must appear in the regulatory submission package.</li>
+  </ul>
+</div>
+
+<nav class="chapter-nav">
+  <a href="ch07-uncertainty-quantification.html">← Ch 7: Uncertainty Quantification</a>
+  <a href="index.html">Table of Contents</a>
+  <a href="ch09-time-series.html">Ch 9: Time Series →</a>
+</nav>
+</div>
+<footer>The Engineer's Handbook of Machine Learning &nbsp;·&nbsp; Leonardo Pulga PhD &nbsp;·&nbsp; <a href="index.html">All chapters</a></footer>
+</body>
+</html>

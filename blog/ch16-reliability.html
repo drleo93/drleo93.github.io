@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reliability Engineering: Statistical Foundations and Prognostics | ML Handbook</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root {
+  --bg:#0d1117;--surface:#161b22;--border:#2d333b;--text:#b8c0cc;--muted:#6e7890;
+  --accent:#6da5cc;--green:#5a9e72;--amber:#c49a3c;--red:#c97b76;--code-bg:#13191f;--tag-bg:#1a2d40;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;font-size:16px;line-height:1.7;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+header{border-bottom:1px solid var(--border);padding:2rem 0 1.5rem;text-align:center;}
+.series-label{color:var(--muted);font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;font-family:monospace;}
+h1{color:var(--accent);font-size:2rem;font-weight:700;margin-bottom:0.5rem;}
+.subtitle{color:var(--muted);font-size:1rem;}
+.tags{margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;}
+.tag{background:var(--tag-bg);color:var(--accent);padding:0.2rem 0.7rem;border-radius:3px;font-size:0.75rem;font-family:monospace;border:1px solid var(--border);}
+main{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem;}
+.tldr{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:4px;padding:1.2rem 1.5rem;margin-bottom:2.5rem;}
+.tldr h2{color:var(--accent);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.75rem;}
+.tldr ul{padding-left:1.2rem;}.tldr li{margin-bottom:0.35rem;}
+h2{color:var(--accent);font-size:1.35rem;margin:2.5rem 0 1rem;border-bottom:1px solid var(--border);padding-bottom:0.4rem;}
+h3{color:#8db4c8;font-size:1.1rem;margin:1.8rem 0 0.7rem;}
+p{margin-bottom:1rem;}ul,ol{padding-left:1.4rem;margin-bottom:1rem;}li{margin-bottom:0.3rem;}
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-rule{background:var(--surface);border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-label{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.5rem;font-weight:700;}
+.box-lesson .box-label{color:var(--green);}.box-pitfall .box-label{color:var(--amber);}
+.box-rule .box-label{color:#8b949e;}.box-example .box-label{color:#9d8fd4;}
+.math-block{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;margin:1.2rem 0;overflow-x:auto;}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;overflow-x:auto;margin:1.2rem 0;}
+code{font-family:'Courier New',monospace;font-size:0.85rem;color:#a8c4d8;}
+p code,li code{background:var(--code-bg);padding:0.1em 0.35em;border-radius:2px;font-size:0.85em;}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:0.88rem;}
+thead th{background:var(--surface);color:var(--accent);padding:0.6rem 0.8rem;text-align:left;border-bottom:2px solid var(--border);font-family:monospace;font-size:0.8rem;}
+tbody td{padding:0.55rem 0.8rem;border-bottom:1px solid var(--border);vertical-align:top;}
+tbody tr:hover{background:#1a1f27;}
+.nav-links{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:0.9rem;}
+footer{text-align:center;color:var(--muted);font-size:0.8rem;padding:2rem;border-top:1px solid var(--border);margin-top:1rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="series-label">The Engineer's Handbook of Machine Learning</div>
+  <h1>Reliability Engineering</h1>
+  <div class="subtitle">Chapter 16 &mdash; Weibull Analysis, Censored Data, Prognostics, and RBDO</div>
+  <div class="tags">
+    <span class="tag">Weibull</span>
+    <span class="tag">Hazard Rate</span>
+    <span class="tag">Censored Data</span>
+    <span class="tag">MLE</span>
+    <span class="tag">RUL</span>
+    <span class="tag">Prognostics</span>
+    <span class="tag">Bathtub Curve</span>
+    <span class="tag">RBDO</span>
+  </div>
+</header>
+
+<main>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>The Weibull distribution is the universal tool of reliability engineering. The shape parameter $\beta$ encodes the failure mechanism: $\beta &lt; 1$ (infant mortality), $\beta \approx 1$ (random), $\beta &gt; 1$ (wear-out).</li>
+    <li><strong>Censoring is critical</strong>: treating right-censored observations as failures underestimates component life by 2&ndash;5&times;. Always use MLE with correct censoring treatment.</li>
+    <li>RUL prediction without a calibrated prediction interval (P10/P90 band) is not engineering output — the interval drives maintenance scheduling, not the point estimate.</li>
+    <li>Use likelihood ratio confidence bounds, not Wald (Fisher matrix) bounds, when $n &lt; 30$.</li>
+    <li>Always report $B_{10}$ life (10% failure probability) alongside the characteristic life $\eta = B_{63.2}$.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>1. Reliability Functions</h2>
+
+<p>Reliability is the probability a system performs its required function for a specified time under stated conditions:</p>
+
+<div class="math-block">
+$$R(t) = P(T > t) = 1 - F(t)$$
+$$\text{Hazard rate: } h(t) = \frac{f(t)}{R(t)} = -\frac{d}{dt}\ln R(t) \quad \text{[failures/time]}$$
+$$\text{Cumulative hazard: } H(t) = \int_0^t h(\tau)\,d\tau = -\ln R(t) \implies R(t) = \exp(-H(t))$$
+</div>
+
+<!-- ================================================================== -->
+<h2>2. The Weibull Distribution</h2>
+
+<div class="math-block">
+$$f(t;\eta,\beta) = \frac{\beta}{\eta}\left(\frac{t}{\eta}\right)^{\beta-1} \exp\!\left[-\left(\frac{t}{\eta}\right)^\beta\right]$$
+$$F(t;\eta,\beta) = 1 - \exp\!\left[-\left(\frac{t}{\eta}\right)^\beta\right]$$
+$$h(t;\eta,\beta) = \frac{\beta}{\eta}\left(\frac{t}{\eta}\right)^{\beta-1} \quad \text{(power-law hazard)}$$
+</div>
+
+<p>where $\eta &gt; 0$ is the <strong>characteristic life</strong> (scale; $B_{63.2} = \eta$) and $\beta &gt; 0$ is the <strong>shape parameter</strong> (encodes failure mechanism).</p>
+
+<h3>Physical Interpretation of $\beta$</h3>
+
+<table>
+  <thead><tr><th>$\beta$ Range</th><th>Failure Mode</th><th>Hazard Trend</th><th>Examples</th></tr></thead>
+  <tbody>
+    <tr><td>$\beta &lt; 1$</td><td>Infant mortality</td><td>Decreasing</td><td>Electronic components, weld defects, casting porosity</td></tr>
+    <tr><td>$\beta = 1$</td><td>Random failures</td><td>Constant ($= 1/\eta$)</td><td>External shocks, software bugs, particle erosion</td></tr>
+    <tr><td>$1 &lt; \beta &lt; 4$</td><td>Early wear-out</td><td>Increasing</td><td>Bearing fatigue ($\beta \approx 1.5$&ndash;2.5), corrosion fatigue</td></tr>
+    <tr><td>$\beta \approx 3.5$</td><td>Normal wear-out</td><td>Steep increase</td><td>Planned maintenance items, tyre wear</td></tr>
+    <tr><td>$\beta &gt; 4$</td><td>Rapid wear-out</td><td>Very steep</td><td>Stress corrosion cracking, hydrogen embrittlement</td></tr>
+  </tbody>
+</table>
+
+<p>The classic <strong>bathtub curve</strong> of product life: decreasing hazard ($\beta &lt; 1$) during burn-in → constant ($\beta \approx 1$) in useful life → increasing ($\beta &gt; 2$) in wear-out.</p>
+
+<h3>Key Life Metrics</h3>
+
+<div class="math-block">
+$$B_{10} \text{ life (10\% failure probability)}: \quad t_{B10} = \eta\bigl(-\ln 0.9\bigr)^{1/\beta} = \eta \cdot (0.1054)^{1/\beta}$$
+$$\text{Mean time to failure (MTTF)}: \quad \mathbb{E}[T] = \eta\,\Gamma\!\left(1 + \frac{1}{\beta}\right)$$
+</div>
+
+<!-- ================================================================== -->
+<h2>3. Parameter Estimation</h2>
+
+<h3>Maximum Likelihood Estimation (MLE)</h3>
+
+<div class="math-block">
+$$\ell(\eta,\beta) = n\ln\beta - n\beta\ln\eta + (\beta-1)\sum_{i=1}^n \ln t_i - \sum_{i=1}^n \left(\frac{t_i}{\eta}\right)^\beta$$
+</div>
+
+<p>For complete (uncensored) data, solve the MLE score equations via Newton-Raphson or trust-region methods. For censored data, add censored contributions to the log-likelihood (see below).</p>
+
+<h3>Weibull Probability Plot (WPP)</h3>
+
+<p>Linearise the CDF: $\ln[-\ln(1-F(t))] = \beta\ln t - \beta\ln\eta$. Plot $y = \ln[-\ln(1-\hat{F}_i)]$ vs. $x = \ln t_i$ where the median rank estimator is $\hat{F}_i = (i - 0.3)/(n + 0.4)$. A straight line confirms the Weibull hypothesis. Slope = $\hat{\beta}$; intercept gives $\hat{\eta}$.</p>
+
+<div class="box-rule">
+  <div class="box-label">Parameter Estimation Best Practices</div>
+  <ol>
+    <li>Use <strong>MLE, not least squares</strong>: MLE is asymptotically efficient and handles censoring correctly. LS on the linearised WPP underestimates $\beta$ with censored data.</li>
+    <li>Verify the Weibull assumption with the WPP before fitting. A concave WPP indicates mixed failure modes or a 3-parameter Weibull.</li>
+    <li>Report confidence bounds (90% or 95%) on $\eta$ and $\beta$. Point estimates alone are insufficient for design decisions.</li>
+    <li>Use <strong>likelihood ratio bounds</strong> over Fisher (Wald) bounds when $n &lt; 30$ — Wald bounds are unreliable for small samples.</li>
+    <li>Always report both $B_{10}$ life and characteristic life $\eta = B_{63.2}$.</li>
+  </ol>
+</div>
+
+<!-- ================================================================== -->
+<h2>4. Censored Data: The Critical Statistical Concept</h2>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Treating Censored Observations as Failures</div>
+  Right-censored units (not yet failed at end of study) contribute information that $T_i &gt; c_i$ — they should NOT be treated as failures at time $c_i$. Doing so introduces catastrophic negative bias: component life is underestimated by factors of 2&ndash;5&times;. This is the single most common error in reliability data analysis.
+</div>
+
+<p>Three types of censoring in engineering:</p>
+<ul>
+  <li><strong>Right censoring</strong>: unit removed before failure; exact failure time unknown but $T_i &gt; c_i$. Most common in field data.</li>
+  <li><strong>Left censoring</strong>: unit failed before first inspection; $T_i &lt; c_i$.</li>
+  <li><strong>Interval censoring</strong>: failure known to occur in $(L_i, R_i]$. Common in periodic borescope inspections and NDT campaigns.</li>
+</ul>
+
+<p>The censored MLE log-likelihood:</p>
+
+<div class="math-block">
+$$\ell(\eta,\beta) = \sum_{i \in \mathcal{F}} \ln f(t_i;\eta,\beta) + \sum_{i \in \mathcal{C}} \ln R(c_i;\eta,\beta)$$
+</div>
+
+<p>where $\mathcal{F}$ is the set of failures and $\mathcal{C}$ the set of censored observations.</p>
+
+<pre><code>from reliability.Fitters import Fit_Weibull_2P
+import numpy as np
+
+# Failure times and censored times
+t_fail   = [850, 1200, 1340, 1650, 1980]  # observed failures
+t_censor = [2000, 2000, 2000, 2000, 2000]  # still running at 2000 hrs
+
+# Combine with censoring indicator (0=failure, 1=right-censored)
+times  = np.array(t_fail + t_censor)
+censor = np.array([0]*len(t_fail) + [1]*len(t_censor))
+
+# MLE fit with censoring
+fit = Fit_Weibull_2P(failures=t_fail, right_censored=t_censor,
+                     CI=0.9, show_probability_plot=False)
+print(f"beta = {fit.beta:.3f}, eta = {fit.alpha:.1f} hrs")
+print(f"B10 life = {fit.quantiles(0.10):.1f} hrs")</code></pre>
+
+<!-- ================================================================== -->
+<h2>5. Remaining Useful Life Prediction</h2>
+
+<p>RUL estimation is a regression problem where the target is time-to-failure from the current state. Three key requirements that distinguish it from standard regression:</p>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — RUL Without Uncertainty</div>
+  Reporting "RUL = 47 hours" without a confidence interval is useless for maintenance scheduling. The decision depends on the cost ratio of false alarm (unnecessary replacement) vs. false miss (failure in service). Only a calibrated P10/P90 interval enables the correct cost-optimal maintenance decision.
+</div>
+
+<h3>LSTM-Weibull Hybrid for Prognostics</h3>
+
+<p>The recommended approach combines a data-driven health index (LSTM autoencoder bottleneck) with a Weibull degradation model:</p>
+
+<ol>
+  <li><strong>Health Index (HI)</strong>: train LSTM autoencoder on new/healthy operating data. The reconstruction error is the HI. HI = 0 (new), HI increases monotonically toward failure.</li>
+  <li><strong>Weibull trend fit</strong>: fit Weibull CDF to the HI trajectory as a function of operating time. Use monotone regression to enforce HI non-decrease.</li>
+  <li><strong>RUL estimation</strong>: the RUL is the time for HI to reach the failure threshold $h^*$, given the fitted Weibull parameters. Propagate parameter uncertainty to obtain P10/P90 RUL bounds.</li>
+  <li><strong>Online update</strong>: re-fit the Weibull parameters as new HI observations arrive (Bayesian update or sliding window MLE).</li>
+</ol>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson — Monotonic Degradation Constraint</div>
+  Physically, a degradation Health Index should be non-decreasing. Without enforcement, LSTM autoencoders produce noisy HI trajectories that increase and decrease, making RUL estimation unreliable. Enforce monotonicity either by post-processing (PAVA isotonic regression) or by using monotone constraints in the LSTM output head. A noisy HI that occasionally "recovers" confuses the Weibull fit and produces overoptimistic RUL estimates.
+</div>
+
+<!-- ================================================================== -->
+<h2>6. Reliability-Based Design Optimisation (RBDO)</h2>
+
+<p>RBDO replaces deterministic constraints $g(\mathbf{x}) \leq 0$ with probabilistic constraints:</p>
+
+<div class="math-block">
+$$\min_{\mathbf{x}} f(\mathbf{x}) \quad \text{s.t.} \quad P\bigl(g_k(\mathbf{x}, \mathbf{Z}) \leq 0\bigr) \geq \Phi(\beta_{target,k})$$
+</div>
+
+<p>where $\mathbf{Z}$ are uncertain parameters (material properties, loads), $\beta_{target}$ is the target reliability index (e.g., $\beta = 3 \Rightarrow P_f \leq 1.35 \times 10^{-3}$), and $\Phi$ is the normal CDF. The double-loop approach: outer optimisation over $\mathbf{x}$, inner reliability analysis (FORM/SORM or Monte Carlo) per constraint evaluation. For surrogate-assisted RBDO, replace the inner loop with a GP that predicts $P(g_k \leq 0)$ directly (see Chapter 15, constrained BO).</p>
+
+<!-- ================================================================== -->
+<h2>7. Key Takeaways</h2>
+
+<ul>
+  <li><strong>Weibull shape $\beta$</strong> is the first diagnostic: measure $\beta$ from field data to identify the failure mode before selecting a prognostics strategy.</li>
+  <li><strong>Never treat censored observations as failures</strong>. Right-censored units contribute $\ln R(c_i)$ to the log-likelihood, not $\ln f(c_i)$.</li>
+  <li>Use <strong>MLE</strong> for parameter estimation; likelihood ratio bounds for confidence intervals when $n &lt; 30$.</li>
+  <li>$B_{10}$ life ($t_{B10} = \eta \cdot 0.1054^{1/\beta}$) is the design-relevant metric — it defines the 10% failure probability point.</li>
+  <li>RUL prediction requires a calibrated P10/P90 interval. Point estimates alone are operationally useless for maintenance scheduling.</li>
+  <li>LSTM autoencoder health index + Weibull trend + Bayesian update is the recommended prognostics pipeline for industrial rotating machinery.</li>
+  <li>RBDO: replace deterministic constraints with probabilistic feasibility constraints. Use surrogate-assisted reliability analysis (GP PoF) to avoid expensive inner-loop Monte Carlo.</li>
+</ul>
+
+<div class="nav-links">
+  <a href="ch15-optimisation.html">&larr; Ch15: Optimisation</a>
+  <a href="ch17-physics-multifidelity.html">Ch17: Physics &amp; Multi-Fidelity &rarr;</a>
+</div>
+
+</main>
+
+<footer>
+  <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
+  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+</footer>
+
+</body>
+</html>

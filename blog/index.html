@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Engineer's Handbook of Machine Learning</title>
+<style>
+  :root {
+    --bg:      #0d1117;
+    --surface: #161b22;
+    --border:  #2d333b;
+    --text:    #b8c0cc;
+    --muted:   #6e7890;
+    --accent:  #6da5cc;
+    --green:   #5a9e72;
+    --amber:   #c49a3c;
+    --red:     #c97b76;
+    --code-bg: #13191f;
+    --tag-bg:  #1a2d40;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif;
+         font-size: 15px; line-height: 1.7; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 0 1.5rem; }
+
+  header { border-bottom: 1px solid var(--border); padding: 3rem 0 2rem; margin-bottom: 3rem; }
+  .book-label { font-size: 0.78rem; color: var(--muted); letter-spacing: .1em;
+                text-transform: uppercase; margin-bottom: .6rem; }
+  h1 { font-size: 2.2rem; font-weight: 700; color: #dde3ec; line-height: 1.2; margin-bottom: .7rem; }
+  .author { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.2rem; }
+  .description {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 4px solid var(--accent); border-radius: 4px;
+    padding: 1rem 1.2rem; margin-top: 1.5rem; font-size: .92rem; color: var(--text);
+  }
+
+  .part-header { margin: 2.5rem 0 1rem; }
+  .part-label { font-size: .72rem; color: var(--muted); letter-spacing: .1em;
+                text-transform: uppercase; margin-bottom: .25rem; }
+  .part-title { font-size: 1.15rem; font-weight: 600; color: #cdd5e0;
+                padding-bottom: .3rem; border-bottom: 1px solid var(--border); }
+
+  .chapter-list { list-style: none; margin: 0 0 1.5rem; }
+  .chapter-list li { display: flex; align-items: baseline; gap: .8rem;
+                      padding: .55rem 0; border-bottom: 1px solid #1c2330; }
+  .chapter-list li:last-child { border-bottom: none; }
+  .ch-num { font-size: .75rem; color: var(--muted); min-width: 2.2rem;
+             font-variant-numeric: tabular-nums; letter-spacing: .03em; }
+  .ch-title { font-size: .95rem; color: var(--accent); flex: 1; }
+  .ch-title:hover { text-decoration: underline; }
+  .ch-tags { display: flex; flex-wrap: wrap; gap: .3rem; }
+  .tag { background: var(--tag-bg); color: var(--muted); font-size: .65rem;
+         padding: .15rem .5rem; border-radius: 3px; white-space: nowrap; }
+
+  footer { text-align: center; color: var(--muted); font-size: .78rem;
+           padding: 2.5rem 0; border-top: 1px solid var(--border); margin-top: 3rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="book-label">Blog Edition · GitHub Pages</div>
+  <h1>The Engineer's Handbook of Machine Learning</h1>
+  <div class="author">Leonardo Pulga PhD</div>
+  <div class="description">
+    A practitioner-first guide to applied ML for engineering systems — from Gaussian processes and uncertainty quantification
+    through deep time-series models, system identification, digital twin architecture, and safe reinforcement learning.
+    Every chapter is self-contained: TL;DR, key equations, working code, callout boxes, and decision tables.
+    Targeted at engineers who need to deploy models in safety-critical, resource-constrained, or regulated environments.
+  </div>
+</header>
+
+<!-- ====================================================== -->
+<div class="part-header">
+  <div class="part-label">Part I</div>
+  <div class="part-title">Foundations</div>
+</div>
+<ul class="chapter-list">
+  <li>
+    <span class="ch-num">Ch 01</span>
+    <a class="ch-title" href="ch01-introduction.html">Introduction to ML for Engineering</a>
+    <div class="ch-tags">
+      <span class="tag">framing</span><span class="tag">ML lifecycle</span><span class="tag">engineering context</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 02</span>
+    <a class="ch-title" href="ch02-mathematics-statistics.html">Mathematics and Statistics Refresher</a>
+    <div class="ch-tags">
+      <span class="tag">linear algebra</span><span class="tag">probability</span><span class="tag">Bayes</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 03</span>
+    <a class="ch-title" href="ch03-eda.html">Exploratory Data Analysis</a>
+    <div class="ch-tags">
+      <span class="tag">DQI</span><span class="tag">outlier detection</span><span class="tag">feature importance</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 04</span>
+    <a class="ch-title" href="ch04-design-of-experiments.html">Design of Experiments</a>
+    <div class="ch-tags">
+      <span class="tag">Sobol'</span><span class="tag">Latin hypercube</span><span class="tag">active learning</span>
+    </div>
+  </li>
+</ul>
+
+<!-- ====================================================== -->
+<div class="part-header">
+  <div class="part-label">Part II</div>
+  <div class="part-title">Supervised Learning and Surrogates</div>
+</div>
+<ul class="chapter-list">
+  <li>
+    <span class="ch-num">Ch 05</span>
+    <a class="ch-title" href="ch05-supervised-learning.html">Supervised Learning: Regression and Classification</a>
+    <div class="ch-tags">
+      <span class="tag">GP</span><span class="tag">XGBoost</span><span class="tag">Matérn kernel</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 06</span>
+    <a class="ch-title" href="ch06-deep-learning.html">Deep Learning for Engineering Regression</a>
+    <div class="ch-tags">
+      <span class="tag">MLP</span><span class="tag">ResNet</span><span class="tag">physics-aware architectures</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 07</span>
+    <a class="ch-title" href="ch07-uncertainty-quantification.html">Uncertainty Quantification</a>
+    <div class="ch-tags">
+      <span class="tag">conformal PI</span><span class="tag">GP posterior</span><span class="tag">calibration</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 08</span>
+    <a class="ch-title" href="ch08-validation-interpretability.html">Validation and Interpretability</a>
+    <div class="ch-tags">
+      <span class="tag">SHAP</span><span class="tag">ASME V&amp;V</span><span class="tag">model card</span>
+    </div>
+  </li>
+</ul>
+
+<!-- ====================================================== -->
+<div class="part-header">
+  <div class="part-label">Part III</div>
+  <div class="part-title">Time-Series and Dynamical Systems</div>
+</div>
+<ul class="chapter-list">
+  <li>
+    <span class="ch-num">Ch 09</span>
+    <a class="ch-title" href="ch09-time-series.html">Classical Time-Series Methods</a>
+    <div class="ch-tags">
+      <span class="tag">ARIMA</span><span class="tag">Kalman filter</span><span class="tag">SSM</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 10</span>
+    <a class="ch-title" href="ch10-deep-time-series.html">Deep Learning for Time Series</a>
+    <div class="ch-tags">
+      <span class="tag">LSTM</span><span class="tag">TCN</span><span class="tag">Transformer</span><span class="tag">PatchTST</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 11</span>
+    <a class="ch-title" href="ch11-system-identification.html">System Identification</a>
+    <div class="ch-tags">
+      <span class="tag">ARX</span><span class="tag">N4SID</span><span class="tag">NARX</span><span class="tag">Hammerstein-Wiener</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 12</span>
+    <a class="ch-title" href="ch12-virtual-sensors.html">Virtual Sensors</a>
+    <div class="ch-tags">
+      <span class="tag">grey-box</span><span class="tag">EKF</span><span class="tag">NOx estimation</span>
+    </div>
+  </li>
+</ul>
+
+<!-- ====================================================== -->
+<div class="part-header">
+  <div class="part-label">Part IV</div>
+  <div class="part-title">Condition Monitoring and Deployment</div>
+</div>
+<ul class="chapter-list">
+  <li>
+    <span class="ch-num">Ch 13</span>
+    <a class="ch-title" href="ch13-anomaly-detection.html">Anomaly Detection and Condition Monitoring</a>
+    <div class="ch-tags">
+      <span class="tag">CUSUM</span><span class="tag">Isolation Forest</span><span class="tag">LSTM autoencoder</span><span class="tag">VAE</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 14</span>
+    <a class="ch-title" href="ch14-deployment.html">Model Deployment: Edge, PLC, and Cloud</a>
+    <div class="ch-tags">
+      <span class="tag">ONNX</span><span class="tag">INT8 quantisation</span><span class="tag">MLOps</span><span class="tag">OOD detection</span>
+    </div>
+  </li>
+</ul>
+
+<!-- ====================================================== -->
+<div class="part-header">
+  <div class="part-label">Part V</div>
+  <div class="part-title">Optimisation and Reliability</div>
+</div>
+<ul class="chapter-list">
+  <li>
+    <span class="ch-num">Ch 15</span>
+    <a class="ch-title" href="ch15-optimisation.html">Bayesian Optimisation and Gradient-Based Methods</a>
+    <div class="ch-tags">
+      <span class="tag">EI</span><span class="tag">TuRBO</span><span class="tag">adjoint method</span><span class="tag">qEHVI</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 16</span>
+    <a class="ch-title" href="ch16-reliability.html">Reliability Analysis and RUL Prediction</a>
+    <div class="ch-tags">
+      <span class="tag">Weibull</span><span class="tag">censored data</span><span class="tag">RBDO</span><span class="tag">PHM</span>
+    </div>
+  </li>
+</ul>
+
+<!-- ====================================================== -->
+<div class="part-header">
+  <div class="part-label">Part VI</div>
+  <div class="part-title">Advanced Physics-Informed Methods</div>
+</div>
+<ul class="chapter-list">
+  <li>
+    <span class="ch-num">Ch 17</span>
+    <a class="ch-title" href="ch17-physics-multifidelity.html">Physics-Constrained ML and Multi-Fidelity Surrogates</a>
+    <div class="ch-tags">
+      <span class="tag">Kennedy-O'Hagan</span><span class="tag">PINN</span><span class="tag">multi-fidelity GP</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 18</span>
+    <a class="ch-title" href="ch18-3d-neural-operators.html">3D Fields and Neural Operators</a>
+    <div class="ch-tags">
+      <span class="tag">FNO</span><span class="tag">DeepONet</span><span class="tag">GNN</span><span class="tag">POD-ROM</span><span class="tag">Transolver</span>
+    </div>
+  </li>
+</ul>
+
+<!-- ====================================================== -->
+<div class="part-header">
+  <div class="part-label">Part VII</div>
+  <div class="part-title">Emerging and Advanced Topics</div>
+</div>
+<ul class="chapter-list">
+  <li>
+    <span class="ch-num">Ch 19</span>
+    <a class="ch-title" href="ch19-clustering.html">Unsupervised Learning and Clustering</a>
+    <div class="ch-tags">
+      <span class="tag">K-means</span><span class="tag">GMM</span><span class="tag">DBSCAN</span><span class="tag">silhouette</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 20</span>
+    <a class="ch-title" href="ch20-generative-ai.html">Generative AI and Foundation Models</a>
+    <div class="ch-tags">
+      <span class="tag">LLM</span><span class="tag">RAG</span><span class="tag">TimeGPT</span><span class="tag">RCTCO prompt</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 21</span>
+    <a class="ch-title" href="ch21-reinforcement-learning.html">Reinforcement Learning for Control</a>
+    <div class="ch-tags">
+      <span class="tag">PPO</span><span class="tag">SAC</span><span class="tag">sim-to-real</span><span class="tag">safe RL</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 22</span>
+    <a class="ch-title" href="ch22-model-versioning-mlops.html">Model Versioning, Lifecycle Management, and MLOps</a>
+    <div class="ch-tags">
+      <span class="tag">MLflow</span><span class="tag">DVC</span><span class="tag">PSI</span><span class="tag">DO-178C</span><span class="tag">rollback</span>
+    </div>
+  </li>
+  <li>
+    <span class="ch-num">Ch 23</span>
+    <a class="ch-title" href="ch23-digital-twin.html">Digital Twin Architecture and Data Assimilation</a>
+    <div class="ch-tags">
+      <span class="tag">EnKF</span><span class="tag">ROM</span><span class="tag">innovation sequence</span><span class="tag">transfer learning</span>
+    </div>
+  </li>
+</ul>
+
+</div>
+<footer>
+  <div class="container">The Engineer's Handbook of Machine Learning · Leonardo Pulga PhD · Blog edition generated for GitHub Pages</div>
+</footer>
+</body>
+</html>

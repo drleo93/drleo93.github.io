@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 23 · Digital Twin Architecture | ML Engineering Handbook</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+  :root {
+    --bg:      #0d1117;
+    --surface: #161b22;
+    --border:  #2d333b;
+    --text:    #b8c0cc;
+    --muted:   #6e7890;
+    --accent:  #6da5cc;
+    --green:   #5a9e72;
+    --amber:   #c49a3c;
+    --red:     #c97b76;
+    --code-bg: #13191f;
+    --tag-bg:  #1a2d40;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif;
+         font-size: 15px; line-height: 1.7; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  header { border-bottom: 1px solid var(--border); padding: 2rem 0 1.5rem; margin-bottom: 2.5rem; }
+  .container { max-width: 860px; margin: 0 auto; padding: 0 1.5rem; }
+  .chapter-label { font-size: 0.78rem; color: var(--muted); letter-spacing: .08em;
+                   text-transform: uppercase; margin-bottom: .4rem; }
+  h1 { font-size: 2rem; font-weight: 700; color: #dde3ec; line-height: 1.25; margin-bottom: .7rem; }
+  .subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 1rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; }
+  .tag { background: var(--tag-bg); color: var(--accent); font-size: 0.72rem;
+         padding: .2rem .6rem; border-radius: 3px; letter-spacing: .03em; }
+
+  h2 { font-size: 1.3rem; font-weight: 600; color: #cdd5e0; margin: 2.5rem 0 .8rem;
+       padding-bottom: .35rem; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.05rem; font-weight: 600; color: #b8c8d8; margin: 1.6rem 0 .5rem; }
+  p  { margin-bottom: 1rem; }
+  ul, ol { margin: .5rem 0 1rem 1.4rem; }
+  li { margin-bottom: .3rem; }
+
+  .tldr { background: var(--surface); border: 1px solid var(--border);
+          border-left: 4px solid var(--accent); border-radius: 4px;
+          padding: 1rem 1.2rem; margin-bottom: 2rem; }
+  .tldr strong { color: var(--accent); }
+
+  .math-block { overflow-x: auto; padding: .6rem 0; margin: 1rem 0; font-size: .97rem; }
+
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 5px;
+        padding: 1rem 1.2rem; overflow-x: auto; margin: 1rem 0; font-size: .82rem; line-height: 1.55; }
+  code { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; color: #aac8e4; }
+  pre code { color: #aac8e4; }
+
+  .box-lesson  { background:#0c2316; border-left:4px solid var(--green); border-radius:4px; padding:1rem 1.2rem; margin:1.5rem 0; }
+  .box-pitfall { background:#2a1600; border-left:4px solid var(--amber); border-radius:4px; padding:1rem 1.2rem; margin:1.5rem 0; }
+  .box-rule    { background:var(--surface); border:1px solid var(--border); border-left:4px solid #6e7681; border-radius:4px; padding:1rem 1.2rem; margin:1.5rem 0; }
+  .box-example { background:#131220; border-left:4px solid #7c6fad; border-radius:4px; padding:1rem 1.2rem; margin:1.5rem 0; }
+  .box-lesson strong, .box-rule strong { color: #8ecfa8; }
+  .box-pitfall strong { color: var(--amber); }
+  .box-example strong { color: #a89fd8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: .85rem; }
+  th { background: var(--surface); color: #cdd5e0; font-weight: 600;
+       padding: .55rem .8rem; border: 1px solid var(--border); text-align: left; }
+  td { padding: .5rem .8rem; border: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #10151c; }
+
+  .maturity-level { display: flex; gap: 1rem; margin: .6rem 0; align-items: flex-start; }
+  .level-badge { background: var(--tag-bg); color: var(--accent); font-size: .72rem;
+                 font-weight: 700; padding: .25rem .6rem; border-radius: 3px;
+                 white-space: nowrap; min-width: 5.5rem; text-align: center; }
+
+  nav.chapter-nav { display: flex; justify-content: space-between; margin: 3rem 0 1.5rem;
+                    border-top: 1px solid var(--border); padding-top: 1.5rem; font-size: .88rem; }
+  footer { text-align: center; color: var(--muted); font-size: .78rem;
+           padding: 2rem 0; border-top: 1px solid var(--border); margin-top: 2rem; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <div class="chapter-label">Chapter 23</div>
+  <h1>Digital Twin Architecture and Data Assimilation</h1>
+  <div class="subtitle">Integrating surrogates, virtual sensors, system identification, and real-time state estimation into a living asset model.</div>
+  <div class="tags">
+    <span class="tag">Digital Twin</span><span class="tag">POD-ROM</span><span class="tag">EnKF</span>
+    <span class="tag">Data Assimilation</span><span class="tag">Transfer Learning</span>
+    <span class="tag">Model-Plant Mismatch</span><span class="tag">ISO 23247</span><span class="tag">Innovation Sequence</span>
+  </div>
+</header>
+
+<div class="tldr">
+  <strong>TL;DR</strong> — A digital twin is an architecture, not an algorithm.
+  It combines a physics-informed predictive model (surrogate / SysID / hybrid) with a real-time state update mechanism (Kalman filter / EnKF) and a decision support interface.
+  The FEM → ROM → DT pipeline gives you 150,000× speedup over the full physics model while retaining physics fidelity.
+  Monitor the innovation sequence for model-plant mismatch; use transfer learning (multi-fidelity GP or fine-tuning) to bridge the expensive-data gap.
+</div>
+
+<!-- ============================================================ -->
+<h2>What a Digital Twin Is — and Is Not</h2>
+
+<p>The term "digital twin" is used inconsistently in industry and academia. A precise operational definition:</p>
+
+<div class="box-rule">
+  <strong>Digital Twin — operational definition</strong>
+  <ol style="margin-top:.5rem">
+    <li><strong>A physics-informed predictive model</strong> — surrogate, SysID model, or hybrid physics/ML — calibrated to measurement data from the asset.</li>
+    <li><strong>A real-time state update mechanism</strong> — continuously assimilates new sensor measurements to refine model parameters and reduce uncertainty (KF, particle filter, or Bayesian update).</li>
+    <li><strong>A decision support interface</strong> — translates predictions and uncertainty estimates into actionable outputs: maintenance scheduling, operating point recommendations, anomaly alerts, RUL estimates.</li>
+  </ol>
+  A simulation model alone is <em>not</em> a digital twin. A dashboard that visualises sensor data is <em>not</em> a digital twin. The twin is defined by the bidirectional connection between the physical and virtual systems.
+</div>
+
+<!-- ============================================================ -->
+<h2>DT Maturity Levels</h2>
+
+<p>An industry-standard five-level maturity scale:</p>
+
+<div class="maturity-level"><div class="level-badge">Level 1</div><div><strong>Descriptive</strong> — A 3D CAD or physics simulation. No real-time data connection. <em>Not a twin.</em></div></div>
+<div class="maturity-level"><div class="level-badge">Level 2</div><div><strong>Diagnostic</strong> — Real-time sensor data visualisation. Data collected but not used to update the model.</div></div>
+<div class="maturity-level"><div class="level-badge">Level 3</div><div><strong>Predictive</strong> — Surrogate calibrated to historical data. Static parameters; no real-time update. <em>Most common "DT" in industry today.</em></div></div>
+<div class="maturity-level"><div class="level-badge">Level 4</div><div><strong>Adaptive</strong> — Continuous state update via KF or Bayesian assimilation. Model parameters adjust as asset evolves. <em>True digital twin.</em></div></div>
+<div class="maturity-level"><div class="level-badge">Level 5</div><div><strong>Autonomous</strong> — DT drives decisions directly (maintenance scheduling, operating commands) with human oversight only for safety-critical choices.</div></div>
+
+<p style="margin-top:1rem">
+  Most methods in this book enable Level 3 (Parts I–II) and Level 4 (Part III: virtual sensors + SysID).
+  Level 5 requires the full RL + safety framework (Ch. 21).
+</p>
+
+<!-- ============================================================ -->
+<h2>FEM → ROM → DT: The Three-Stage Construction Pipeline</h2>
+
+<p>The most common question: "I have a FEM model. How do I turn it into a digital twin?"</p>
+
+<h3>Stage 1: High-Fidelity Physics Model</h3>
+<p>
+  A FEM, CFD, or ODE/PDE model that is physically accurate but too slow for real-time update (&gt; 1 s per evaluation).
+  This is your physics foundation — do not compromise its accuracy.
+  Requirements: mesh convergence study (solution change &lt; 1% between refinement levels),
+  material parameters calibrated to coupon tests (not default library values), and ASME V&amp;V 10/40 compliance.
+</p>
+
+<h3>Stage 2: Reduced-Order Model (ROM)</h3>
+<p>A fast approximate representation of the high-fidelity model (&lt; 10 ms per evaluation). Built via POD or neural operator.</p>
+
+<p><strong>POD-Galerkin ROM (linear/mildly nonlinear physics):</strong></p>
+<ol>
+  <li>Run FEM at \(N_s = 200\)–\(500\) Sobol' parameter samples. Collect snapshots: \(\mathbf{S} = [\mathbf{u}_1, \ldots, \mathbf{u}_{N_s}] \in \mathbb{R}^{n \times N_s}\).</li>
+  <li>Compute SVD: retain first \(r\) modes \(\bm{\Phi}\) such that
+    <div class="math-block">$$\frac{\sum_{i=1}^r \sigma_i^2}{\sum_j \sigma_j^2} > 0.9999$$</div>
+    Typical: \(r = 20\)–\(100\) modes vs \(n = 10^4\)–\(10^6\) DOFs.
+  </li>
+  <li>Project FEM equations: \(\mathbf{K}\mathbf{u} = \mathbf{f}\) → \((\bm{\Phi}^\top\mathbf{K}\bm{\Phi})\mathbf{q} = \bm{\Phi}^\top\mathbf{f}\), where \(\mathbf{q} \in \mathbb{R}^r\). Speedup: \(10^2\)–\(10^4\times\) vs FEM.</li>
+</ol>
+
+<p><strong>Neural operator ROM (strongly nonlinear physics):</strong>
+  FNO/Transolver replaces POD projection. Maps parameters directly to full-field solution
+  \(\bm{\Theta} \to \mathbf{u}(\mathbf{x})\) in ~10 ms per evaluation.
+</p>
+
+<h3>Stage 3: Digital Twin</h3>
+<p>The ROM augmented with: (a) a real-time state update mechanism (Section below), and (b) a monitoring layer that detects when the ROM's predictions diverge from sensor observations.</p>
+
+<div class="box-example">
+  <strong>Turbine blade thermal DT</strong><br>
+  FEM: ABAQUS 3D thermal model, 84,000 DOFs, 45-second solve per operating point.<br>
+  Parameters: \(\bm{\mu} = (\dot{m}_{cool}, T_{gas}, T_{cool}, \mathrm{Re}) \in \mathbb{R}^4\).<br>
+  Snapshot DOE: \(N_s = 120\) Sobol' points; 1.5 hours total (one-time cost).<br>
+  POD: \(r = 8\) modes capture 99.998% of snapshot energy.<br>
+  ROM surrogate: GP on 8 outputs; prediction in 0.3 ms vs 45 s for FEM (<strong>150,000× speedup</strong>).<br>
+  ROM error: \(\|\hat{\mathbf{u}} - \mathbf{u}_{FEM}\|/\|\mathbf{u}_{FEM}\| &lt; 0.2\%\) on 20 held-out validation points.<br>
+  Digital twin: ROM in EnKF ensemble propagation; 12 thermocouple measurements update state every 30 s.
+</div>
+
+<!-- ============================================================ -->
+<h2>Data Assimilation: Real-Time State Update</h2>
+
+<p>
+  The defining capability of a DT is not the model but the <em>update mechanism</em>.
+  Data assimilation formalises the sequential Bayesian update of the model's state distribution:
+</p>
+
+<div class="math-block">
+$$p(\mathbf{x}_t \mid \mathbf{y}_{1:t}) \propto p(\mathbf{y}_t \mid \mathbf{x}_t)\, p(\mathbf{x}_t \mid \mathbf{y}_{1:t-1})$$
+</div>
+
+<h3>Assimilation Method Selection</h3>
+
+<table>
+  <thead>
+    <tr><th>Method</th><th>Dimensionality</th><th>Nonlinearity</th><th>Engineering use</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Kalman filter (KF)</td><td>Low (\(d \leq 20\))</td><td>None (linear)</td><td>Battery SoC, linear thermal models</td></tr>
+    <tr><td>Extended KF (EKF)</td><td>Low–medium</td><td>Mild</td><td>Turbopump dynamics, ECM battery</td></tr>
+    <tr><td>Unscented KF (UKF)</td><td>Low–medium</td><td>Moderate</td><td>Chemical reactor SoC, propellant feed</td></tr>
+    <tr><td>Ensemble KF (EnKF)</td><td>High (\(d > 100\))</td><td>High</td><td>CFD state update, reservoir models</td></tr>
+    <tr><td>Particle filter (PF)</td><td>Any</td><td>Any (non-Gaussian)</td><td>RUL estimation, multi-modal posterior</td></tr>
+    <tr><td>4D-Var</td><td>Very high (\(d > 10^4\))</td><td>Smooth, differentiable</td><td>Atmospheric/ocean; adjoint required</td></tr>
+  </tbody>
+</table>
+
+<h3>Ensemble Kalman Filter (EnKF)</h3>
+<p>
+  Maintains an ensemble of \(N_e\) model states \(\{\mathbf{x}_t^{(i)}\}_{i=1}^{N_e}\) and updates them when observations arrive:
+</p>
+<div class="math-block">
+$$\mathbf{K}_t^{EnKF} = \mathbf{C}_{xz}(\mathbf{C}_{zz} + \mathbf{R})^{-1}$$
+$$\mathbf{x}_t^{(i)+} = \mathbf{x}_t^{(i)-} + \mathbf{K}_t^{EnKF}\!\left(\mathbf{y}_t + \bm{\epsilon}^{(i)} - \mathcal{H}(\mathbf{x}_t^{(i)-})\right)$$
+</div>
+<p>
+  where \(\mathbf{C}_{xz}, \mathbf{C}_{zz}\) are sample cross-covariances from the ensemble and
+  \(\bm{\epsilon}^{(i)} \sim \mathcal{N}(\mathbf{0}, \mathbf{R})\).
+  With \(N_e = 50\)–\(200\), the EnKF is tractable even for 3D field surrogates (FNO, Transolver).
+</p>
+
+<h3>DT Update Trigger Protocols</h3>
+
+<table>
+  <thead>
+    <tr><th>Trigger</th><th>Method</th><th>Engineering application</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>New measurement (streaming)</td><td>KF/EKF/UKF update</td><td>Battery SoC, real-time temperature estimation</td></tr>
+    <tr><td>CUSUM alarm</td><td>Full recalibration</td><td>Catalyst deactivation, sensor drift correction</td></tr>
+    <tr><td>Scheduled interval</td><td>Ensemble refresh</td><td>Monthly fleet reliability update, seasonal model</td></tr>
+    <tr><td>Accuracy degradation</td><td>Active learning</td><td>Surrogate retraining when RMSE exceeds threshold</td></tr>
+    <tr><td>Significant event</td><td>Parameter reset + refit</td><td>Major maintenance, component replacement</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2>Model-Plant Mismatch: Detection and Recovery</h2>
+
+<p>
+  The most operationally critical DT problem: the DT's predictions diverge from sensor measurements
+  but the system continues serving stale predictions silently.
+</p>
+
+<table>
+  <thead>
+    <tr><th>Mechanism</th><th>Physical cause</th><th>Detection</th><th>Remedy</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Parameter drift</td><td>Catalyst deactivation, wear, fouling</td><td>Innovation CUSUM</td><td>Bayesian re-identification (EKF)</td></tr>
+    <tr><td>Operating envelope shift</td><td>New load profile, seasonal change</td><td>ODD check, CUSUM</td><td>Active learning at new operating points</td></tr>
+    <tr><td>Model structure error</td><td>Wrong physics, missing dynamics</td><td>Systematic residual bias</td><td>Add physics terms, new surrogate family</td></tr>
+    <tr><td>Sensor degradation</td><td>Drift, fouling, calibration loss</td><td>Cross-sensor consistency</td><td>Sensor recalibration; flag in model card</td></tr>
+  </tbody>
+</table>
+
+<h3>The Innovation Sequence as a Health Monitor</h3>
+
+<p>
+  In the KF/EnKF framework, the <strong>innovation</strong> at step \(t\) is:
+</p>
+<div class="math-block">
+$$\bm{\nu}_t = \mathbf{y}_t - \mathcal{H}(\hat{\mathbf{x}}_t^-)$$
+</div>
+<p>
+  Under a correctly specified model, innovations are white noise: \(\bm{\nu}_t \sim \mathcal{N}(\mathbf{0}, \mathbf{S}_t)\).
+  Three checks to monitor continuously:
+</p>
+<ol>
+  <li><strong>Innovation bias</strong>: \(\bar{\bm{\nu}} \neq \mathbf{0}\) → systematic model error.</li>
+  <li><strong>Innovation variance</strong>: \(\hat{\mathbf{S}} \neq \mathbf{S}_t\) → incorrect noise spec or unmodelled nonlinearity.</li>
+  <li><strong>Normalised innovation squared (NIS)</strong>: \(\chi^2_t = \bm{\nu}_t^\top \mathbf{S}_t^{-1} \bm{\nu}_t\) should follow \(\chi^2(n_y)\). Run CUSUM on \(\chi^2_t\) to detect slow drift early.</li>
+</ol>
+
+<pre><code>class DTHealthMonitor:
+    def __init__(self, n_obs, alpha=0.01, cusum_thresh=5.0):
+        self.cusum_pos = 0.
+        self.cusum_neg = 0.
+        self.chi2_threshold = chi2.ppf(1 - alpha, df=n_obs)
+        self.h = cusum_thresh
+
+    def update(self, innovation, S):
+        nis = float(innovation @ np.linalg.solve(S, innovation))
+
+        # CUSUM on NIS (detect sustained drift)
+        self.cusum_pos = max(0, self.cusum_pos + nis - self.chi2_threshold)
+        self.cusum_neg = max(0, self.cusum_neg - nis + self.chi2_threshold)
+
+        if self.cusum_pos > self.h or self.cusum_neg > self.h:
+            return 'MISMATCH_DETECTED'   # trigger re-identification
+        return 'NOMINAL'</code></pre>
+
+<h3>DT Freshness Requirements</h3>
+
+<table>
+  <thead>
+    <tr><th>Application</th><th>Freshness budget</th><th>Dominant drift mechanism</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Battery SoC (EV)</td><td>Hours</td><td>Capacity fade, temperature-dependent parameters</td></tr>
+    <tr><td>Engine calibration</td><td>Days–weeks</td><td>Carbon build-up, injector wear</td></tr>
+    <tr><td>Structural health (aircraft)</td><td>Per-flight</td><td>Damage accumulation, temperature cycling</td></tr>
+    <tr><td>Catalytic reformer</td><td>Days</td><td>Catalyst deactivation (predictable Arrhenius)</td></tr>
+    <tr><td>Wind turbine</td><td>Months</td><td>Blade erosion, bearing wear (slow but monotone)</td></tr>
+    <tr><td>Fleet surrogate</td><td>Quarterly</td><td>Systematic unit-to-unit variability shift</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2>Transfer Learning for Data-Scarce DTs</h2>
+
+<p>
+  The fundamental challenge in engineering DT development is data scarcity.
+  Hot-fire tests cost tens of thousands of euros; destructive reliability tests consume irreplaceable hardware.
+  Transfer learning bridges the source domain (data-rich: simulation, sister asset, previous product generation)
+  to the target domain (data-scarce: the actual asset under operation).
+</p>
+
+<table>
+  <thead>
+    <tr><th>Approach</th><th>Source domain</th><th>Method</th><th>Example</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Multi-fidelity GP</td><td>CFD / FEM simulation</td><td>Kennedy-O'Hagan co-kriging</td><td>Turbine vane \(T_{wall}\)</td></tr>
+    <tr><td>Fine-tuning</td><td>Pre-trained neural net</td><td>Freeze early layers, retrain last</td><td>NOx model: test-bench → fleet</td></tr>
+    <tr><td>Domain randomisation</td><td>Parametric simulation</td><td>Train on distribution, deploy on one</td><td>Rocket GNC: sim → flight</td></tr>
+    <tr><td>Instance reweighting</td><td>Historical asset</td><td>Re-weight source samples by density ratio</td><td>Bearing: Gen 1 → Gen 2</td></tr>
+    <tr><td>Physics-informed TL</td><td>Known ODEs + sparse data</td><td>Embed physics in loss, fine-tune on data</td><td>Propellant: lab → engine</td></tr>
+  </tbody>
+</table>
+
+<h3>Multi-Fidelity as the Engineering-Native Transfer Method</h3>
+<p>
+  The Kennedy-O'Hagan framework is transfer learning with explicit physics reasoning about the fidelity gap:
+</p>
+<div class="math-block">
+$$f_{high}(\mathbf{x}) = \rho \cdot f_{low}(\mathbf{x}) + \delta(\mathbf{x})$$
+</div>
+<p>
+  \(\rho\) is the fidelity scaling factor; \(\delta\) is the discrepancy GP.
+  Practical workflow: 200 cheap RANS simulations (LF) + 12 expensive LES or hot-fire tests (HF)
+  gives better predictions than either alone, with honest uncertainty estimates reflecting the limited HF data.
+</p>
+
+<div class="box-pitfall">
+  <strong>Pitfall — Data leakage in transfer learning</strong><br>
+  When fine-tuning on a target dataset, the GroupKFold split must exclude any time windows
+  from the target asset that overlap with the source training period.
+  Failure to do this produces a fine-tuned model that appears to generalise but has
+  memorised shared operating conditions — inflated validation metrics, collapsed performance in deployment.
+</div>
+
+<!-- ============================================================ -->
+<h2>The Full DT: LOX/Methane Engine Map</h2>
+
+<p>
+  Every chapter of this book contributes a specific component to the complete operational DT.
+  The LOX/methane liquid rocket engine demonstrates the full architecture:
+</p>
+
+<table>
+  <thead>
+    <tr><th>DT Component</th><th>Chapter</th><th>Specific contribution</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Test campaign design</td><td>DOE</td><td>Sobol' DOE for hot-fire test matrix; Bayesian active learning for next test</td></tr>
+    <tr><td>Performance surrogate</td><td>Regression</td><td>GP ARD: \(I_{sp}, c^*\) efficiency vs. \((O/F, p_c, \varepsilon)\)</td></tr>
+    <tr><td>Combustion stability</td><td>Regression</td><td>XGBoost: stable / rough / hard-start classifier</td></tr>
+    <tr><td>Uncertainty quantification</td><td>UQ</td><td>Conformal PI; GP posterior; calibration check</td></tr>
+    <tr><td>Multi-fidelity correction</td><td>Multi-fidelity</td><td>CFD (200 RANS) + hot-fire (12 tests) Kennedy-O'Hagan</td></tr>
+    <tr><td>Physics constraints</td><td>Physics-ML</td><td>Thermodynamic ceiling on \(I_{sp}\); conservation laws</td></tr>
+    <tr><td>Transient time series</td><td>Deep TS</td><td>Thrust transient, throttle ramp, turbopump startup</td></tr>
+    <tr><td>Feed system SysID</td><td>SysID</td><td>PEM for propellant feed dynamics; EKF state estimation</td></tr>
+    <tr><td>Thermal virtual sensor</td><td>Virtual Sensors</td><td>LSTM: chamber wall temperature from pressure sensors</td></tr>
+    <tr><td>Turbopump anomaly detection</td><td>Anomaly Detection</td><td>Isolation Forest + CUSUM on bearing vibration</td></tr>
+    <tr><td>Bearing RUL</td><td>Reliability</td><td>Weibull-LSTM hybrid; RBDO margin analysis</td></tr>
+    <tr><td>Performance optimisation</td><td>Optimisation</td><td>BO: injector geometry; EHVI: multi-objective \(I_{sp}/m_{engine}\)</td></tr>
+    <tr><td>3D flow surrogate</td><td>Neural Operators</td><td>PINN: combustion chamber wall heat flux field</td></tr>
+    <tr><td>GNC policy (RL)</td><td>RL</td><td>PPO: throttle schedule for trajectory optimisation</td></tr>
+    <tr><td>Flight computer deployment</td><td>Deployment</td><td>ONNX export; latency/memory constraint satisfaction</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2>DT Standards</h2>
+
+<p>
+  <strong>ISO 23247 (2021)</strong> — Four-entity reference architecture for manufacturing DTs:
+  physical observable entity, device layer (sensors/actuators), digital twin layer (virtual model),
+  user layer (applications). Defines data exchange interfaces and synchronisation requirements —
+  not the ML methods.
+</p>
+<p>
+  <strong>ASME V&amp;V 40 (2018)</strong> — Most rigorous standard for computational model credibility
+  in safety-critical DTs. Defines the context of use (CoU), requires risk-informed credibility assessment,
+  mandates quantitative ODD coverage. Applies to any safety-critical DT, not only medical.
+</p>
+
+<!-- ============================================================ -->
+<h2>Key Takeaways</h2>
+
+<ul>
+  <li>A digital twin = physics model + real-time state update + decision support. Simulation alone is not a twin.</li>
+  <li>FEM → ROM (POD-Galerkin): retain 99.99% energy with \(r = 20\)–\(100\) modes from \(10^4\)–\(10^6\) DOF. 150,000× speedup.</li>
+  <li>EnKF ensemble propagation: \(N_e = 50\)–\(200\) members; run the ROM (not the full FEM) for real-time tractability.</li>
+  <li>Monitor the CUSUM on the normalised innovation squared (NIS) to detect model-plant mismatch before it becomes operationally significant.</li>
+  <li>Define your freshness budget before deployment — the maximum time the DT can operate without update. Each application has its own tolerance.</li>
+  <li>Transfer learning (multi-fidelity GP or neural net fine-tuning) is the engineering answer to expensive training data.</li>
+  <li>DT maturity Level 4 (adaptive) is the target; Level 3 (predictive/static surrogate) is where most industrial systems are today.</li>
+</ul>
+
+<nav class="chapter-nav">
+  <a href="ch22-model-versioning-mlops.html">← Ch 22: Model Versioning & MLOps</a>
+  <a href="index.html">Index →</a>
+</nav>
+</div>
+<footer>
+  <div class="container">The Engineer's Handbook of Machine Learning · Leonardo Pulga PhD</div>
+</footer>
+</body>
+</html>

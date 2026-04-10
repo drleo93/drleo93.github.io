@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 7: Uncertainty Quantification | Engineer's ML Handbook</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#2d333b;--text:#b8c0cc;--muted:#6e7890;--accent:#6da5cc;--green:#5a9e72;--amber:#c49a3c;--red:#c97b76;--code-bg:#13191f;--tag-bg:#1a2d40}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.7}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:1.4rem 2rem}
+header .breadcrumb{font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem}
+header h1{font-size:1.7rem;font-weight:700;color:#d0dae8;line-height:1.25}
+header .meta{font-size:0.82rem;color:var(--muted);margin-top:0.5rem}
+.tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin:0.9rem 0}
+.tag{background:var(--tag-bg);color:var(--accent);font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;border:1px solid #2a4a66}
+.container{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
+.tldr{background:#0c1e30;border:1px solid #2a4a66;border-left:4px solid var(--accent);border-radius:6px;padding:1.1rem 1.4rem;margin:1.5rem 0}
+.tldr h3{color:var(--accent);font-size:0.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:0.5rem}
+.tldr ul{padding-left:1.2rem}.tldr li{margin-bottom:0.25rem;font-size:0.92rem}
+h2{color:#c8d6e5;font-size:1.3rem;margin:2.2rem 0 0.8rem;padding-bottom:0.35rem;border-bottom:1px solid var(--border)}
+h3{color:#a8bcd0;font-size:1.05rem;margin:1.6rem 0 0.5rem}
+p{margin-bottom:0.9rem}ul,ol{padding-left:1.5rem;margin-bottom:0.9rem}li{margin-bottom:0.3rem}
+code{background:var(--code-bg);color:#a8d4a8;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.85em;padding:0.1em 0.4em;border-radius:3px}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto;margin:1rem 0}
+pre code{background:none;padding:0;font-size:0.88em}
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-rule{background:#161b22;border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-label{font-size:0.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:0.5rem}
+.box-lesson .box-label{color:var(--green)}.box-pitfall .box-label{color:var(--amber)}.box-rule .box-label{color:#8b9aaa}.box-example .box-label{color:#9d8fd4}
+.tbl-wrap{overflow-x:auto;margin:1.2rem 0}
+table{width:100%;border-collapse:collapse;font-size:0.87rem}
+th{background:#1c2636;color:#c8d6e5;padding:0.6rem 0.85rem;text-align:left;border-bottom:2px solid var(--border)}
+td{padding:0.55rem 0.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#161d28}td:first-child{color:#9bafc4}
+.formula-block{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:0.9rem 1.2rem;margin:1rem 0;text-align:center;overflow-x:auto}
+nav.chapter-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0;margin-top:2rem;border-top:1px solid var(--border);font-size:0.88rem}
+nav.chapter-nav a{color:var(--accent)}
+footer{background:var(--surface);border-top:1px solid var(--border);padding:1.2rem 2rem;text-align:center;font-size:0.8rem;color:var(--muted);margin-top:3rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="breadcrumb"><a href="index.html">Engineer's ML Handbook</a> › Part II: Models</div>
+  <h1>Ch 7: Uncertainty Quantification for Engineering Surrogates</h1>
+  <div class="meta">Chapter 7 of 23 &nbsp;·&nbsp; ~25 min read &nbsp;·&nbsp; A surrogate without UQ is dangerous</div>
+  <div class="tags">
+    <span class="tag">epistemic uncertainty</span>
+    <span class="tag">aleatoric uncertainty</span>
+    <span class="tag">conformal prediction</span>
+    <span class="tag">deep ensembles</span>
+    <span class="tag">MC Dropout</span>
+    <span class="tag">GP posterior</span>
+    <span class="tag">calibration</span>
+    <span class="tag">prediction interval</span>
+  </div>
+</header>
+<div class="container">
+
+<div class="tldr">
+  <h3>TL;DR</h3>
+  <ul>
+    <li>Epistemic uncertainty (from limited data) can be reduced by collecting more data. Aleatoric uncertainty (measurement noise) cannot. A surrogate that confuses them gives wrong safety margins.</li>
+    <li><strong>Conformal prediction</strong> provides distribution-free, finite-sample coverage guarantees — the only method valid for regulatory submissions (EASA, ISO 26262).</li>
+    <li><strong>Deep ensembles</strong> (5–10 independently trained networks) consistently outperform MC Dropout in calibration quality across all benchmarks.</li>
+    <li>MC Dropout does not grow uncertainty outside the training domain — supplement with Mahalanobis distance OOD detection for extrapolation detection.</li>
+    <li>GP posterior uncertainty is exact under the GP prior: calibrated by construction, grows with distance from training data, zero at training points (up to noise).</li>
+    <li>Check calibration: empirical coverage at level \(1-\alpha\) should equal \(1-\alpha\). Plot reliability diagrams before any deployment.</li>
+  </ul>
+</div>
+
+<h2>1. Why UQ Matters</h2>
+
+<p>Three engineering scenarios where missing UQ causes failures:</p>
+<ul>
+  <li>Compressor map surrogate predicts surge margin = 8%. Without a PI, the engineer cannot determine whether this is confidently 8% or could be 3%–14%. With 95% PI [6.1%, 9.9%], the decision carries known risk.</li>
+  <li>LSTM NOx virtual sensor predicts 0.38 g/kWh (Euro 6d limit: 0.40). Without UQ: compliance pass. With 95% PI [0.31, 0.47]: upper bound exceeds limit — flag for additional measurement.</li>
+  <li>GP surrogate queried far from training data: posterior \(\sigma^*(\mathbf{x}) > 3\sigma_f\) signals unreliable prediction — request a new experiment before acting.</li>
+</ul>
+
+<h2>2. Epistemic vs. Aleatoric Uncertainty</h2>
+
+<div class="box-lesson">
+  <div class="box-label">Definitions</div>
+  <p><strong>Epistemic uncertainty</strong> (from limited data): in GP notation:</p>
+  $$U_{epistemic}(\mathbf{x}^*) = k_{**} - \mathbf{k}_*^\top(\mathbf{K} + \sigma_n^2\mathbf{I})^{-1}\mathbf{k}_*$$
+  <p>Zero at training points. Increases with distance from training data. Can be reduced by collecting more data.</p>
+  <p><strong>Aleatoric uncertainty</strong> (irreducible noise): \(U_{aleatoric} = \sigma_n^2\). Adding more training data does not reduce it. Can only be reduced by improving instrumentation.</p>
+  <p><strong>Total</strong>: \(U_{total} = U_{epistemic} + U_{aleatoric}\).</p>
+</div>
+
+<h2>3. GP Uncertainty: The Gold Standard</h2>
+
+<p>GP posterior predictive distribution is Gaussian:</p>
+<div class="formula-block">
+$$p(y^* | \mathbf{x}^*, \mathcal{D}) = \mathcal{N}\!\bigl(\mu^*(\mathbf{x}^*),\; \sigma^{*2}(\mathbf{x}^*) + \sigma_n^2\bigr)$$
+</div>
+
+<p>95% prediction interval: \([\mu^* - 1.96\sigma^*, \mu^* + 1.96\sigma^*]\).</p>
+
+<p>Key properties: (1) calibrated by construction if the kernel is correctly specified; (2) high \(\sigma^*(\mathbf{x})\) identifies where to place the next experiment (active learning); (3) \(\sigma^* \to \sigma_n\) at training points.</p>
+
+<p><strong>Calibration check</strong> — empirical coverage should match nominal:</p>
+<div class="formula-block">
+$$\hat{c}(\alpha) = \frac{1}{n_{test}}\sum_{i=1}^{n_{test}} \mathbf{1}\!\left[y_i \in \left[\mu^* \pm z_{1-\alpha/2}\sigma^*\right]\right] \approx 1-\alpha$$
+</div>
+
+<h2>4. Monte Carlo Dropout</h2>
+
+<p>Train MLP with dropout rate \(p\). At test time, run \(T\) stochastic forward passes with dropout active:</p>
+<div class="formula-block">
+$$\hat{\mu}(\mathbf{x}) = \frac{1}{T}\sum_{t=1}^T \hat{y}_t(\mathbf{x}), \qquad \hat{\sigma}^2(\mathbf{x}) = \frac{1}{T}\sum_{t=1}^T \hat{y}_t^2 - \hat{\mu}^2 + \frac{p}{1-p}\|\mathbf{w}\|^2 \cdot \tau^{-1}$$
+</div>
+
+<p>Use \(T = 50\text{–}200\) passes. At \(T=100\), inference cost is \(100\times\) a single forward pass — often unacceptable for embedded deployment.</p>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Two MC Dropout calibration failures</div>
+  <ol>
+    <li><strong>Overconfidence in extrapolation</strong>: MC Dropout uncertainty does not grow significantly outside the training domain — unlike GPs. Supplement with Mahalanobis distance to training data for OOD detection.</li>
+    <li><strong>Under-confidence in interpolation</strong>: with poorly tuned \(p\), MC Dropout produces uncertainty estimates too wide inside the training domain, creating overly conservative designs. Tune \(p \in [0.05, 0.20]\) via negative log-predictive density (NLPD) on a calibration set, not fixed at \(p=0.5\).</li>
+  </ol>
+</div>
+
+<h2>5. Deep Ensembles</h2>
+
+<p>Train \(M\) networks with identical architecture but independent random initialisations. Each outputs a Gaussian \((\mu^{(m)}, \sigma^{(m)2})\). The ensemble predictive distribution is a mixture of Gaussians:</p>
+
+<div class="formula-block">
+$$\mu^*(\mathbf{x}) = \frac{1}{M}\sum_{m=1}^M \mu^{(m)}(\mathbf{x}), \qquad \sigma^{*2}(\mathbf{x}) = \frac{1}{M}\sum_{m=1}^M \left[\sigma^{(m)2} + \mu^{(m)2}\right] - \mu^{*2}$$
+</div>
+
+<p>Deep ensembles (\(M=5\)) consistently outperform MC Dropout, Bayesian NNs, and temperature scaling in calibration quality across tabular and image benchmarks (Lakshminarayanan et al., 2017). Main drawback: \(M\times\) training and inference cost.</p>
+
+<div class="box-rule">
+  <div class="box-label">Rule — Ensemble size vs. cost</div>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>\(M\) value</th><th>Inference cost</th><th>Use when</th></tr></thead>
+    <tbody>
+      <tr><td>\(M=1\)</td><td>\(1\times\)</td><td>No UQ needed (point estimate)</td></tr>
+      <tr><td>\(M=3\)</td><td>\(3\times\)</td><td>Lightweight UQ; tight inference budget</td></tr>
+      <tr><td>\(M=5\)</td><td>\(5\times\)</td><td><strong>Recommended default</strong>; good calibration</td></tr>
+      <tr><td>\(M=10\)</td><td>\(10\times\)</td><td>High-stakes regulatory; diminishing returns above 10</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<h2>6. Conformal Prediction</h2>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson — The only distribution-free coverage guarantee</div>
+  Conformal prediction (Vovk et al.) provides a finite-sample, distribution-free coverage guarantee: for any black-box model \(\hat{f}\), it constructs prediction intervals \(C(\mathbf{x}^*)\) satisfying:
+  $$P(y^* \in C(\mathbf{x}^*)) \geq 1 - \alpha$$
+  without assuming any distributional form.
+  <br><br>
+  <strong>Split conformal algorithm</strong>:
+  <ol>
+    <li>Split data: calibration set \(\mathcal{D}_{cal}\), test set \(\mathcal{D}_{test}\)</li>
+    <li>Compute conformity scores on calibration: \(s_i = |y_i - \hat{f}(\mathbf{x}_i)|\)</li>
+    <li>Compute \(\hat{q} = \lceil(1-\alpha)(1 + 1/n_{cal})\rceil\)-th quantile of \(\{s_i\}\)</li>
+    <li>Prediction interval: \([\hat{f}(\mathbf{x}^*) - \hat{q},\; \hat{f}(\mathbf{x}^*) + \hat{q}]\)</li>
+  </ol>
+  This is the method to use for EASA CM-0064, ISO 26262 ASIL-B, and any other regulatory submission requiring coverage guarantees.
+</div>
+
+<h2>7. UQ Method Selection</h2>
+
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>Method</th><th>Model type</th><th>Coverage guarantee</th><th>Extrapolation detection</th><th>Inference cost</th></tr></thead>
+  <tbody>
+    <tr><td>GP posterior</td><td>GP only</td><td>Asymptotic (model-dependent)</td><td>Yes (σ* grows)</td><td>1×</td></tr>
+    <tr><td>Deep ensembles</td><td>Any NN</td><td>None (empirical)</td><td>Partial (disagreement)</td><td>M×</td></tr>
+    <tr><td>MC Dropout</td><td>Any NN with dropout</td><td>None</td><td>No</td><td>T×</td></tr>
+    <tr><td><strong>Conformal prediction</strong></td><td>Any black box</td><td><strong>Distribution-free, finite-sample</strong></td><td>Requires separate OOD detector</td><td>1× + calibration</td></tr>
+    <tr><td>Bootstrap</td><td>Any model</td><td>Asymptotic</td><td>No</td><td>B×</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Rule — UQ method by application</div>
+  <ul>
+    <li><strong>Regulatory submission (EASA/FAA/ISO)</strong>: conformal prediction — the only method with distribution-free coverage guarantee</li>
+    <li><strong>Active learning and Bayesian optimisation</strong>: GP posterior — exact epistemic uncertainty, grows in extrapolation</li>
+    <li><strong>Production NN deployment</strong>: deep ensembles (\(M=5\)) — best calibration, most robust</li>
+    <li><strong>Quick uncertainty estimate for NN</strong>: MC Dropout with \(p \in [0.05, 0.20]\) tuned by NLPD</li>
+    <li><strong>Always</strong>: check empirical coverage with reliability diagrams before deployment</li>
+  </ul>
+</div>
+
+<h2>Chapter Summary</h2>
+
+<div class="box-lesson">
+  <div class="box-label">Key takeaways</div>
+  <ul>
+    <li><strong>Epistemic vs. aleatoric</strong>: confusing them gives wrong safety margins. GP separates them analytically. Deep ensembles conflate them (disagreement is partly epistemic, partly aleatoric).</li>
+    <li><strong>Conformal prediction</strong>: mandatory for regulatory submissions. Distribution-free, finite-sample. Works with any black-box model.</li>
+    <li><strong>Deep ensembles beat MC Dropout</strong> in calibration quality consistently. Use \(M=5\) as the default.</li>
+    <li><strong>MC Dropout extrapolation failure</strong>: supplement with Mahalanobis distance OOD detector. Never rely on MC Dropout alone for safety-critical extrapolation detection.</li>
+    <li><strong>Calibration check</strong>: plot reliability diagram. Empirical coverage at 90% should be ~90%. Systematic under-coverage in a specific input region indicates model misspecification there.</li>
+  </ul>
+</div>
+
+<nav class="chapter-nav">
+  <a href="ch06-deep-learning.html">← Ch 6: Deep Learning</a>
+  <a href="index.html">Table of Contents</a>
+  <a href="ch08-validation-interpretability.html">Ch 8: Validation &amp; Interpretability →</a>
+</nav>
+</div>
+<footer>The Engineer's Handbook of Machine Learning &nbsp;·&nbsp; Leonardo Pulga PhD &nbsp;·&nbsp; <a href="index.html">All chapters</a></footer>
+</body>
+</html>
