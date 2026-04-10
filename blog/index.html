@@ -26,7 +26,25 @@
 
   .container { max-width: 860px; margin: 0 auto; padding: 0 1.5rem; }
 
-  header { border-bottom: 1px solid var(--border); padding: 3rem 0 2rem; margin-bottom: 3rem; }
+  /* Navigation Links CSS */
+  .top-nav {
+    display: flex;
+    gap: 1.5rem;
+    padding-top: 1.5rem;
+    font-size: 0.9rem;
+  }
+  .top-nav a {
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .top-nav a:hover {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  /* Header adjustments */
+  header { border-bottom: 1px solid var(--border); padding: 2rem 0 2rem; margin-bottom: 3rem; }
+  
   .book-label { font-size: 0.78rem; color: var(--muted); letter-spacing: .1em;
                 text-transform: uppercase; margin-bottom: .6rem; }
   h1 { font-size: 2.2rem; font-weight: 700; color: #dde3ec; line-height: 1.2; margin-bottom: .7rem; }
@@ -62,6 +80,11 @@
 <body>
 <div class="container">
 
+<nav class="top-nav">
+  <a href="https://drleo93.github.io/index.html">← Main Home</a>
+  <a href="https://drleo93.github.io/blog.html">Book Home</a>
+</nav>
+
 <header>
   <div class="book-label">Blog Edition · GitHub Pages</div>
   <h1>The Engineer's Handbook of Machine Learning</h1>
@@ -74,7 +97,6 @@
   </div>
 </header>
 
-<!-- ====================================================== -->
 <div class="part-header">
   <div class="part-label">Part I</div>
   <div class="part-title">Foundations</div>
@@ -110,7 +132,6 @@
   </li>
 </ul>
 
-<!-- ====================================================== -->
 <div class="part-header">
   <div class="part-label">Part II</div>
   <div class="part-title">Supervised Learning and Surrogates</div>
@@ -146,7 +167,6 @@
   </li>
 </ul>
 
-<!-- ====================================================== -->
 <div class="part-header">
   <div class="part-label">Part III</div>
   <div class="part-title">Time-Series and Dynamical Systems</div>
@@ -182,7 +202,6 @@
   </li>
 </ul>
 
-<!-- ====================================================== -->
 <div class="part-header">
   <div class="part-label">Part IV</div>
   <div class="part-title">Condition Monitoring and Deployment</div>
@@ -204,7 +223,6 @@
   </li>
 </ul>
 
-<!-- ====================================================== -->
 <div class="part-header">
   <div class="part-label">Part V</div>
   <div class="part-title">Optimisation and Reliability</div>
@@ -226,7 +244,6 @@
   </li>
 </ul>
 
-<!-- ====================================================== -->
 <div class="part-header">
   <div class="part-label">Part VI</div>
   <div class="part-title">Advanced Physics-Informed Methods</div>
@@ -248,7 +265,6 @@
   </li>
 </ul>
 
-<!-- ====================================================== -->
 <div class="part-header">
   <div class="part-label">Part VII</div>
   <div class="part-title">Emerging and Advanced Topics</div>
