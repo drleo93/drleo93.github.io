@@ -11,104 +11,43 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* Integrated Blog Theme Palette */
-    :root {
-      --bg:      #2a2d35;
-      --surface: #33373f;
-      --border:  #484d58;
-      --text:    #d4d8e0;
-      --muted:   #8e94a4;
-      --accent:  #7db8d8;
-      --tag-bg:  #2d3d52;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-    }
-    
-    a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-    
-    a:hover {
-      text-decoration: underline;
-    }
-
-    /* Typography overrides for consistency */
-    h1, h2, h3, h4, .h2, .h3, .h4 { color: #dde3ec; }
-    p { color: var(--text); }
-
+    /* Consistent Styling with Resume Page */
     .tech-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-    
-    /* Updated tag style to match blog */
     .tech-tag {
-      background: var(--tag-bg); 
-      border: 1px solid var(--border);
-      color: var(--muted); 
-      font-size: 11px; font-weight: 500;
-      padding: 3px 10px; 
-      border-radius: 3px; 
-      letter-spacing: .03em;
-      white-space: nowrap;
+      background:hsla(45,90%,68%,.1); border:1px solid hsla(45,90%,68%,.25);
+      color:hsl(45,90%,62%); font-size:11px; font-weight:500;
+      padding:3px 10px; border-radius:20px; letter-spacing:.03em;
     }
-
-    .stat-row { display:flex; gap:14px; flex-wrap:wrap; margin:18px 0 0; }
     
-    /* Updated card styling to match blog */
-    .stat-box {
-      background: var(--surface); 
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--accent); /* Blog style accent border */
-      border-radius: 4px; 
-      padding: 12px 18px; 
-      text-align: center; 
-      flex: 1; 
-      min-width: 90px;
+    /* Adjusted Stat Row to prevent excessive vertical stretching */
+    .stat-row { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+      gap: 14px; 
+      margin: 18px 0 0; 
     }
-    .stat-box .stat-num { font-size:1.5rem; font-weight:600; color: var(--accent); display:block; }
-    .stat-box .stat-label { font-size:11px; color: var(--muted); margin-top:2px; }
+    .stat-box {
+      background: var(--bg-gradient-jet); 
+      border: 1px solid var(--jet);
+      border-radius: 12px; 
+      padding: 15px; 
+      text-align: center;
+    }
+    .stat-box .stat-num { font-size:1.5rem; font-weight:600; color:hsl(45,90%,68%); display:block; }
+    .stat-box .stat-label { font-size:11px; color:var(--light-gray-70); margin-top:2px; }
     
     .achievements-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(175px,1fr)); gap:12px; margin-top:18px; }
-    
-    /* Updated achievement card to match blog */
     .achievement-card {
-      background: var(--surface); 
-      border: 1px solid var(--border);
-      border-radius: 4px; 
-      padding: 15px; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 6px;
+      background:var(--bg-gradient-jet); border:1px solid var(--jet);
+      border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:6px;
     }
-    .achievement-card ion-icon { font-size:22px; color: var(--accent); }
-    .achievement-card .ach-title { font-size:13px; font-weight:600; color: #dde3ec; }
-    .achievement-card .ach-desc { font-size:11.5px; color: var(--text); line-height:1.5; }
+    .achievement-card ion-icon { font-size:22px; color:hsl(45,90%,68%); }
+    .achievement-card .ach-title { font-size:13px; font-weight:600; color:var(--light-gray); }
+    .achievement-card .ach-desc { font-size:11.5px; color:var(--light-gray-70); line-height:1.5; }
     
-    .navbar-link { text-decoration:none; display:block; padding:5px 7px; color:inherit; }
-
-    /* New direct contact links section */
-    .contact-links {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 30px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 20px;
-    }
-    .contact-link-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 14px;
-    }
-    .contact-link-item ion-icon {
-      font-size: 22px;
-      color: var(--accent);
-    }
+    /* Ensure the main content height fits the text */
+    .main-content { min-height: auto; }
+    article { height: auto; }
   </style>
 </head>
 <body>
@@ -157,21 +96,17 @@
           <div class="icon-box"><ion-icon name="globe-outline"></ion-icon></div>
           <div class="contact-info">
             <p class="contact-title">ResearchGate</p>
-            <a href="https://www.researchgate.net/profile/Leonardo-Pulga" class="contact-link" target="_blank">researchgate.net/…/Leonardo-Pulga</a>
+            <a href="https://www.researchgate.net/profile/Leonardo-Pulga" class="contact-link" target="_blank">ResearchGate Profile</a>
           </div>
         </li>
       </ul>
       <div class="separator"></div>
       <ul class="social-list">
         <li class="social-item">
-          <a href="https://www.linkedin.com/in/leonardopulga/" class="social-link" target="_blank" title="LinkedIn">
-            <ion-icon name="logo-linkedin"></ion-icon>
-          </a>
+          <a href="https://www.linkedin.com/in/leonardopulga/" class="social-link" target="_blank"><ion-icon name="logo-linkedin"></ion-icon></a>
         </li>
         <li class="social-item">
-          <a href="https://github.com/drleo93" class="social-link" target="_blank" title="GitHub">
-            <ion-icon name="logo-github"></ion-icon>
-          </a>
+          <a href="https://github.com/drleo93" class="social-link" target="_blank"><ion-icon name="logo-github"></ion-icon></a>
         </li>
       </ul>
     </div>
@@ -181,10 +116,10 @@
 
     <nav class="navbar">
       <ul class="navbar-list">
-        <li class="navbar-item"><a class="navbar-link active" href="./index.html" data-nav-link href="./index.html">About</a></li>
+        <li class="navbar-item"><a class="navbar-link active" href="./index.html" data-nav-link>About</a></li>
         <li class="navbar-item"><a class="navbar-link" href="./resume.html" data-nav-link>Resume</a></li>
         <li class="navbar-item"><a class="navbar-link" href="./blog.html" data-nav-link>Blog</a></li>
-        <li class="navbar-item"><a class="navbar-link" href="#contact" data-nav-link>Contact</a></li>
+        <li class="navbar-item"><a class="navbar-link" href="./index.html#contact" data-nav-link>Contact</a></li>
       </ul>
     </nav>
 
@@ -210,8 +145,7 @@
         </p>
         <p>
           I also wrote a technical handbook on applied ML for engineering. 23 chapters, every one
-          self-contained with equations, working code, and decision tables — written for engineers
-          who have to actually deploy this stuff.
+          self-contained with equations, working code, and decision tables.
           <a href="./blog.html">Read the chapters →</a>
         </p>
       </section>
@@ -226,59 +160,20 @@
       <section class="service">
         <h3 class="h3 service-title">What I'm working on</h3>
         <ul class="service-list">
-
           <li class="service-item">
-            <div class="service-icon-box">
-              <img src="./assets/images/icon-design.svg" alt="Scientific ML" width="40">
-            </div>
+            <div class="service-icon-box"><img src="./assets/images/icon-design.svg" alt="Scientific ML" width="40"></div>
             <div class="service-content-box">
               <h4 class="h4 service-item-title">Scientific ML & Surrogate Modelling</h4>
-              <p class="service-item-text">
-                GP, PINN, FNO, DeepONet — fast physics-faithful surrogates that replace
-                FEM/CFD queries in optimisation and digital-twin loops.
-              </p>
+              <p class="service-item-text">GP, PINN, FNO, DeepONet — fast physics-faithful surrogates for digital-twin loops.</p>
             </div>
           </li>
-
           <li class="service-item">
-            <div class="service-icon-box">
-              <img src="./assets/images/icon-dev.svg" alt="Virtual Sensors" width="40">
-            </div>
+            <div class="service-icon-box"><img src="./assets/images/icon-dev.svg" alt="Virtual Sensors" width="40"></div>
             <div class="service-content-box">
               <h4 class="h4 service-item-title">Hybrid Virtual Sensors & Anomaly Detection</h4>
-              <p class="service-item-text">
-                Grey-box architectures (physics model + ML residual) for real-time estimation.
-                CUSUM, Isolation Forest, LSTM autoencoders for turbomachinery monitoring.
-              </p>
+              <p class="service-item-text">Grey-box architectures (physics + ML residual) for real-time estimation and monitoring.</p>
             </div>
           </li>
-
-          <li class="service-item">
-            <div class="service-icon-box">
-              <img src="./assets/images/icon-app.svg" alt="Optimisation" width="40">
-            </div>
-            <div class="service-content-box">
-              <h4 class="h4 service-item-title">Bayesian Optimisation & Engineering Design</h4>
-              <p class="service-item-text">
-                Multi-objective BO (qEHVI), Bayesian RBDO, surrogate-assisted MDO.
-                Reduced calibration times by 50–90% across multiple product lines.
-              </p>
-            </div>
-          </li>
-
-          <li class="service-item">
-            <div class="service-icon-box">
-              <img src="./assets/images/icon-photo.svg" alt="3D AI" width="40">
-            </div>
-            <div class="service-content-box">
-              <h4 class="h4 service-item-title">3D AI & Neural Operators</h4>
-              <p class="service-item-text">
-                POD-ROM, FNO, GNN for full-field CFD/FEM predictions. Making spatial ML
-                tractable for real engineering geometries at production latencies.
-              </p>
-            </div>
-          </li>
-
         </ul>
       </section>
 
@@ -288,32 +183,17 @@
           <div class="achievement-card">
             <ion-icon name="trophy-outline"></ion-icon>
             <div class="ach-title">LEC Data Challenge</div>
-            <div class="ach-desc">2nd Place — 2021 & 2023. Exoplanet transit signal detection from photometric time series.</div>
-          </div>
-          <div class="achievement-card">
-            <ion-icon name="trophy-outline"></ion-icon>
-            <div class="ach-title">Ariel Data Challenge</div>
-            <div class="ach-desc">4th Place — 2022. Atmospheric retrieval from space telescope spectral data.</div>
-          </div>
-          <div class="achievement-card">
-            <ion-icon name="ribbon-outline"></ion-icon>
-            <div class="ach-title">Top 10% Kaggler</div>
-            <div class="ach-desc">Multiple placements across time-series and science ML challenges.</div>
+            <div class="ach-desc">2nd Place — 2021 & 2023. Exoplanet transit signal detection.</div>
           </div>
           <div class="achievement-card">
             <ion-icon name="school-outline"></ion-icon>
             <div class="ach-title">Ph.D. — UNIBO</div>
-            <div class="ach-desc">Automotive for Intelligent Mobility. AI-augmented CFD for ICEs with Maserati. 2022.</div>
-          </div>
-          <div class="achievement-card">
-            <ion-icon name="checkmark-circle-outline"></ion-icon>
-            <div class="ach-title">Eng. Profession</div>
-            <div class="ach-desc">Qualified for the Italian Engineering Profession (Ordine degli Ingegneri).</div>
+            <div class="ach-desc">Automotive for Intelligent Mobility. AI-augmented CFD with Maserati.</div>
           </div>
           <div class="achievement-card">
             <ion-icon name="flash-outline"></ion-icon>
             <div class="ach-title">Mensa Italy</div>
-            <div class="ach-desc">Affiliate member. Useful mostly for riddles, data challenges, and arguing about priors.</div>
+            <div class="ach-desc">Affiliate member. Useful for data challenges and priors.</div>
           </div>
         </div>
       </section>
@@ -322,59 +202,11 @@
         <h3 class="h3" style="margin-bottom:10px;">Tech stack</h3>
         <div class="tech-tags">
           <span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span>
-          <span class="tech-tag">TensorFlow</span><span class="tech-tag">GPflow</span>
-          <span class="tech-tag">BoTorch</span><span class="tech-tag">scikit-learn</span>
-          <span class="tech-tag">ONNX</span><span class="tech-tag">AWS</span>
-          <span class="tech-tag">Docker</span><span class="tech-tag">Linux</span>
-          <span class="tech-tag">MLflow</span><span class="tech-tag">Matlab</span>
-          <span class="tech-tag">Fortran</span><span class="tech-tag">OpenFOAM</span>
-          <span class="tech-tag">Star-CD / Fluent</span><span class="tech-tag">Ansys</span>
-          <span class="tech-tag">Simulink</span><span class="tech-tag">Aspen</span>
+          <span class="tech-tag">TensorFlow</span><span class="tech-tag">BoTorch</span>
+          <span class="tech-tag">AWS</span><span class="tech-tag">Docker</span>
+          <span class="tech-tag">MLflow</span><span class="tech-tag">OpenFOAM</span>
+          <span class="tech-tag">Ansys</span><span class="tech-tag">Simulink</span>
         </div>
-      </section>
-
-    </article>
-
-    <article class="contact active" data-page="contact" id="contact" style="margin-top:40px; display:block;">
-
-      <header>
-        <h2 class="h2 article-title">Contact</h2>
-      </header>
-
-      <section class="contact-info-direct">
-        <div class="contact-links">
-          <div class="contact-link-item">
-            <ion-icon name="mail-outline"></ion-icon>
-            <a href="mailto:leonardo.pulga93@gmail.com">leonardo.pulga93@gmail.com</a>
-          </div>
-          <div class="contact-link-item">
-            <ion-icon name="globe-outline"></ion-icon>
-            <a href="https://www.researchgate.net/profile/Leonardo-Pulga" target="_blank">ResearchGate Profile</a>
-          </div>
-          <div class="contact-link-item">
-            <ion-icon name="logo-linkedin"></ion-icon>
-            <a href="https://www.linkedin.com/in/leonardopulga/" target="_blank">LinkedIn Profile</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="contact-form">
-        <h3 class="h3 form-title">Get in touch</h3>
-        <p style="color:var(--muted); font-size:13px; margin-bottom:18px; line-height:1.7;">
-          Working on something at the intersection of ML and engineering? Interested in collaboration,
-          consulting, or just want to argue about Gaussian processes? Drop a message.
-        </p>
-        <form action="#" class="form" data-form>
-          <div class="input-wrapper">
-            <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
-            <input type="email" name="email" class="form-input" placeholder="Email address" required data-form-input>
-          </div>
-          <textarea name="message" class="form-input" placeholder="Your message" required data-form-input></textarea>
-          <button class="form-btn" type="submit" disabled data-form-btn>
-            <ion-icon name="paper-plane"></ion-icon>
-            <span>Send Message</span>
-          </button>
-        </form>
       </section>
 
     </article>
