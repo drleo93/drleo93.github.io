@@ -11,34 +11,109 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
+    /* Integrated Blog Theme Palette */
+    :root {
+      --bg:      #2a2d35;
+      --surface: #33373f;
+      --border:  #484d58;
+      --text:    #d4d8e0;
+      --muted:   #8e94a4;
+      --accent:  #7db8d8;
+      --tag-bg:  #2d3d52;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+    }
+    
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Typography overrides for consistency */
+    h1, h2, h3, h4, .h2, .h3, .h4 { color: #dde3ec; }
+    p { color: var(--text); }
+
     .tech-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+    
+    /* Updated tag style to match blog */
     .tech-tag {
-      background:hsla(45,90%,68%,.1); border:1px solid hsla(45,90%,68%,.25);
-      color:hsl(45,90%,62%); font-size:11px; font-weight:500;
-      padding:3px 10px; border-radius:20px; letter-spacing:.03em;
+      background: var(--tag-bg); 
+      border: 1px solid var(--border);
+      color: var(--muted); 
+      font-size: 11px; font-weight: 500;
+      padding: 3px 10px; 
+      border-radius: 3px; 
+      letter-spacing: .03em;
+      white-space: nowrap;
     }
+
     .stat-row { display:flex; gap:14px; flex-wrap:wrap; margin:18px 0 0; }
+    
+    /* Updated card styling to match blog */
     .stat-box {
-      background:var(--bg-gradient-jet); border:1px solid var(--jet);
-      border-radius:10px; padding:12px 18px; text-align:center; flex:1; min-width:90px;
+      background: var(--surface); 
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent); /* Blog style accent border */
+      border-radius: 4px; 
+      padding: 12px 18px; 
+      text-align: center; 
+      flex: 1; 
+      min-width: 90px;
     }
-    .stat-box .stat-num { font-size:1.5rem; font-weight:600; color:hsl(45,90%,68%); display:block; }
-    .stat-box .stat-label { font-size:11px; color:var(--light-gray-70); margin-top:2px; }
+    .stat-box .stat-num { font-size:1.5rem; font-weight:600; color: var(--accent); display:block; }
+    .stat-box .stat-label { font-size:11px; color: var(--muted); margin-top:2px; }
+    
     .achievements-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(175px,1fr)); gap:12px; margin-top:18px; }
+    
+    /* Updated achievement card to match blog */
     .achievement-card {
-      background:var(--bg-gradient-jet); border:1px solid var(--jet);
-      border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:6px;
+      background: var(--surface); 
+      border: 1px solid var(--border);
+      border-radius: 4px; 
+      padding: 15px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 6px;
     }
-    .achievement-card ion-icon { font-size:22px; color:hsl(45,90%,68%); }
-    .achievement-card .ach-title { font-size:13px; font-weight:600; color:var(--light-gray); }
-    .achievement-card .ach-desc { font-size:11.5px; color:var(--light-gray-70); line-height:1.5; }
+    .achievement-card ion-icon { font-size:22px; color: var(--accent); }
+    .achievement-card .ach-title { font-size:13px; font-weight:600; color: #dde3ec; }
+    .achievement-card .ach-desc { font-size:11.5px; color: var(--text); line-height:1.5; }
+    
     .navbar-link { text-decoration:none; display:block; padding:5px 7px; color:inherit; }
+
+    /* New direct contact links section */
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 30px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 20px;
+    }
+    .contact-link-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+    }
+    .contact-link-item ion-icon {
+      font-size: 22px;
+      color: var(--accent);
+    }
   </style>
 </head>
 <body>
 <main>
 
-  <!-- SIDEBAR -->
   <aside class="sidebar" data-sidebar>
     <div class="sidebar-info">
       <figure class="avatar-box">
@@ -102,10 +177,8 @@
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
   <div class="main-content">
 
-    <!-- NAV -->
     <nav class="navbar">
       <ul class="navbar-list">
         <li class="navbar-item"><a class="navbar-link active" href="./index.html" data-nav-link href="./index.html">About</a></li>
@@ -115,7 +188,6 @@
       </ul>
     </nav>
 
-    <!-- ABOUT -->
     <article class="about active" data-page="about">
 
       <header>
@@ -144,7 +216,6 @@
         </p>
       </section>
 
-      <!-- stats -->
       <div class="stat-row">
         <div class="stat-box"><span class="stat-num">7+</span><div class="stat-label">yrs industry ML</div></div>
         <div class="stat-box"><span class="stat-num">50–90%</span><div class="stat-label">sim-time reduction</div></div>
@@ -152,7 +223,6 @@
         <div class="stat-box"><span class="stat-num">2nd</span><div class="stat-label">LEC Data Challenge</div></div>
       </div>
 
-      <!-- services -->
       <section class="service">
         <h3 class="h3 service-title">What I'm working on</h3>
         <ul class="service-list">
@@ -212,7 +282,6 @@
         </ul>
       </section>
 
-      <!-- achievements -->
       <section style="margin-top:30px;">
         <h3 class="h3">Achievements</h3>
         <div class="achievements-grid">
@@ -249,7 +318,6 @@
         </div>
       </section>
 
-      <!-- tech stack -->
       <section style="margin-top:28px;">
         <h3 class="h3" style="margin-bottom:10px;">Tech stack</h3>
         <div class="tech-tags">
@@ -267,24 +335,32 @@
 
     </article>
 
-    <!-- CONTACT anchor section -->
     <article class="contact active" data-page="contact" id="contact" style="margin-top:40px; display:block;">
 
       <header>
         <h2 class="h2 article-title">Contact</h2>
       </header>
 
-      <section class="mapbox" data-mapbox>
-        <figure>
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d91207.23388455588!2d10.855056!3d44.645997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477fef3f90b8dd77%3A0x3c1c8e54a591b80c!2sModena%2C%20Italy!5e0!3m2!1sen!2sit!4v1680000000000"
-            width="400" height="300" loading="lazy" style="border:0;"></iframe>
-        </figure>
+      <section class="contact-info-direct">
+        <div class="contact-links">
+          <div class="contact-link-item">
+            <ion-icon name="mail-outline"></ion-icon>
+            <a href="mailto:leonardo.pulga93@gmail.com">leonardo.pulga93@gmail.com</a>
+          </div>
+          <div class="contact-link-item">
+            <ion-icon name="globe-outline"></ion-icon>
+            <a href="https://www.researchgate.net/profile/Leonardo-Pulga" target="_blank">ResearchGate Profile</a>
+          </div>
+          <div class="contact-link-item">
+            <ion-icon name="logo-linkedin"></ion-icon>
+            <a href="https://www.linkedin.com/in/leonardopulga/" target="_blank">LinkedIn Profile</a>
+          </div>
+        </div>
       </section>
 
       <section class="contact-form">
         <h3 class="h3 form-title">Get in touch</h3>
-        <p style="color:hsl(0,0%,55%); font-size:13px; margin-bottom:18px; line-height:1.7;">
+        <p style="color:var(--muted); font-size:13px; margin-bottom:18px; line-height:1.7;">
           Working on something at the intersection of ML and engineering? Interested in collaboration,
           consulting, or just want to argue about Gaussian processes? Drop a message.
         </p>
