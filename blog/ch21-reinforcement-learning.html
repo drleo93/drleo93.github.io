@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reinforcement Learning for Dynamic Optimisation | ML Handbook</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#2d333b;--text:#b8c0cc;--muted:#6e7890;--accent:#6da5cc;--green:#5a9e72;--amber:#c49a3c;--red:#c97b76;--code-bg:#13191f;--tag-bg:#1a2d40;}
+*{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;font-size:16px;line-height:1.7;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+header{border-bottom:1px solid var(--border);padding:2rem 0 1.5rem;text-align:center;}
+.series-label{color:var(--muted);font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;font-family:monospace;}
+h1{color:var(--accent);font-size:2rem;font-weight:700;margin-bottom:0.5rem;}.subtitle{color:var(--muted);font-size:1rem;}
+.tags{margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;}
+.tag{background:var(--tag-bg);color:var(--accent);padding:0.2rem 0.7rem;border-radius:3px;font-size:0.75rem;font-family:monospace;border:1px solid var(--border);}
+main{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem;}
+.tldr{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:4px;padding:1.2rem 1.5rem;margin-bottom:2.5rem;}
+.tldr h2{color:var(--accent);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.75rem;}
+.tldr ul{padding-left:1.2rem;}.tldr li{margin-bottom:0.35rem;}
+h2{color:var(--accent);font-size:1.35rem;margin:2.5rem 0 1rem;border-bottom:1px solid var(--border);padding-bottom:0.4rem;}
+h3{color:#8db4c8;font-size:1.1rem;margin:1.8rem 0 0.7rem;}
+p{margin-bottom:1rem;}ul,ol{padding-left:1.4rem;margin-bottom:1rem;}li{margin-bottom:0.3rem;}
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-rule{background:var(--surface);border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-label{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.5rem;font-weight:700;}
+.box-lesson .box-label{color:var(--green);}.box-pitfall .box-label{color:var(--amber);}
+.box-rule .box-label{color:#8b949e;}.box-example .box-label{color:#9d8fd4;}
+.math-block{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;margin:1.2rem 0;overflow-x:auto;}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;overflow-x:auto;margin:1.2rem 0;}
+code{font-family:'Courier New',monospace;font-size:0.85rem;color:#a8c4d8;}
+p code,li code{background:var(--code-bg);padding:0.1em 0.35em;border-radius:2px;font-size:0.85em;}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:0.88rem;}
+thead th{background:var(--surface);color:var(--accent);padding:0.6rem 0.8rem;text-align:left;border-bottom:2px solid var(--border);font-family:monospace;font-size:0.8rem;}
+tbody td{padding:0.55rem 0.8rem;border-bottom:1px solid var(--border);vertical-align:top;}
+tbody tr:hover{background:#1a1f27;}
+.nav-links{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:0.9rem;}
+footer{text-align:center;color:var(--muted);font-size:0.8rem;padding:2rem;border-top:1px solid var(--border);margin-top:1rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="series-label">The Engineer's Handbook of Machine Learning</div>
+  <h1>Reinforcement Learning for Dynamic Optimisation</h1>
+  <div class="subtitle">Chapter 21 &mdash; MDP, PPO, SAC, Model-Based RL, Sim-to-Real, Energy Management</div>
+  <div class="tags">
+    <span class="tag">Reinforcement Learning</span>
+    <span class="tag">PPO</span>
+    <span class="tag">SAC</span>
+    <span class="tag">MDP</span>
+    <span class="tag">Sim-to-Real</span>
+    <span class="tag">MPC</span>
+    <span class="tag">Energy Management</span>
+    <span class="tag">Model-Based RL</span>
+  </div>
+</header>
+
+<main>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>RL is not a drop-in replacement for MPC or PID. Use it only when the control policy is too complex to specify analytically <em>and</em> interactions over time shape the reward.</li>
+    <li>In most engineering control problems, a well-tuned MPC with a good surrogate model outperforms model-free RL — it can plan ahead and incorporates safety constraints analytically.</li>
+    <li>The sim-to-real gap is the primary deployment challenge. A 5% model error can produce a 100% policy performance gap (for $\gamma = 0.99$).</li>
+    <li>PPO: workhorse for continuous control, on-policy, clip-based stability. SAC: off-policy, entropy-regularised, better for continuous action spaces.</li>
+    <li>Model-based RL (Dreamer, PETS): 10&ndash;100&times; more sample-efficient than model-free RL. Requires a good world model — the engineering surrogate models from this handbook.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>1. RL Fundamentals: MDP and Return</h2>
+
+<p>RL trains an agent to take actions $a_t$ in an environment that transitions between states $s_t$, maximising cumulative reward:</p>
+
+<div class="math-block">
+$$G_t = \sum_{k=0}^{\infty} \gamma^k r_{t+k+1}$$
+</div>
+
+<p>The Markov Decision Process (MDP) formalises this as $(\mathcal{S}, \mathcal{A}, \mathcal{T}, \mathcal{R}, \gamma)$ where $\mathcal{T}(s'|s,a)$ is the transition probability and $\gamma \in [0,1)$ is the discount factor ($\gamma \to 1$ = far-sighted, $\gamma \to 0$ = myopic).</p>
+
+<!-- ================================================================== -->
+<h2>2. RL vs. Competing Engineering Control Methods</h2>
+
+<table>
+  <thead>
+    <tr><th>Method</th><th>Strengths</th><th>Weaknesses</th><th>Best For</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>PID / classical</strong></td><td>Simple, interpretable, fast</td><td>Linear/near-linear; fixed gain</td><td>Setpoint tracking, SISO</td></tr>
+    <tr><td><strong>MPC + surrogate</strong></td><td>Planning horizon, constraint handling, physics</td><td>Requires good model; compute cost</td><td>Multivariable, constrained</td></tr>
+    <tr><td><strong>Bayesian Optimisation</strong></td><td>Sample-efficient; UQ</td><td>Static; no sequential state</td><td>One-shot design optimisation</td></tr>
+    <tr><td><strong>Model-free RL (PPO/SAC)</strong></td><td>Complex, non-convex, high-dimensional</td><td>Data hungry; no safety guarantee; opaque</td><td>Complex, long-horizon tasks</td></tr>
+    <tr><td><strong>Model-based RL (MBRL)</strong></td><td>Sample-efficient; explicit model</td><td>Model error propagates; instability risk</td><td>Sim-to-real with good simulator</td></tr>
+  </tbody>
+</table>
+
+<h3>When RL is the Right Choice</h3>
+<ul>
+  <li>Environment is too complex to model accurately enough for MPC (real-time energy dispatch in stochastic grid with many interacting agents).</li>
+  <li>Policy must adapt online to changing conditions without re-solving an optimisation problem (adaptive combustion control under fuel variability).</li>
+  <li>Objective involves long-horizon credit assignment (battery degradation minimisation over thousands of cycles where daily charging decisions matter).</li>
+</ul>
+
+<h3>When RL is the Wrong Choice</h3>
+<ul>
+  <li>Safety constraints must be <strong>guaranteed</strong> (hard constraints). RL cannot provide formal constraint satisfaction guarantees without auxiliary safety filters.</li>
+  <li>A good physics model and MPC can solve the problem. The MPC policy will be interpretable, explainable to regulators, and provably safe.</li>
+  <li>Training data (real interactions) is expensive. Model-free RL requires millions of environment interactions.</li>
+</ul>
+
+<!-- ================================================================== -->
+<h2>3. Key RL Algorithms</h2>
+
+<h3>Proximal Policy Optimisation (PPO)</h3>
+
+<p>PPO is the workhorse model-free RL algorithm for continuous control. It stabilises training by clipping the policy update:</p>
+
+<div class="math-block">
+$$\mathcal{L}^{CLIP}(\theta) = \mathbb{E}_t\bigl[\min\bigl(r_t(\theta)\hat{A}_t,\, \text{clip}(r_t(\theta), 1-\varepsilon, 1+\varepsilon)\hat{A}_t\bigr)\bigr]$$
+$$r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}, \quad \varepsilon = 0.2 \text{ (standard)}$$
+</div>
+
+<p>$\hat{A}_t$ is the generalised advantage estimate. The clip prevents large policy updates that destabilise training. On-policy: requires new samples each update.</p>
+
+<h3>Soft Actor-Critic (SAC)</h3>
+
+<p>SAC maximises both reward and entropy, producing naturally exploratory, robust policies:</p>
+
+<div class="math-block">
+$$\pi^* = \arg\max_\pi \sum_t \mathbb{E}\bigl[r(s_t,a_t) + \alpha\,\mathcal{H}(\pi(\cdot|s_t))\bigr]$$
+</div>
+
+<p>where $\alpha$ is the temperature (automatically tuned) and $\mathcal{H}$ is entropy. SAC is preferred over PPO for continuous action spaces: it is off-policy (more sample-efficient) and naturally explores without explicit $\varepsilon$-greedy. The entropy term prevents premature convergence to suboptimal deterministic policies.</p>
+
+<h3>Model-Based RL: Dreamer and PETS</h3>
+
+<p>Learn a world model $p_\theta(s_{t+1}|s_t,a_t)$ and plan using the model. Sample efficiency improvement: 10&ndash;100&times; over SAC. In engineering, the "world model" is the physical surrogate (GP, LSTM, XGBoost) — the entire framework of this handbook supports this directly.</p>
+
+<!-- ================================================================== -->
+<h2>4. The Sim-to-Real Gap</h2>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Sim-to-Real Performance Gap</div>
+  If the RL policy is trained in a surrogate $\hat{\mathcal{T}}$ but deployed in the real system $\mathcal{T}$:
+  $$J(\pi|\mathcal{T}) - J(\pi|\hat{\mathcal{T}}) \leq \frac{2\gamma\,\epsilon_T}{(1-\gamma)^2}$$
+  where $\epsilon_T = \max_{s,a}\|\mathcal{T}(s'|s,a) - \hat{\mathcal{T}}(s'|s,a)\|_1$. A <strong>5% model error</strong> produces a <strong>100% policy performance gap</strong> for $\gamma = 0.99$. Mitigations: domain randomisation (train over a distribution of surrogate parameters), adversarial training (train against the worst-case surrogate), and conservative policies (constrain $|a_t - a_{MPC}|$ during online deployment).
+</div>
+
+<!-- ================================================================== -->
+<h2>5. Engineering RL Applications</h2>
+
+<h3>Energy Management in Hybrid Powertrains</h3>
+
+<div class="box-example">
+  <div class="box-label">Example — Hybrid EMS with SAC</div>
+  <p><strong>State</strong>: SoC, vehicle speed, requested torque, catalytic converter temperature.<br>
+  <strong>Action</strong>: power split ratio (continuous in $[0,1]$).<br>
+  <strong>Reward</strong>: $r_t = -\dot{m}_f(t)\cdot\Delta t - \lambda_1\max(0, \text{NOx}(t) - \text{NOx}_{lim}) - \lambda_2|SoC_{final} - SoC_{target}|^2$<br>
+  <strong>Environment</strong>: 1D powertrain model (GT-Drive) as simulator.<br>
+  <strong>Result</strong>: SAC with PPO fine-tuning achieves 3&ndash;5% fuel economy improvement over rule-based EMS on the WLTC, with NOx constraint satisfaction via reward shaping.</p>
+</div>
+
+<pre><code>import gymnasium as gym
+from stable_baselines3 import SAC
+from stable_baselines3.common.callbacks import EvalCallback
+
+class HybridEMSEnv(gym.Env):
+    """
+    Hybrid powertrain EMS environment.
+    State:  [SoC, v [km/h], T_req [Nm], T_cat [C]]
+    Action: power split ratio in [-1, 1] (mapped to [0, 1])
+    """
+    def __init__(self, cycle_profile, surrogate_model):
+        super().__init__()
+        self.observation_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=(4,))
+        self.action_space = gym.spaces.Box(low=-1, high=1, shape=(1,))
+        self.surrogate = surrogate_model   # GP or XGBoost fuel/NOx surrogate
+        self.cycle = cycle_profile         # WLTC speed profile [km/h]
+        self.t = 0
+
+    def step(self, action):
+        split = (action[0] + 1) / 2.0    # map [-1,1] to [0,1]
+        fuel_rate, nox = self.surrogate.predict(self.state, split)
+        reward = (-fuel_rate - 0.5 * max(0, nox - 0.4))
+        self.t += 1
+        done = (self.t >= len(self.cycle))
+        return self._next_state(split), reward, done, False, {}
+
+# Train SAC
+env = HybridEMSEnv(wltc_profile, surrogate)
+model = SAC("MlpPolicy", env, verbose=1, learning_rate=3e-4,
+            batch_size=256, buffer_size=1_000_000,
+            ent_coef='auto', target_entropy='auto')
+model.learn(total_timesteps=500_000,
+            callback=EvalCallback(eval_env, n_eval_episodes=5))</code></pre>
+
+<h3>Gas Turbine Combustor Control</h3>
+
+<p>Real-time control of a combustor to minimise NOx while maintaining stability. State: fuel-air ratio distribution, flame temperature, pressure oscillation amplitude. Action: fuel staging valve positions. Environment: Cantera-based 0D reactor network (real combustor trials cost ~€50K/day). Challenge: thermoacoustic instability manifests as a reward cliff — policies must learn to avoid the instability boundary proactively.</p>
+
+<!-- ================================================================== -->
+<h2>6. Safe RL and Constraint Satisfaction</h2>
+
+<p>Model-free RL cannot guarantee hard constraint satisfaction during training or deployment. For engineering applications with safety constraints, three approaches:</p>
+
+<ul>
+  <li><strong>Reward shaping</strong>: penalise constraint violations in the reward function ($\lambda \max(0, g(\mathbf{x}))^2$). Does not guarantee zero violations during training.</li>
+  <li><strong>Constrained RL (CPO, TRPO-Lagrangian)</strong>: augment the MDP with a constraint cost signal; optimise policy subject to $\mathbb{E}[C_t] \leq c_{max}$. Provides probabilistic constraint satisfaction.</li>
+  <li><strong>Safety filter (shielding)</strong>: the RL policy proposes an action; a fast MPC or CBF (Control Barrier Function) filter checks safety and modifies the action if necessary. Provides hard safety guarantees — the gold standard for safety-critical engineering deployment.</li>
+</ul>
+
+<!-- ================================================================== -->
+<h2>7. Key Takeaways</h2>
+
+<ul>
+  <li>Default to <strong>MPC + surrogate model</strong> for engineering control. RL only when: (1) problem is too complex for MPC, (2) long-horizon credit assignment is essential, (3) you have a high-fidelity simulator.</li>
+  <li><strong>PPO</strong>: on-policy, clip-stabilised. Use for initial experiments. $\varepsilon = 0.2$ standard; train for millions of steps.</li>
+  <li><strong>SAC</strong>: off-policy, entropy-regularised. Preferred for continuous actions. More sample-efficient than PPO. Use <code>ent_coef='auto'</code>.</li>
+  <li><strong>Model-based RL</strong>: the "world model" is your engineering surrogate. Dreamer / PETS are 10&ndash;100&times; more sample-efficient than model-free RL.</li>
+  <li>The sim-to-real gap bound: $J(\pi|\mathcal{T}) - J(\pi|\hat{\mathcal{T}}) \leq 2\gamma\epsilon_T/(1-\gamma)^2$. A 5% model error at $\gamma=0.99$ = 100% policy gap. Domain randomisation is mandatory.</li>
+  <li>For safety-critical deployment: always use a safety filter (shielding, CBF) on top of the RL policy. Reward shaping alone does not provide hard safety guarantees.</li>
+  <li>The hybrid EMS result (3&ndash;5% fuel saving over rule-based) is representative of what RL can achieve in powertrain applications — significant but not magical.</li>
+</ul>
+
+<div class="nav-links">
+  <a href="ch20-generative-ai.html">&larr; Ch20: Generative AI</a>
+  <a href="ch22-model-versioning-mlops.html">Ch22: Model Versioning &amp; MLOps &rarr;</a>
+</div>
+
+</main>
+
+<footer>
+  <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
+  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+</footer>
+
+</body>
+</html>

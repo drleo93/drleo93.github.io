@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 4: Design of Experiments &amp; Sensitivity Analysis | Engineer's ML Handbook</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root {
+  --bg:      #0d1117;
+  --surface: #161b22;
+  --border:  #2d333b;
+  --text:    #b8c0cc;
+  --muted:   #6e7890;
+  --accent:  #6da5cc;
+  --green:   #5a9e72;
+  --amber:   #c49a3c;
+  --red:     #c97b76;
+  --code-bg: #13191f;
+  --tag-bg:  #1a2d40;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.7}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:1.4rem 2rem}
+header .breadcrumb{font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem}
+header h1{font-size:1.7rem;font-weight:700;color:#d0dae8;line-height:1.25}
+header .meta{font-size:0.82rem;color:var(--muted);margin-top:0.5rem}
+.tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin:0.9rem 0}
+.tag{background:var(--tag-bg);color:var(--accent);font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;border:1px solid #2a4a66}
+.container{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
+.tldr{background:#0c1e30;border:1px solid #2a4a66;border-left:4px solid var(--accent);border-radius:6px;padding:1.1rem 1.4rem;margin:1.5rem 0}
+.tldr h3{color:var(--accent);font-size:0.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:0.5rem}
+.tldr ul{padding-left:1.2rem}
+.tldr li{margin-bottom:0.25rem;font-size:0.92rem}
+h2{color:#c8d6e5;font-size:1.3rem;margin:2.2rem 0 0.8rem;padding-bottom:0.35rem;border-bottom:1px solid var(--border)}
+h3{color:#a8bcd0;font-size:1.05rem;margin:1.6rem 0 0.5rem}
+p{margin-bottom:0.9rem}
+ul,ol{padding-left:1.5rem;margin-bottom:0.9rem}
+li{margin-bottom:0.3rem}
+code{background:var(--code-bg);color:#a8d4a8;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.85em;padding:0.1em 0.4em;border-radius:3px}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto;margin:1rem 0}
+pre code{background:none;padding:0;font-size:0.88em}
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-rule{background:#161b22;border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-label{font-size:0.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:0.5rem}
+.box-lesson .box-label{color:var(--green)}
+.box-pitfall .box-label{color:var(--amber)}
+.box-rule .box-label{color:#8b9aaa}
+.box-example .box-label{color:#9d8fd4}
+.tbl-wrap{overflow-x:auto;margin:1.2rem 0}
+table{width:100%;border-collapse:collapse;font-size:0.87rem}
+th{background:#1c2636;color:#c8d6e5;padding:0.6rem 0.85rem;text-align:left;border-bottom:2px solid var(--border)}
+td{padding:0.55rem 0.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#161d28}
+td:first-child{color:#9bafc4}
+.formula-block{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:0.9rem 1.2rem;margin:1rem 0;text-align:center;overflow-x:auto}
+nav.chapter-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0;margin-top:2rem;border-top:1px solid var(--border);font-size:0.88rem}
+nav.chapter-nav a{color:var(--accent)}
+footer{background:var(--surface);border-top:1px solid var(--border);padding:1.2rem 2rem;text-align:center;font-size:0.8rem;color:var(--muted);margin-top:3rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="breadcrumb"><a href="index.html">Engineer's ML Handbook</a> › Part I: Foundations</div>
+  <h1>Ch 4: Design of Experiments &amp; Sensitivity Analysis</h1>
+  <div class="meta">Chapter 4 of 23 &nbsp;·&nbsp; ~30 min read &nbsp;·&nbsp; Invest as much here as in the model</div>
+  <div class="tags">
+    <span class="tag">DOE</span>
+    <span class="tag">Latin hypercube</span>
+    <span class="tag">Sobol'</span>
+    <span class="tag">space-filling</span>
+    <span class="tag">sensitivity analysis</span>
+    <span class="tag">factorial design</span>
+    <span class="tag">CCD</span>
+    <span class="tag">active learning</span>
+    <span class="tag">BOED</span>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="tldr">
+  <h3>TL;DR</h3>
+  <ul>
+    <li>The design of experiments determines everything downstream. A poor experimental design cannot be compensated by a sophisticated surrogate.</li>
+    <li>For surrogate construction: use Sobol' or optimised LHS with \(n \geq 10d\) for GP, \(n \geq 50d\) for XGBoost. Never use full factorial above \(d = 4\).</li>
+    <li>Run global sensitivity analysis on a cheap proxy <em>before</em> collecting expensive training data. Identifying two inert inputs before a 200-point campaign saves €20,000–€100,000.</li>
+    <li>Sobol' total-effect index \(S_{T_i} < 0.01\): input is inert — fix it at nominal and reduce problem dimensionality.</li>
+    <li>D-optimal and G-efficiency metrics apply only to RSM (linear models). They are meaningless for GP and XGBoost — use space-filling metrics instead.</li>
+    <li>Active learning (GP max-variance acquisition) always improves any static initial design when additional evaluation budget is available.</li>
+  </ul>
+</div>
+
+<!-- =========================================================== -->
+<h2>1. The Information-per-Euro Principle</h2>
+
+<p>Every engineering experiment represents a finite budget. A test-bench run at a chemical pilot plant costs €500–€2,000 and takes 4–12 hours. A RANS CFD simulation costs 24–96 hours on a high-performance cluster. The DOE determines how much information is extracted per unit of this budget.</p>
+
+<div class="box-lesson">
+  <div class="box-label">Three fundamental design properties</div>
+  A design \(\mathcal{X} = \{\mathbf{x}_1,\ldots,\mathbf{x}_n\} \subset \mathbb{R}^d\) for surrogate modelling should satisfy:
+  <ol>
+    <li><strong>Space-filling</strong>: points cover the input domain uniformly.</li>
+    <li><strong>Non-collapsing</strong>: the projection onto any \(k\)-dimensional subspace is also space-filling, for \(k = 1,\ldots,d-1\).</li>
+    <li><strong>Orthogonality</strong>: columns of the design matrix are uncorrelated; enables independent estimation of main effects.</li>
+  </ol>
+  Classical factorial designs satisfy (3) but not (1) or (2). Space-filling designs satisfy (1) and (2) but not always (3). The correct type depends on the intended use.
+</div>
+
+<!-- =========================================================== -->
+<h2>2. Design Quality Metrics</h2>
+
+<h3>Space-Filling Metrics</h3>
+
+<p><strong>Maximin distance</strong> — larger is better; ensures no two points are unnecessarily clustered:</p>
+<div class="formula-block">
+$$\Phi_{mm}(\mathcal{X}) = \min_{i \neq j} \|\mathbf{x}_i - \mathbf{x}_j\|_2$$
+</div>
+
+<p><strong>Average minimum distance (AMD)</strong> — less dominated by outlier pairs than maximin:</p>
+<div class="formula-block">
+$$\Phi_{AMD}(\mathcal{X}) = \frac{1}{n}\sum_{i=1}^n \min_{j \neq i}\|\mathbf{x}_i - \mathbf{x}_j\|_2$$
+</div>
+
+<p><strong>Star discrepancy \(D^*\)</strong> — smaller is better; the Koksma-Hlawka inequality bounds integration error directly:</p>
+<div class="formula-block">
+$$\left|\frac{1}{n}\sum_{i=1}^n f(\mathbf{x}_i) - \int f\,d\mathbf{x}\right| \leq D^*(\mathcal{X})\cdot V(f)$$
+</div>
+
+<p>Low-discrepancy sequences achieve \(D^* = \mathcal{O}((\log n)^d/n)\) vs. \(\mathcal{O}(n^{-1/2})\) for random Monte Carlo.</p>
+
+<p><strong>Centred \(L_2\) discrepancy (\(CD^2\))</strong>: the recommended default for LHS optimisation — fast to compute, closed-form, rotation-invariant.</p>
+
+<h3>Model-Based (Optimality) Metrics — RSM Only</h3>
+
+<p><strong>D-efficiency</strong>: minimises the volume of the confidence ellipsoid on \(\hat{\boldsymbol{\beta}}\). 100% = globally optimal. <em>Use only for RSM — meaningless for GP/XGBoost.</em></p>
+
+<p><strong>Condition number</strong> \(\kappa(\mathbf{X}_p^\top\mathbf{X}_p)\): target &lt; 100 for RSM. Above 1,000: numerical instability in OLS.</p>
+
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr><th>Metric</th><th>Better</th><th>Use for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Maximin \(\Phi_{mm}\)</td><td>Larger</td><td>Quick space-filling check; sensitive to single closest pair</td></tr>
+    <tr><td>AMD</td><td>Larger</td><td>Robust space-filling; less outlier-sensitive</td></tr>
+    <tr><td>Star discrepancy \(D^*\)</td><td>Smaller</td><td>Integration error; low-discrepancy sequence quality</td></tr>
+    <tr><td>\(CD^2\)</td><td>Smaller</td><td>LHS optimisation; general GP design — recommended default</td></tr>
+    <tr><td>D-efficiency</td><td>Larger</td><td>RSM coefficient estimation — meaningless for GP/XGBoost</td></tr>
+    <tr><td>Condition number</td><td>Smaller</td><td>Numerical stability for OLS</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- =========================================================== -->
+<h2>3. Classical Designs</h2>
+
+<h3>Full Factorial and Fractional Factorial</h3>
+
+<p>A \(2^k\) full factorial evaluates all \(2^k\) combinations. Use when: \(k \leq 4\); goal is main-effect and two-way interaction estimation; budget allows all \(2^k\) runs.</p>
+
+<p>A \(2^{k-p}\) fractional factorial uses \(2^{k-p}\) runs with resolution \(R\):</p>
+<ul>
+  <li><strong>Resolution III</strong>: main effects confounded with 2FI — screening only, \(k \geq 7\)</li>
+  <li><strong>Resolution IV</strong>: main effects clear; 2FI confounded with 2FI</li>
+  <li><strong>Resolution V</strong>: main effects and 2FI clear — preferred for RSM</li>
+</ul>
+
+<h3>Central Composite Design (CCD) and Box-Behnken (BBD)</h3>
+
+<p>CCD augments a factorial with \(\pm\alpha\) axial (star) points and \(n_c\) centre runs. Total runs: \(2^k + 2k + n_c\). Rotatable with \(\alpha = (2^{k-p})^{1/4}\); face-centred (\(\alpha = 1\)) when corners are infeasible.</p>
+
+<p>BBD places points at edge midpoints only — no vertex runs. Safe when all-extreme-level combinations are operationally infeasible (safety, cost, or feasibility constraints). For \(k = 3\): \(n = 12 + n_c\) runs.</p>
+
+<!-- =========================================================== -->
+<h2>4. Space-Filling Designs</h2>
+
+<h3>Latin Hypercube Sampling (LHS)</h3>
+
+<p>An LHS partitions each of the \(d\) dimensions into \(n\) equal strata and places exactly one point per stratum per dimension, guaranteeing uniform marginal distributions.</p>
+
+<ul>
+  <li><strong>\(CD^2\)-optimal LHS</strong>: minimises centred \(L_2\) discrepancy; fast column-pairwise swap algorithm — recommended default</li>
+  <li><strong>Maximin LHS</strong>: maximises minimum pairwise distance; better space-filling; slower \(\mathcal{O}(n^2)\) per iteration</li>
+  <li><strong>Orthogonal LHS</strong>: all 2D projections are also LHS; best balance; exists for \(n = p^2\) (prime power)</li>
+</ul>
+
+<h3>Sobol' Quasi-Random Sequences</h3>
+
+<p>Deterministic, low-discrepancy:</p>
+<ul>
+  <li>Discrepancy: \(D^* = \mathcal{O}((\log n)^d / n)\) vs. \(\mathcal{O}(n^{-1/2})\) for Monte Carlo</li>
+  <li>Reproducible (seed-based); best at \(n = 2^m\)</li>
+  <li>Scrambling (Owen scrambling) removes leftmost corner bias and enables unbiased variance estimation</li>
+  <li>Works well up to \(d \approx 40\); use Faure or Niederreiter for \(d > 40\)</li>
+</ul>
+
+<pre><code>from scipy.stats.qmc import Sobol
+sampler = Sobol(d=5, scramble=True, seed=42)
+X = sampler.random_base2(m=7)  # n=128 points in 5D
+# Scale to [lo, hi]
+X_scaled = qmc.scale(X, l_bounds, u_bounds)</code></pre>
+
+<div class="box-rule">
+  <div class="box-label">Rule — Sample size guidelines</div>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr><th>Model type</th><th>Minimum \(n\)</th><th>Recommended</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>GP (Matérn-5/2)</td><td>\(10d\)</td><td>\(20d\) for accurate hyperparameter estimation</td></tr>
+      <tr><td>XGBoost / RF</td><td>\(50d\)</td><td>\(100d\) for reliable feature importances</td></tr>
+      <tr><td>RSM (quadratic)</td><td>\(3p\) where \(p = (d+1)(d+2)/2\)</td><td>CCD or BBD at exact \(n\)</td></tr>
+      <tr><td>Neural network</td><td>\(100d\)</td><td>\(500d\) for generalisation beyond training range</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- =========================================================== -->
+<h2>5. Global Sensitivity Analysis</h2>
+
+<h3>Morris Screening (Elementary Effects)</h3>
+
+<p>Cheapest GSA approach — designed for screening \(d > 20\) inputs with only \(r(d+1)\) model evaluations:</p>
+
+<div class="formula-block">
+$$EE_i(\mathbf{x}) = \frac{f(\mathbf{x} + \Delta\mathbf{e}_i) - f(\mathbf{x})}{\Delta}$$
+</div>
+
+<p>Compute \(r \geq 10\) elementary effects per input from different starting points. Summary statistics: \(\mu_i^* = \mathbb{E}[|EE_i|]\) (importance) and \(\sigma_i = \mathrm{Std}(EE_i)\) (nonlinearity/interaction indicator).</p>
+
+<p><strong>Decision rule</strong>: if \(\mu_i^* < 0.1\max_j\mu_j^*\): candidate for elimination. If \(\sigma_i > \mu_i^*\): strong nonlinearity or interaction.</p>
+
+<h3>Sobol' Variance-Based Indices</h3>
+
+<div class="formula-block">
+$$S_i = \frac{\mathrm{Var}(\mathbb{E}[Y|X_i])}{\mathrm{Var}(Y)} \quad \text{(first-order)}, \qquad S_{T_i} = 1 - \frac{\mathrm{Var}(\mathbb{E}[Y|\mathbf{X}_{\sim i}])}{\mathrm{Var}(Y)} \quad \text{(total)}$$
+</div>
+
+<p><strong>Interpretation</strong>: \(S_{T_i} < 0.01\) — input is inert, fix at nominal. \(S_{T_i} \gg S_i\) — strong interactions. \(\sum_i S_i < 1\) — significant interactions present.</p>
+
+<div class="box-example">
+  <div class="box-label">Example — Catalytic steam methane reformer (SMR)</div>
+  8 inputs: \(T\), \(p\), \(S/C\), GHSV, \(\chi_{CH_4}\), \(\chi_{CO_2}\), \(\chi_{N_2}\), \(A_{mod}\).
+  <br><br>
+  Sobol' results: \(S_{T,T} = 0.58\) (temperature dominates — confirming Arrhenius rate control). \(S_{T,S/C} = 0.32\), \(S_{T,p} = 0.19\) through equilibrium effects. Feed composition variables (\(\chi_{CH_4}\), \(\chi_{CO_2}\), \(\chi_{N_2}\)) and \(A_{mod}\) all have \(S_{T_i} < 0.01\).
+  <br><br>
+  <strong>Action</strong>: fix 4 inert inputs at nominal, reduce from 8D to 4D, save 50% of experimental budget.
+</div>
+
+<p><strong>Estimation cost</strong>: Saltelli estimator requires \(n(2d+2)\) model evaluations for all first-order and total indices simultaneously. For expensive models: train a GP surrogate on \(n_{training} = 50d\) points, then sample \(10^6\) from the surrogate (cost \(\approx n_{training}\)).</p>
+
+<h3>Derivative-Based Global Sensitivity (DGSM)</h3>
+
+<p>For models with available gradients (surrogate or AD-enabled simulation):</p>
+<div class="formula-block">
+$$\nu_i = \int_\mathcal{X}\!\!\left(\frac{\partial f}{\partial x_i}\right)^{\!2}\!d\mathbf{x} \approx \frac{1}{n}\sum_{j=1}^n\!\left(\frac{\partial f}{\partial x_i}(\mathbf{x}_j)\right)^{\!2}$$
+</div>
+
+<p>DGSM bounds \(S_{T_i}\) from above. Requires \(n(d+1)\) evaluations with forward-mode AD — far cheaper than Saltelli for \(d > 20\).</p>
+
+<!-- =========================================================== -->
+<h2>6. Design Selection Framework</h2>
+
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr><th>Design method</th><th>RSM</th><th>Screening</th><th>GP</th><th>ML (XGB/RF)</th><th>High-\(d\)</th><th>Augment</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Full factorial</td><td>●●</td><td>○</td><td>○</td><td>○</td><td>○</td><td>●</td></tr>
+    <tr><td>Fractional factorial</td><td>●</td><td>●●</td><td>○</td><td>○</td><td>○</td><td>●</td></tr>
+    <tr><td>CCD</td><td>●●</td><td>○</td><td>●</td><td>○</td><td>○</td><td>●●</td></tr>
+    <tr><td>Box-Behnken</td><td>●●</td><td>○</td><td>●</td><td>○</td><td>○</td><td>○</td></tr>
+    <tr><td>Optimised LHS</td><td>○</td><td>●</td><td>●●</td><td>●●</td><td>●</td><td>○</td></tr>
+    <tr><td>Sobol' sequence</td><td>○</td><td>●</td><td>●●</td><td>●●</td><td>●●</td><td>○</td></tr>
+    <tr><td>D-optimal</td><td>●●</td><td>○</td><td>○</td><td>○</td><td>●</td><td>●●</td></tr>
+    <tr><td>Active learning</td><td>○</td><td>○</td><td>●●</td><td>●</td><td>●</td><td>●●</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>●● = recommended; ● = acceptable; ○ = not recommended</p>
+
+<div class="box-rule">
+  <div class="box-label">Rule — Design selection by goal</div>
+  <ul>
+    <li><strong>RSM (polynomial model for ANOVA)</strong>: CCD for \(d \leq 6\); fractional factorial for screening; BBD when corner runs are infeasible</li>
+    <li><strong>GP surrogate</strong>: Sobol' + LHS with \(n \geq 10d\). Always scramble Sobol' sequences.</li>
+    <li><strong>XGBoost / RF surrogate</strong>: Sobol' or LHS with \(n \geq 50d\)</li>
+    <li><strong>Mixture constraints</strong>: simplex-centroid or Dirichlet LHS</li>
+    <li><strong>High-dimensional screening (\(d > 10\))</strong>: Morris first, then Sobol' on reduced space</li>
+    <li><strong>Adaptive / expensive model</strong>: active learning with GP max-variance acquisition</li>
+  </ul>
+</div>
+
+<!-- =========================================================== -->
+<h2>7. Bayesian Optimal Experimental Design (BOED)</h2>
+
+<p>The theoretical foundation: the <strong>Expected Information Gain</strong> (EIG) for a proposed experiment at \(\mathbf{x}^*\):</p>
+
+<div class="formula-block">
+$$\text{EIG}(\mathbf{x}^*) = \mathbb{E}_{p(y^*|\mathbf{x}^*)}\!\left[D_{KL}\!\left(p(\boldsymbol{\theta} \mid y^*, \mathbf{x}^*) \;\big\|\; p(\boldsymbol{\theta})\right)\right]$$
+</div>
+
+<p>For a Gaussian surrogate, EIG reduces to:</p>
+<div class="formula-block">
+$$\text{EIG}(\mathbf{x}^*) = \tfrac{1}{2}\log\!\left(1 + \frac{k(\mathbf{x}^*,\mathbf{x}^*)}{\sigma_n^2}\right)$$
+</div>
+
+<p>This is the GP max-variance acquisition function: run the experiment where the model is most uncertain. The Bayesian optimisation Expected Improvement (EI) is a special case where the parameter of interest is the global optimum location rather than the full parameter vector (Chapter 15).</p>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Calling the statistician after the experiment</div>
+  Fisher's 1938 warning remains accurate: a poorly designed experiment cannot be rescued by a sophisticated analysis. If you collect 200 points on a regular grid in a 5D space, the between-grid-line regions will be empty, and the GP will have high posterior variance everywhere it matters most (between training points). The statistical analysis will correctly report high uncertainty — but the experiment cannot be rerun. The DOE must be planned before any data is collected.
+</div>
+
+<!-- =========================================================== -->
+<h2>Chapter Summary</h2>
+
+<div class="box-lesson">
+  <div class="box-label">Key takeaways</div>
+  <ul>
+    <li><strong>Run sensitivity analysis before the main campaign</strong>: Morris screening costs \(r(d+1)\) evaluations. If it eliminates 3 inputs from 8, you reduced from \(10 \times 8 = 80\) to \(10 \times 5 = 50\) points for the GP — saving 37% of the budget.</li>
+    <li><strong>Sobol' sequences</strong> are the default for GP and ML surrogates. They achieve lower discrepancy than random LHS and scale to \(d \approx 40\).</li>
+    <li><strong>Full factorial above \(d = 4\)</strong> is never appropriate for surrogate construction — \(2^5 = 32\) points in 5D provides poor space-filling coverage compared to a 32-point Sobol' design.</li>
+    <li><strong>D-efficiency is meaningless for GP/XGBoost</strong>. It assumes a linear model. Use \(CD^2\) or maximin for space-filling designs.</li>
+    <li><strong>Active learning</strong> with GP max-variance acquisition: always add budget to sequentially refine the surrogate in regions of high uncertainty before making final design decisions.</li>
+    <li><strong>Sobol' \(S_{T_i} < 0.01\)</strong>: hard threshold for input elimination. Confirm with domain knowledge before fixing.</li>
+  </ul>
+</div>
+
+<nav class="chapter-nav">
+  <a href="ch03-eda.html">← Ch 3: EDA &amp; Feature Engineering</a>
+  <a href="index.html">Table of Contents</a>
+  <a href="ch05-supervised-learning.html">Ch 5: Supervised Learning →</a>
+</nav>
+
+</div><!-- .container -->
+
+<footer>
+  The Engineer's Handbook of Machine Learning &nbsp;·&nbsp; Leonardo Pulga PhD &nbsp;·&nbsp;
+  <a href="index.html">All chapters</a>
+</footer>
+
+</body>
+</html>

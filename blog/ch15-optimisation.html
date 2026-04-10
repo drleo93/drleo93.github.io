@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engineering Design Optimisation | ML Handbook</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root {
+  --bg:      #0d1117;
+  --surface: #161b22;
+  --border:  #2d333b;
+  --text:    #b8c0cc;
+  --muted:   #6e7890;
+  --accent:  #6da5cc;
+  --green:   #5a9e72;
+  --amber:   #c49a3c;
+  --red:     #c97b76;
+  --code-bg: #13191f;
+  --tag-bg:  #1a2d40;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Georgia', serif; font-size: 16px; line-height: 1.7; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+header { border-bottom: 1px solid var(--border); padding: 2rem 0 1.5rem; text-align: center; }
+.series-label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; font-family: monospace; }
+h1 { color: var(--accent); font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+.subtitle { color: var(--muted); font-size: 1rem; }
+.tags { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.tag { background: var(--tag-bg); color: var(--accent); padding: 0.2rem 0.7rem; border-radius: 3px; font-size: 0.75rem; font-family: monospace; border: 1px solid var(--border); }
+main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+.tldr { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 4px; padding: 1.2rem 1.5rem; margin-bottom: 2.5rem; }
+.tldr h2 { color: var(--accent); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.75rem; }
+.tldr ul { padding-left: 1.2rem; }
+.tldr li { margin-bottom: 0.35rem; }
+h2 { color: var(--accent); font-size: 1.35rem; margin: 2.5rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+h3 { color: #8db4c8; font-size: 1.1rem; margin: 1.8rem 0 0.7rem; }
+p { margin-bottom: 1rem; }
+ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+li { margin-bottom: 0.3rem; }
+.box-lesson  { background: #0c2316; border-left: 4px solid var(--green);  border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-pitfall { background: #2a1600; border-left: 4px solid var(--amber); border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-rule    { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid #6e7681; border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-example { background: #131220; border-left: 4px solid #7c6fad; border-radius: 4px; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.box-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.5rem; font-weight: 700; }
+.box-lesson .box-label  { color: var(--green); }
+.box-pitfall .box-label { color: var(--amber); }
+.box-rule .box-label    { color: #8b949e; }
+.box-example .box-label { color: #9d8fd4; }
+.math-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; margin: 1.2rem 0; overflow-x: auto; }
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; overflow-x: auto; margin: 1.2rem 0; }
+code { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #a8c4d8; }
+p code, li code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 2px; font-size: 0.85em; }
+table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+thead th { background: var(--surface); color: var(--accent); padding: 0.6rem 0.8rem; text-align: left; border-bottom: 2px solid var(--border); font-family: monospace; font-size: 0.8rem; }
+tbody td { padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:hover { background: #1a1f27; }
+.nav-links { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.9rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 1rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="series-label">The Engineer's Handbook of Machine Learning</div>
+  <h1>Engineering Design Optimisation</h1>
+  <div class="subtitle">Chapter 15 &mdash; Bayesian Optimisation, Adjoint Methods, Multi-Objective, Constrained BO</div>
+  <div class="tags">
+    <span class="tag">Bayesian Optimisation</span>
+    <span class="tag">Expected Improvement</span>
+    <span class="tag">TuRBO</span>
+    <span class="tag">Adjoint Method</span>
+    <span class="tag">Pareto Front</span>
+    <span class="tag">NSGA-II</span>
+    <span class="tag">EHVI</span>
+    <span class="tag">Constrained BO</span>
+  </div>
+</header>
+
+<main>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>Bayesian optimisation with Expected Improvement is the gold standard for &lt;200 expensive evaluations in $d \leq 20$ dimensions. Beyond that, use TuRBO.</li>
+    <li>Gradient-based optimisation is 100&times; faster per iteration than gradient-free — but requires smooth, differentiable objectives. Adjoint methods provide exact gradients at the cost of one additional solve, independent of $d$.</li>
+    <li>Multi-objective optimisation finds a Pareto front, not a single solution. Always present the full trade-off curve — picking a single "optimal" point destroys information.</li>
+    <li>Constrained BO: model each constraint with a separate GP. Use $\text{cEI}(\mathbf{x}) = \text{EI}(\mathbf{x}) \times \prod_k \text{PoF}_k(\mathbf{x})$.</li>
+    <li>For noisy test-bench data: Knowledge Gradient outperforms EI because it measures expected improvement in the global optimum estimate, not just at the queried point.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>1. Method Selection: A Decision Flowchart</h2>
+
+<table>
+  <thead>
+    <tr><th>Situation</th><th>Algorithm</th><th>Reason</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Gradient available, $d \leq 20$, &lt;500 evals, noiseless</td><td>EI with GP</td><td>Standard; widely validated</td></tr>
+    <tr><td>Gradient available, noisy (test bench)</td><td>Knowledge Gradient (KG)</td><td>Better with noise; measures global improvement</td></tr>
+    <tr><td>No gradient, $d \in [20, 100]$</td><td>TuRBO ($m=5$ trust regions)</td><td>Scalable local search</td></tr>
+    <tr><td>No gradient, $d > 100$</td><td>SAASBO</td><td>Sparse axis-aligned subspace</td></tr>
+    <tr><td>Differentiable surrogate, $d > 20$</td><td>Adjoint / L-BFGS-B</td><td>Exact gradient, $\mathcal{O}(d^0)$ cost</td></tr>
+    <tr><td>Parallel evaluations (batch)</td><td>qEI or qNEI</td><td>Parallelism-aware acquisition</td></tr>
+    <tr><td>Multiple objectives</td><td>qEHVI (BoTorch)</td><td>Exact Pareto hypervolume improvement</td></tr>
+    <tr><td>Categorical + continuous variables</td><td>CoCaBO or BODi</td><td>Mixed-variable space</td></tr>
+  </tbody>
+</table>
+
+<!-- ================================================================== -->
+<h2>2. Bayesian Optimisation: Expected Improvement</h2>
+
+<p>BO replaces expensive objective evaluations with a cheap GP surrogate and queries the next point by maximising an acquisition function. Given current best $f^* = \min_i y_i$ and GP posterior $(\mu^*, \sigma^*)$:</p>
+
+<div class="math-block">
+$$\text{EI}(\mathbf{x}) = (f^* - \mu^*)\Phi(Z) + \sigma^*\phi(Z), \quad Z = \frac{f^* - \mu^*(\mathbf{x})}{\sigma^*(\mathbf{x})}$$
+</div>
+
+<p>where $\Phi$, $\phi$ are the standard normal CDF and PDF. EI = 0 when $\sigma^* = 0$ (already evaluated) and is maximised by balancing <strong>exploitation</strong> ($f^* > \mu^*$: region where the GP predicts improvement) and <strong>exploration</strong> (large $\sigma^*$: high uncertainty).</p>
+
+<h3>Knowledge Gradient for Noisy Evaluations</h3>
+
+<div class="math-block">
+$$\text{KG}(\mathbf{x}) = \mathbb{E}\bigl[\min_{\mathbf{x}'}\mu_{n+1}(\mathbf{x}') - \min_{\mathbf{x}'}\mu_n(\mathbf{x}') \bigm| \mathbf{x}_{n+1}=\mathbf{x}\bigr]$$
+</div>
+
+<p>KG measures the expected improvement in the <em>global optimum estimate</em>, not just at $\mathbf{x}$. More suitable for noisy test-bench data where EI is distracted by noise-induced false optima.</p>
+
+<!-- ================================================================== -->
+<h2>3. TuRBO: Trust-Region BO for High Dimensions</h2>
+
+<p>Global GPs become unreliable in $d > 20$: the kernel matrix is poorly conditioned and the acquisition function landscape has exponentially many local optima. TuRBO maintains a set of local trust regions $\{\mathcal{T}_k\}$, each with its own GP:</p>
+
+<div class="math-block">
+$$\mathbf{x}_{next} = \arg\min_{\mathbf{x} \in \mathcal{T}_k} f_k(\mathbf{x}), \quad f_k \sim \mathcal{GP}_k$$
+$$L_{k+1} = \begin{cases} \min(2L_k, L_{max}) & \text{if } n_{succ} \geq \tau_{succ} \\ L_k/2 & \text{if } n_{fail} \geq \tau_{fail} \\ L_k & \text{otherwise}\end{cases}$$
+</div>
+
+<p>Trust regions expand on improvement, contract on failure. Each region uses Thompson sampling (draw a sample from the GP posterior, minimise it) rather than EI — computationally cheaper for many restarts.</p>
+
+<!-- ================================================================== -->
+<h2>4. Gradient-Based Optimisation Through Surrogates</h2>
+
+<p>If the surrogate $\hat{f}$ is implemented in PyTorch or JAX, gradients are free via automatic differentiation:</p>
+
+<pre><code>import torch
+from scipy.optimize import minimize
+
+def gradient_opt_through_gp(model, scaler, bounds_phys, n_restarts=20):
+    """L-BFGS-B minimisation of GP posterior mean using TF autodiff."""
+    import tensorflow as tf
+    d = bounds_phys.shape[0]
+    best_val, best_x = float('inf'), None
+
+    for _ in range(n_restarts):
+        x0 = np.random.uniform(0, 1, size=d)
+
+        def objective_and_grad(x_np):
+            x_tf = tf.Variable(x_np[None, :], dtype=tf.float64)
+            with tf.GradientTape() as tape:
+                mu, _ = model.predict_y(x_tf)
+                obj   = tf.squeeze(mu)
+            grad = tape.gradient(obj, x_tf)
+            return obj.numpy(), grad.numpy()[0]
+
+        res = minimize(objective_and_grad, x0, method='L-BFGS-B',
+                       jac=True, bounds=[(0., 1.)]*d,
+                       options={'maxiter': 200, 'ftol': 1e-12})
+        if res.fun < best_val:
+            best_val, best_x = res.fun, res.x
+
+    return scaler.inverse_transform(best_x[None, :])[0], best_val</code></pre>
+
+<!-- ================================================================== -->
+<h2>5. Adjoint-Based Optimisation</h2>
+
+<p>For PDE-constrained problems (CFD, FEM), the adjoint method computes the gradient of a scalar objective $J$ with respect to $d$ design parameters at the cost of one additional linear solve — regardless of $d$:</p>
+
+<div class="math-block">
+<strong>The Adjoint Method:</strong> Let $\mathcal{R}(\mathbf{u}, \mathbf{x}) = 0$ be the state equations (Navier-Stokes, heat equation).
+$$\mathcal{L} = J(\mathbf{u}, \mathbf{x}) + \boldsymbol{\lambda}^\top \mathcal{R}(\mathbf{u}, \mathbf{x})$$
+Setting $\partial \mathcal{L}/\partial \mathbf{u} = 0$ gives the <strong>adjoint equation</strong>:
+$$\left(\frac{\partial \mathcal{R}}{\partial \mathbf{u}}\right)^\top \boldsymbol{\lambda} = -\frac{\partial J}{\partial \mathbf{u}}$$
+The gradient then costs only one additional linear solve:
+$$\frac{dJ}{d\mathbf{x}} = \frac{\partial J}{\partial \mathbf{x}} + \boldsymbol{\lambda}^\top \frac{\partial \mathcal{R}}{\partial \mathbf{x}} \quad \text{(cost: } \mathcal{O}(d^0) \text{ vs finite diff } \mathcal{O}(d)\text{)}$$
+</div>
+
+<div class="box-example">
+  <div class="box-label">Example — Turbine Blade Aerodynamic Optimisation</div>
+  <p>State-of-the-art turbine blade optimisation uses adjoint-based gradient descent:</p>
+  <ol>
+    <li>Parameterise blade geometry with $d = 20$&ndash;100 design variables (PARSEC, CST, or B-spline control points).</li>
+    <li>Run RANS CFD to compute total-to-total efficiency $\eta_{tt}$ and mass-flow-averaged loss $\omega$.</li>
+    <li>Run adjoint RANS to compute $d\eta_{tt}/dx_i$ for all $i$ simultaneously.</li>
+    <li>Step in the gradient direction with L-BFGS-B, subject to structural constraints.</li>
+  </ol>
+  <p><strong>Result</strong>: 20% drag reduction on a high-pressure turbine NGV in &lt;50 CFD evaluations. Gradient-free NSGA-II on the same problem required &gt;5,000 evaluations.</p>
+</div>
+
+<!-- ================================================================== -->
+<h2>6. Constrained Bayesian Optimisation</h2>
+
+<p>Engineering problems always have constraints. For output constraints (constraint value computed by the expensive simulation), model each constraint with a separate GP and use the probability of feasibility:</p>
+
+<div class="math-block">
+$$\text{PoF}(\mathbf{x}) = P\bigl(g(\mathbf{x}) \leq 0\bigr) = \Phi\!\left(\frac{-\mu_g^*(\mathbf{x})}{\sigma_g^*(\mathbf{x})}\right)$$
+$$\text{Constrained EI: } \text{cEI}(\mathbf{x}) = \text{EI}(\mathbf{x}) \times \prod_k \text{PoF}_k(\mathbf{x})$$
+</div>
+
+<pre><code>from botorch.models import SingleTaskGP
+from botorch.acquisition.logei import qLogNoisyExpectedImprovement
+from botorch.optim import optimize_acqf
+import torch
+
+def constrained_bo_step(train_X, train_Y, train_C, bounds, n_candidates=256):
+    """One step of constrained BO with m output constraints (<=0 is feasible)."""
+    obj_model = SingleTaskGP(train_X, train_Y)
+    # Separate GP per constraint
+    con_models = [SingleTaskGP(train_X, train_C[:, i:i+1])
+                  for i in range(train_C.shape[1])]
+
+    constraints = {i: (None, 0.0) for i in range(train_C.shape[1])}
+    acqf = qLogNoisyExpectedImprovement(
+        model=obj_model, X_baseline=train_X, constraints=constraints
+    )
+    candidate, _ = optimize_acqf(
+        acqf, bounds=bounds, q=1, num_restarts=20, raw_samples=n_candidates
+    )
+    return candidate</code></pre>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Ignoring Constraint Uncertainty</div>
+  Using hard constraint enforcement (reject infeasible points) instead of probabilistic feasibility wastes the BO budget by refusing to explore near constraint boundaries — where the best feasible solutions often lie. Always use PoF-weighted acquisition. Set PoF threshold at 0.9 (not 0.5) for engineering safety constraints.
+</div>
+
+<!-- ================================================================== -->
+<h2>7. Multi-Objective Optimisation: Pareto Fronts</h2>
+
+<p>A solution $\mathbf{x}^*$ is Pareto optimal if no other feasible $\mathbf{x}'$ is better in at least one objective without being worse in another. The Pareto front $\mathcal{P}^*$ is the set of all such solutions.</p>
+
+<div class="math-block">
+$$\mathbf{x}^* \text{ is Pareto optimal} \iff \nexists\, \mathbf{x}' : f_k(\mathbf{x}') \leq f_k(\mathbf{x}^*)\;\forall k, \quad \exists k': f_{k'}(\mathbf{x}') < f_{k'}(\mathbf{x}^*)$$
+</div>
+
+<p><strong>qEHVI (Expected Hypervolume Improvement)</strong>: the BO acquisition function for multi-objective problems. It measures the expected increase in the dominated hypervolume — the volume of objective space dominated by the current Pareto front. Implemented in BoTorch as <code>qExpectedHypervolumeImprovement</code>.</p>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson</div>
+  Presenting the full Pareto front to decision-makers is almost always more valuable than a single "optimal" point. A BSFC vs. NOx Pareto front for an engine calibration problem might show that a 5% BSFC penalty reduces NOx by 40% — a trade-off that cannot be captured by any single-objective formulation. The engineering decision of <em>which</em> Pareto point to select belongs to the system engineer, not the optimiser.
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Multi-Objective Best Practices</div>
+  <ul>
+    <li>Normalise all objectives to [0, 1] before computing hypervolume — EHVI is scale-sensitive.</li>
+    <li>Set the reference point slightly worse than the worst observed objective values (e.g., $r_k = \max_i f_k(x_i) \times 1.1$).</li>
+    <li>For $> 3$ objectives, hypervolume computation becomes expensive — use R2 indicator or decomposition-based methods (MOEA/D).</li>
+    <li>NSGA-II with surrogate assistance: use the GP surrogate to pre-screen candidates before expensive CFD evaluation. Reduces budget by 10&times; vs. direct NSGA-II on CFD.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>8. Key Takeaways</h2>
+
+<ul>
+  <li><strong>BO with EI</strong>: gold standard for $d \leq 20$, $n \leq 200$ expensive evaluations. Use Knowledge Gradient for noisy test benches.</li>
+  <li><strong>TuRBO</strong>: mandatory for $d > 20$. Fits local GPs in trust regions that expand/contract based on improvement history.</li>
+  <li><strong>Adjoint method</strong>: compute exact gradients of PDE-constrained objectives at $\mathcal{O}(1)$ extra solve cost. 100&times; more efficient than finite differences for $d > 10$.</li>
+  <li><strong>Constrained BO</strong>: model each constraint with its own GP; weight EI by $\text{PoF}(\mathbf{x})$. Never use hard rejection.</li>
+  <li><strong>Multi-objective</strong>: always present the full Pareto front. qEHVI (BoTorch) is the correct acquisition for BO-based Pareto front generation.</li>
+  <li>Gradient-free methods (CMA-ES, NSGA-II) need $\mathcal{O}(10^3\text{--}10^4)$ evaluations vs. $\mathcal{O}(10\text{--}100)$ for gradient-based. Never use gradient-free when gradients are available.</li>
+</ul>
+
+<div class="nav-links">
+  <a href="ch14-deployment.html">&larr; Ch14: Deployment</a>
+  <a href="ch16-reliability.html">Ch16: Reliability &rarr;</a>
+</div>
+
+</main>
+
+<footer>
+  <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
+  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+</footer>
+
+</body>
+</html>

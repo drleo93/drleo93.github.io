@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Fidelity Surrogates and Physics Constraints | ML Handbook</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#2d333b;--text:#b8c0cc;--muted:#6e7890;--accent:#6da5cc;--green:#5a9e72;--amber:#c49a3c;--red:#c97b76;--code-bg:#13191f;--tag-bg:#1a2d40;}
+*{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;font-size:16px;line-height:1.7;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+header{border-bottom:1px solid var(--border);padding:2rem 0 1.5rem;text-align:center;}
+.series-label{color:var(--muted);font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;font-family:monospace;}
+h1{color:var(--accent);font-size:2rem;font-weight:700;margin-bottom:0.5rem;}.subtitle{color:var(--muted);font-size:1rem;}
+.tags{margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;}
+.tag{background:var(--tag-bg);color:var(--accent);padding:0.2rem 0.7rem;border-radius:3px;font-size:0.75rem;font-family:monospace;border:1px solid var(--border);}
+main{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem;}
+.tldr{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:4px;padding:1.2rem 1.5rem;margin-bottom:2.5rem;}
+.tldr h2{color:var(--accent);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.75rem;}
+.tldr ul{padding-left:1.2rem;}.tldr li{margin-bottom:0.35rem;}
+h2{color:var(--accent);font-size:1.35rem;margin:2.5rem 0 1rem;border-bottom:1px solid var(--border);padding-bottom:0.4rem;}
+h3{color:#8db4c8;font-size:1.1rem;margin:1.8rem 0 0.7rem;}
+p{margin-bottom:1rem;}ul,ol{padding-left:1.4rem;margin-bottom:1rem;}li{margin-bottom:0.3rem;}
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-rule{background:var(--surface);border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-label{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.5rem;font-weight:700;}
+.box-lesson .box-label{color:var(--green);}.box-pitfall .box-label{color:var(--amber);}
+.box-rule .box-label{color:#8b949e;}.box-example .box-label{color:#9d8fd4;}
+.math-block{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;margin:1.2rem 0;overflow-x:auto;}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;overflow-x:auto;margin:1.2rem 0;}
+code{font-family:'Courier New',monospace;font-size:0.85rem;color:#a8c4d8;}
+p code,li code{background:var(--code-bg);padding:0.1em 0.35em;border-radius:2px;font-size:0.85em;}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:0.88rem;}
+thead th{background:var(--surface);color:var(--accent);padding:0.6rem 0.8rem;text-align:left;border-bottom:2px solid var(--border);font-family:monospace;font-size:0.8rem;}
+tbody td{padding:0.55rem 0.8rem;border-bottom:1px solid var(--border);vertical-align:top;}
+tbody tr:hover{background:#1a1f27;}
+.nav-links{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:0.9rem;}
+footer{text-align:center;color:var(--muted);font-size:0.8rem;padding:2rem;border-top:1px solid var(--border);margin-top:1rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="series-label">The Engineer's Handbook of Machine Learning</div>
+  <h1>Multi-Fidelity Surrogates and Physics Constraints</h1>
+  <div class="subtitle">Chapter 17 &mdash; Kennedy-O'Hagan, Physics Losses, Grey-Box ODEs, Transfer Learning</div>
+  <div class="tags">
+    <span class="tag">Multi-Fidelity</span>
+    <span class="tag">Kennedy-O'Hagan</span>
+    <span class="tag">Physics Constraints</span>
+    <span class="tag">Grey-Box</span>
+    <span class="tag">Transfer Learning</span>
+    <span class="tag">PINN</span>
+    <span class="tag">Smart Data</span>
+    <span class="tag">CFD</span>
+  </div>
+</header>
+
+<main>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>Multi-fidelity modelling: combine cheap simulations (1D, coarse CFD) with expensive measurements. The Kennedy-O'Hagan auto-regressive model needs only 15&ndash;30 HF points to correct a 200-point LF surrogate.</li>
+    <li>Physics constraints are non-optional in engineering ML. A surrogate that violates conservation laws is not just inaccurate — it is <em>dangerous</em>.</li>
+    <li>Three strategies to enforce physics: (1) architecture constraints (monotone networks, equivariant layers), (2) physics loss terms, (3) grey-box formulation (physics model + ML residual).</li>
+    <li>Multi-fidelity budget rule: if $c_{HF}/c_{LF} &gt; 10$, invest 80% budget in LF, 20% in HF. Minimum HF points: $5(d+1)$.</li>
+    <li>KO scale factor $\rho \approx 1$ means the LF model is well-calibrated. $\rho \ll 0.8$ means the LF model has systematic bias — fix the physics first.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>1. The Multi-Fidelity Problem</h2>
+
+<p>Engineering workflows produce data at multiple fidelity levels, each with a different cost-accuracy trade-off:</p>
+
+<table>
+  <thead><tr><th>Level</th><th>Method</th><th>Cost</th><th>Error</th><th>Typical Data Volume</th></tr></thead>
+  <tbody>
+    <tr><td>1 (cheapest)</td><td>Handbook correlations, 0D thermodynamics</td><td>Seconds</td><td>10&ndash;30%</td><td>Unlimited</td></tr>
+    <tr><td>2</td><td>1D simulation (GT-Power), 2D RANS, coarse FEM</td><td>Minutes–hours</td><td>3&ndash;10%</td><td>Hundreds</td></tr>
+    <tr><td>3</td><td>3D RANS fine mesh, LES</td><td>Hours–days</td><td>0.5&ndash;2%</td><td>Tens</td></tr>
+    <tr><td>4 (most expensive)</td><td>Physical test bench, wind tunnel</td><td>Thousands €</td><td>Measurement uncertainty</td><td;>Single digits</td></tr>
+  </tbody>
+</table>
+
+<p>The goal: leverage abundant LF data to reduce the number of expensive HF evaluations required to achieve a given accuracy target.</p>
+
+<!-- ================================================================== -->
+<h2>2. Kennedy-O'Hagan Auto-Regressive Model</h2>
+
+<p>The KO model links two fidelity levels with a scale factor and an additive discrepancy GP:</p>
+
+<div class="math-block">
+$$y_{HF}(\mathbf{x}) = \rho\,y_{LF}(\mathbf{x}) + \delta(\mathbf{x}), \quad \delta \sim \mathcal{GP}(0, k_\delta)$$
+</div>
+
+<p>$\rho$ is the multiplicative correction (learned by OLS) and $\delta$ is an independent GP capturing the systematic discrepancy. When $\rho \approx 1$ and $\sigma_\delta \ll \sigma_{LF}$, the LF model is already excellent. When $\rho \ll 0.8$, the LF model has large systematic bias — fix the physics first.</p>
+
+<pre><code>import gpflow, numpy as np
+from sklearn.preprocessing import StandardScaler
+
+def kennedy_ohagan_gp(X_lf, y_lf, X_hf, y_hf):
+    """Two-level Kennedy-O'Hagan multi-fidelity GP."""
+    scaler = StandardScaler()
+    X_lf_n = scaler.fit_transform(X_lf)
+    X_hf_n = scaler.transform(X_hf)
+
+    # Step 1: Fit GP on LF data
+    gp_lf = gpflow.models.GPR(
+        (X_lf_n, y_lf[:, None]),
+        kernel=gpflow.kernels.Matern52(lengthscales=np.ones(X_lf.shape[1])),
+        noise_variance=1e-4
+    )
+    gpflow.optimizers.Scipy().minimize(gp_lf.training_loss, gp_lf.trainable_variables)
+
+    # Step 2: LF predictions at HF locations
+    mu_lf_at_hf, _ = gp_lf.predict_y(X_hf_n)
+    mu_lf = mu_lf_at_hf.numpy().ravel()
+
+    # Step 3: Estimate rho by OLS, compute discrepancy
+    rho = float(np.linalg.lstsq(mu_lf[:, None], y_hf[:, None], rcond=None)[0][0, 0])
+    delta_hf = y_hf - rho * mu_lf
+
+    # Step 4: Fit discrepancy GP (augmented input includes LF prediction)
+    X_aug = np.hstack([X_hf_n, mu_lf[:, None]])
+    gp_delta = gpflow.models.GPR(
+        (X_aug, delta_hf[:, None]),
+        kernel=gpflow.kernels.Matern52(lengthscales=np.ones(X_aug.shape[1])),
+        noise_variance=1e-4
+    )
+    gpflow.optimizers.Scipy().minimize(gp_delta.training_loss, gp_delta.trainable_variables)
+    print(f"rho = {rho:.4f}  (1.0 = LF perfectly calibrated)")
+    return gp_lf, gp_delta, rho, scaler
+
+def predict_mf(gp_lf, gp_delta, rho, scaler, X_new):
+    X_n = scaler.transform(X_new)
+    mu_lf, _ = gp_lf.predict_y(X_n)
+    X_aug = np.hstack([X_n, mu_lf.numpy()])
+    mu_d, var_d = gp_delta.predict_y(X_aug)
+    mu_hf  = rho * mu_lf.numpy().ravel() + mu_d.numpy().ravel()
+    sigma   = np.sqrt(var_d.numpy().ravel())
+    return mu_hf, sigma</code></pre>
+
+<div class="box-example">
+  <div class="box-label">Example — Compressor Efficiency Multi-Fidelity Surrogate</div>
+  <p><strong>Setup</strong>: 200 1D simulation (GT-Power) points as LF; 7 RANS CFD evaluations as HF. Target: isentropic efficiency $\eta_{is}$ vs. normalised speed $N/\sqrt{T_1}$.</p>
+  <p><strong>Result</strong>: 7 HF RANS evaluations correct the 200-point LF surrogate. MF surrogate achieves HF accuracy (RMSE ≈ 0.8%) at 20&times; lower cost than a pure HF GP would require.</p>
+  <p><strong>Diagnostic</strong>: $\rho = 0.97$ (LF is well-calibrated; mostly a vertical offset). Discrepancy GP $\sigma_\delta = 1.2\%$ (captures injection timing effects not in 1D model).</p>
+</div>
+
+<!-- ================================================================== -->
+<h2>3. Multi-Fidelity Budget Allocation</h2>
+
+<p>Optimal allocation minimises integrated posterior variance subject to a total cost budget $\mathcal{B}$:</p>
+
+<div class="math-block">
+$$\min_{n_{LF}, n_{HF}} \int_\mathcal{X} \sigma^{*2}_{MF}(\mathbf{x})\,d\mathbf{x} \quad \text{s.t.} \quad c_{LF}\,n_{LF} + c_{HF}\,n_{HF} \leq \mathcal{B}$$
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Budget Allocation Rules of Thumb</div>
+  <ul>
+    <li>If $c_{HF}/c_{LF} &gt; 10$: invest 80% budget in LF, 20% in HF.</li>
+    <li>Minimum HF points: $\geq 5(d+1)$ for the discrepancy GP to be identifiable. For $d=5$: at least 30 HF points.</li>
+    <li>LF points: $\geq 10\times$ HF points. More LF data is almost always beneficial since it is cheap.</li>
+    <li>If $\rho \approx 1.0$ and $\sigma_\delta \ll \sigma_{LF}$: LF is excellent; HF adds little value. Stop collecting HF.</li>
+    <li>If $\rho \ll 0.8$: systematic LF bias is large. Fix the LF model physics before adding HF data.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>4. Physics Constraints in Engineering ML</h2>
+
+<h3>Why Physics Constraints Are Non-Optional</h3>
+
+<p>Data-driven surrogates trained without physics constraints can violate conservation laws, predict negative pressures, or produce non-monotone responses in physically monotone systems. In engineering, these are not just inaccuracies — they are <strong>dangerous</strong> if the model is used for control or certification.</p>
+
+<p>Three strategies for enforcing physics, in order of increasing flexibility:</p>
+
+<table>
+  <thead><tr><th>Strategy</th><th>Mechanism</th><th>Cost</th><th>When to Use</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Architecture constraints</strong></td><td>Monotone networks, equivariant layers, softmax outputs</td><td>Zero (baked in)</td><td>Known monotonicity or symmetry</td></tr>
+    <tr><td><strong>Physics loss terms</strong></td><td>Add residual of governing equation to training loss (PINN)</td><td>Moderate (extra compute)</td><td>Known PDE; continuity, energy balance</td></tr>
+    <tr><td><strong>Grey-box formulation</strong></td><td>Physics model output as input or offset; ML learns residual only</td><td>Low (separate models)</td><td>Partial physics available; most engineering problems</td></tr>
+  </tbody>
+</table>
+
+<h3>Architecture Constraints</h3>
+
+<ul>
+  <li><strong>Monotone networks</strong>: constrain all weights in one layer to be positive (or use the ICNN architecture). Guarantees output is monotonically increasing in specified inputs — e.g., compressor pressure ratio must increase with mass flow at fixed speed.</li>
+  <li><strong>Input convex networks</strong>: ICNN guarantees the output is a convex function of inputs — correct for thermodynamic free energy functions.</li>
+  <li><strong>Equivariant layers</strong>: build rotation/reflection symmetry into the layer structure. Critical for 3D field predictions where physics is isotropic.</li>
+</ul>
+
+<h3>Physics Loss (PINN-style)</h3>
+
+<div class="math-block">
+$$\mathcal{L}_{total} = \underbrace{\mathcal{L}_{data}}_{\text{fit observations}} + \lambda\underbrace{\mathcal{L}_{physics}}_{\text{PDE residual at collocation pts}}$$
+$$\mathcal{L}_{physics} = \frac{1}{N_c}\sum_{i=1}^{N_c} \left\|\mathcal{N}[\hat{u}](\mathbf{x}_i^c) - f(\mathbf{x}_i^c)\right\|^2$$
+</div>
+
+<p>where $\mathcal{N}[\hat{u}]$ is the differential operator applied to the network prediction (via automatic differentiation) and $f$ is the source term. The collocation points $\mathbf{x}_i^c$ can be sampled anywhere in the domain — they do not require labels.</p>
+
+<!-- ================================================================== -->
+<h2>5. Transfer Learning for Engineering Surrogates</h2>
+
+<p>Transfer learning reuses a surrogate trained on a source domain (e.g., one engine variant, one material grade) to a target domain with limited new data:</p>
+
+<ul>
+  <li><strong>Fine-tuning</strong>: freeze the feature extractor layers; retrain only the output head on target domain data. Effective when source and target domains share low-level physics (same combustion mechanism, different injection geometry).</li>
+  <li><strong>Domain adaptation</strong>: align the feature distributions between source and target domains using maximum mean discrepancy (MMD) or adversarial training. Used when the input distribution shifts significantly (different test conditions).</li>
+  <li><strong>KO-style transfer</strong>: treat the source domain model as LF and target domain data as HF. Apply KO auto-regressive correction. Requires only $5(d+1)$ target domain points.</li>
+</ul>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson</div>
+  KO-style transfer (source = LF, target = HF) is almost always the right approach for engineering surrogates. It is interpretable ($\rho$ quantifies how well the source model generalises), statistically rigorous, and requires minimal target data. Fine-tuning neural networks for transfer between engine variants requires careful learning rate selection and risks catastrophic forgetting if the target dataset is small.
+</div>
+
+<!-- ================================================================== -->
+<h2>6. Key Takeaways</h2>
+
+<ul>
+  <li>Kennedy-O'Hagan: $y_{HF} = \rho y_{LF} + \delta$. Just 15&ndash;30 HF points correct a 200-point LF surrogate. Check $\rho$: if $\rho \ll 0.8$, fix the LF physics first.</li>
+  <li>Budget allocation: $c_{HF}/c_{LF} &gt; 10$ → 80% LF, 20% HF. Minimum HF: $5(d+1)$ points for the discrepancy GP.</li>
+  <li>Physics constraints are non-optional. Use architecture constraints (monotone, equivariant) when the physical relationship is known a priori. Use physics losses (PINN) when the PDE is known. Use grey-box otherwise.</li>
+  <li>Grey-box = physics model output + ML residual. This is the default for regulated engineering domains — it provides physical bounds on extrapolation and reduces data requirements.</li>
+  <li>Transfer learning: KO-style (source as LF, target as HF) is the most interpretable and data-efficient transfer strategy for engineering surrogates.</li>
+  <li>Two-fidelity is usually sufficient: adding a third level (e.g., handbook + 1D + HF experiment) yields diminishing returns and complicates the KO nesting.</li>
+</ul>
+
+<div class="nav-links">
+  <a href="ch16-reliability.html">&larr; Ch16: Reliability Engineering</a>
+  <a href="ch18-3d-neural-operators.html">Ch18: 3D &amp; Neural Operators &rarr;</a>
+</div>
+
+</main>
+
+<footer>
+  <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
+  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+</footer>
+
+</body>
+</html>

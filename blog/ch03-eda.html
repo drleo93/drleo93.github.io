@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 3: Engineering Data Analysis &amp; Feature Engineering | Engineer's ML Handbook</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root {
+  --bg:      #0d1117;
+  --surface: #161b22;
+  --border:  #2d333b;
+  --text:    #b8c0cc;
+  --muted:   #6e7890;
+  --accent:  #6da5cc;
+  --green:   #5a9e72;
+  --amber:   #c49a3c;
+  --red:     #c97b76;
+  --code-bg: #13191f;
+  --tag-bg:  #1a2d40;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.7}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:1.4rem 2rem}
+header .breadcrumb{font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem}
+header h1{font-size:1.7rem;font-weight:700;color:#d0dae8;line-height:1.25}
+header .meta{font-size:0.82rem;color:var(--muted);margin-top:0.5rem}
+.tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin:0.9rem 0}
+.tag{background:var(--tag-bg);color:var(--accent);font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;border:1px solid #2a4a66}
+.container{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
+.tldr{background:#0c1e30;border:1px solid #2a4a66;border-left:4px solid var(--accent);border-radius:6px;padding:1.1rem 1.4rem;margin:1.5rem 0}
+.tldr h3{color:var(--accent);font-size:0.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:0.5rem}
+.tldr ul{padding-left:1.2rem}
+.tldr li{margin-bottom:0.25rem;font-size:0.92rem}
+h2{color:#c8d6e5;font-size:1.3rem;margin:2.2rem 0 0.8rem;padding-bottom:0.35rem;border-bottom:1px solid var(--border)}
+h3{color:#a8bcd0;font-size:1.05rem;margin:1.6rem 0 0.5rem}
+h4{color:var(--muted);font-size:0.95rem;margin:1.2rem 0 0.3rem;text-transform:uppercase;letter-spacing:.04em}
+p{margin-bottom:0.9rem}
+ul,ol{padding-left:1.5rem;margin-bottom:0.9rem}
+li{margin-bottom:0.3rem}
+code{background:var(--code-bg);color:#a8d4a8;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.85em;padding:0.1em 0.4em;border-radius:3px}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto;margin:1rem 0}
+pre code{background:none;padding:0;font-size:0.88em}
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-rule{background:#161b22;border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-label{font-size:0.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:0.5rem}
+.box-lesson .box-label{color:var(--green)}
+.box-pitfall .box-label{color:var(--amber)}
+.box-rule .box-label{color:#8b9aaa}
+.box-example .box-label{color:#9d8fd4}
+.tbl-wrap{overflow-x:auto;margin:1.2rem 0}
+table{width:100%;border-collapse:collapse;font-size:0.87rem}
+th{background:#1c2636;color:#c8d6e5;padding:0.6rem 0.85rem;text-align:left;border-bottom:2px solid var(--border)}
+td{padding:0.55rem 0.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#161d28}
+td:first-child{color:#9bafc4}
+.formula-block{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:0.9rem 1.2rem;margin:1rem 0;text-align:center;overflow-x:auto}
+nav.chapter-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0;margin-top:2rem;border-top:1px solid var(--border);font-size:0.88rem}
+nav.chapter-nav a{color:var(--accent)}
+footer{background:var(--surface);border-top:1px solid var(--border);padding:1.2rem 2rem;text-align:center;font-size:0.8rem;color:var(--muted);margin-top:3rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="breadcrumb"><a href="index.html">Engineer's ML Handbook</a> › Part I: Foundations</div>
+  <h1>Ch 3: Engineering Data Analysis &amp; Feature Engineering</h1>
+  <div class="meta">Chapter 3 of 23 &nbsp;·&nbsp; ~35 min read &nbsp;·&nbsp; Highest leverage activity in engineering ML</div>
+  <div class="tags">
+    <span class="tag">EDA</span>
+    <span class="tag">data audit</span>
+    <span class="tag">Buckingham π</span>
+    <span class="tag">feature engineering</span>
+    <span class="tag">Arrhenius</span>
+    <span class="tag">leakage</span>
+    <span class="tag">outliers</span>
+    <span class="tag">data splitting</span>
+    <span class="tag">imbalance</span>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="tldr">
+  <h3>TL;DR</h3>
+  <ul>
+    <li>Feature engineering based on dimensional analysis (Buckingham π) is worth more than any algorithm choice. Dimensionless inputs routinely reduce required training data by 3–10×.</li>
+    <li>Temporal and group leakage is the most expensive ML mistake in engineering: a model with leakage passes all standard tests and fails in deployment.</li>
+    <li>Data imbalance is a physics problem — fix it with targeted DOE in the underrepresented region, not synthetic augmentation.</li>
+    <li>Compute the Dataset Quality Index (DQI) before any modelling. DQI &lt; 0.90: do not train, regardless of validation RMSE.</li>
+    <li>Use Spearman correlation (not Pearson) for engineering responses; use mutual information for non-monotone features.</li>
+    <li>The Arrhenius transform \(1/T\) linearises thermal activation — use it for flame speed, ignition delay, catalyst deactivation, creep.</li>
+  </ul>
+</div>
+
+<!-- =========================================================== -->
+<h2>1. The Data Audit: Before Any Modelling</h2>
+
+<p>Every engineering ML project begins with a structured data audit before any transformation, training, or visualisation. Six questions must be answered:</p>
+
+<ol>
+  <li><strong>Provenance</strong>: instrument, calibration certificate, sampling rate, test rig ID. A 100 Hz NOx analyser and a 5 Hz one have different response functions; mixing them introduces systematic error.</li>
+  <li><strong>Completeness and missing mechanism</strong>: MCAR/MAR/MNAR classification per column. A clipped NOx analyser returning 3000 ppm when overranged is MNAR and must be corrected before any imputation.</li>
+  <li><strong>Physical plausibility</strong>: does every signal respect physical bounds? Negative concentrations, \(\eta > 1\), and \(T < T_{amb}\) indicate faults or unit errors.</li>
+  <li><strong>Temporal ordering</strong>: rows must be in chronological order within each session. Engine test data is frequently stored out of order.</li>
+  <li><strong>Group structure</strong>: which rows belong to the same physical unit? This determines the correct cross-validation strategy.</li>
+  <li><strong>Target distribution</strong>: skewness &gt; 1 for NOx, PM, and concentration targets requires log-transformation before Gaussian-assumption models.</li>
+</ol>
+
+<h3>Dataset Quality Index (DQI)</h3>
+
+<p>Four component scores, each in \([0,1]\):</p>
+
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr><th>Score</th><th>Definition</th><th>Action threshold</th><th>Engineering example</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Completeness \(q_c\)</td><td>\(1 - n_{missing}/n_{total}\) per column</td><td>\(q_c < 0.90\): impute or discard</td><td>8% missing BSFC readings after bench restart</td></tr>
+    <tr><td>Consistency \(q_s\)</td><td>Fraction within ±3 MAD of rolling median</td><td>\(q_s < 0.95\): check sensor</td><td>NOx sensor stuck at 3000 ppm during enrichment</td></tr>
+    <tr><td>Plausibility \(q_p\)</td><td>Fraction within physical bounds \([x_{min}, x_{max}]\)</td><td>\(q_p < 0.99\): flag critical</td><td>Negative mass flow after pressure correction error</td></tr>
+    <tr><td>Temporal regularity \(q_t\)</td><td>Fraction of timesteps within expected \(\Delta t \pm 10\%\)</td><td>\(q_t < 0.95\): check DAQ</td><td>GPS dropout on mobile emission measurement</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="formula-block">
+$$\mathrm{DQI} = (q_c \cdot q_s \cdot q_p \cdot q_t)^{1/4}$$
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Rule — DQI thresholds</div>
+  DQI ≥ 0.97: proceed to modelling. DQI ∈ [0.90, 0.97): document issues and apply targeted cleaning. DQI &lt; 0.90: <strong>do not train</strong> — the resulting model cannot be trusted regardless of validation RMSE.
+</div>
+
+<pre><code>def data_quality_score(df, bounds, redundant_pairs=None, dt_expected=None):
+    q_c = 1 - df.isnull().mean().mean()
+    plaus = pd.Series(1.0, index=df.columns)
+    for col, (lo, hi) in bounds.items():
+        if col in df:
+            plaus[col] = ((df[col] >= lo) & (df[col] <= hi)).mean()
+    q_p = plaus.mean()
+    roll_med = df.rolling(50, center=True, min_periods=5).median()
+    roll_mad = (df - roll_med).abs().rolling(50, center=True, min_periods=5).median()
+    q_s = ((df - roll_med).abs() < 3 * roll_mad + 1e-9).mean().mean()
+    if dt_expected and 'timestamp' in df.columns:
+        dts = df['timestamp'].diff().dropna()
+        q_t = ((dts - dt_expected).abs() < 0.1*dt_expected).mean()
+    else:
+        q_t = 1.0
+    dqi = (q_c * q_s * q_p * q_t) ** 0.25
+    return {'DQI': dqi, 'completeness': q_c, 'consistency': q_s,
+            'plausibility': q_p, 'temporal': q_t}</code></pre>
+
+<!-- =========================================================== -->
+<h2>2. Summary Statistics and Correlation Analysis</h2>
+
+<h3>Descriptive Statistics with Physical Interpretation</h3>
+
+<p>Skewness \(\gamma\) and excess kurtosis \(\kappa\):</p>
+<ul>
+  <li>\(\gamma > 1\): right-skewed — characteristic of NOx, CO, PM, concentration data. Apply \(\log(1+x)\).</li>
+  <li>\(\kappa > 3\): leptokurtic — impulsive vibration signals, knock events, incipient faults.</li>
+  <li>\(\kappa < -1\): platykurtic — bounded quantities near their limits (efficiency, normalised pressure).</li>
+</ul>
+
+<h3>Spearman vs. Pearson</h3>
+
+<p>Pearson \(r\) reports zero for perfectly nonlinear relationships (e.g., a U-shaped efficiency curve). Spearman rank correlation detects any monotone association and is robust to outliers:</p>
+
+<div class="formula-block">
+$$\rho_{jk} = 1 - \frac{6\sum_i d_i^2}{n(n^2-1)}, \quad d_i = \mathrm{rank}(x_{ij}) - \mathrm{rank}(x_{ik})$$
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Rule — Correlation method selection</div>
+  For all nonlinear engineering responses (combustion, thermodynamics, kinetics): use <strong>Spearman</strong> for exploratory analysis. Use <strong>mutual information</strong> (<code>sklearn.feature_selection.mutual_info_regression</code>) for non-monotone features such as injection timing vs. BSFC, which has an optimum. Near-zero Pearson \(r\) with high MI is the signature of a nonlinear physical relationship.
+</div>
+
+<!-- =========================================================== -->
+<h2>3. Feature Engineering: Buckingham π Theorem</h2>
+
+<p>Feature engineering is the highest-leverage activity in engineering ML. Physical intuition and domain knowledge produce transformations that make the problem tractable with less data and better generalisation.</p>
+
+<div class="box-lesson">
+  <div class="box-label">Theorem — Buckingham π</div>
+  If a physical law involves \(n\) dimensional quantities with \(k\) independent fundamental dimensions, the relationship can be expressed as a function of \(n - k\) independent dimensionless parameters \(\Pi_1, \ldots, \Pi_{n-k}\). The surrogate function lives in an \((n-k)\)-dimensional space, not an \(n\)-dimensional one.
+</div>
+
+<h3>Example: Aerospace Compressor Map</h3>
+
+<p>Inputs: \(N\) [rpm], \(\dot{m}\) [kg/s], \(D\) [m], \(p_{01}\) [Pa], \(T_{01}\) [K], \(\gamma\) [-], \(R\) [J/kg/K] — 7 variables, 4 fundamental dimensions. Result: \(7 - 4 = 3\) non-trivial groups:</p>
+
+<div class="formula-block">
+$$\hat{N} = \frac{ND}{\sqrt{\gamma R T_{01}}}, \qquad \hat{\dot{m}} = \frac{\dot{m}\sqrt{\gamma R T_{01}}}{p_{01}D^2}, \qquad \hat{\mathrm{Re}} = \frac{\rho_{01} N D^2}{\mu}$$
+</div>
+
+<p>A GP trained on 2 corrected inputs instead of 7 raw ones requires \(10^5/10^2 = 1000\times\) fewer grid points to cover the same relative density in input space. This is not a heuristic — it follows from the Buckingham theorem.</p>
+
+<div class="box-rule">
+  <div class="box-label">Rule — Buckingham π protocol</div>
+  <ol>
+    <li>List all inputs/outputs with SI units. Write the dimensional matrix.</li>
+    <li>Compute the rank \(k\) of the dimensional matrix.</li>
+    <li>Select \(k\) linearly independent repeating variables (typically those spanning all dimensions).</li>
+    <li>Construct \(n-k\) dimensionless \(\Pi\) groups by combining each remaining variable with the repeating variables.</li>
+    <li>Verify with experiments or CFD that each \(\Pi\) group genuinely affects the output.</li>
+    <li><strong>Always train on \(\Pi\) groups when derivable; never on raw dimensional inputs.</strong></li>
+  </ol>
+</div>
+
+<div class="box-example">
+  <div class="box-label">Example — Ignition delay surrogate: T vs. 1/T as input</div>
+  2,400 shock tube measurements of n-heptane ignition delay, \(T \in [700, 1400]\) K.
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr><th>Input set</th><th>GP RMSE (10-fold CV)</th><th>Extrapolation at 1600 K</th><th>Training points needed</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>\((T, p, \phi)\)</td><td>8.2%</td><td>\(4.1\times\) off</td><td>\(n = 800\)</td></tr>
+      <tr><td>\((1/T, \ln p, \phi)\)</td><td>3.1%</td><td>\(1.3\times\) off</td><td>\(n = 250\)</td></tr>
+      <tr><td>\((\mathrm{Da}, E_a/R_uT, \phi)\)</td><td>2.4%</td><td>\(1.1\times\) off</td><td>\(n = 180\)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  The \(1/T\) Arrhenius transform reduces required training data by \(3.2\times\) and halves extrapolation error by linearising the dominant exponential dependence.
+</div>
+
+<!-- =========================================================== -->
+<h2>4. Physics-Based Transformations</h2>
+
+<h3>Arrhenius Transform</h3>
+
+<p>Any Arrhenius-governed quantity: \(k(T) = A\exp(-E_a/R_uT)\) becomes linear in \(1/T\) space. Use \(x_{Arr} = 1/T\) [K\(^{-1}\)] for:</p>
+<ul>
+  <li>Laminar flame speed (\(S_L \propto T_u^\alpha\), \(\alpha \approx 1.5\text{–}2.0\))</li>
+  <li>Ignition delay time (\(\tau_{ign} \propto \exp(E_a/R_uT)\))</li>
+  <li>Catalyst deactivation rate, corrosion rate, creep rate in materials</li>
+</ul>
+
+<h3>Ratio Features from Conservation Laws</h3>
+
+<ul>
+  <li><strong>Equivalence ratio</strong>: \(\phi = \dot{m}_f/(\dot{m}_{air}/F_{stoich})\) — encodes fuel-air balance in one dimensionless number</li>
+  <li><strong>Steam-to-carbon ratio</strong>: \(S/C = \dot{n}_{H_2O}/\dot{n}_C\) — key parameter for coke deposition in steam reforming</li>
+  <li><strong>Normalised temperature</strong>: \(\theta = (T - T_{ref})/T_{ref}\) — dimensionless, centred at zero, used in heat exchanger effectiveness</li>
+</ul>
+
+<h3>Product Features from Reaction Mechanisms</h3>
+
+<p>The Zeldovich thermal NOx rate suggests a single scalar feature encoding the dominant NOx formation mechanism:</p>
+<div class="formula-block">
+$$\phi_{Zel} = [O_2]^{0.5} \cdot [N_2] \cdot \exp\!\left(-\frac{38{,}370}{T}\right)$$
+</div>
+
+<p>For an ECU-based virtual sensor, \([O_2]\) and \([N_2]\) can be estimated from \(\lambda\) and the Boudouard equilibrium — computable in real time without additional sensors.</p>
+
+<h3>Frequency-Domain Features for Rotating Machinery</h3>
+
+<p>Fault frequencies are physically computable from geometry:</p>
+<div class="formula-block">
+$$f_{BPFO} = \frac{N_b f_r}{2}\!\left(1 - \frac{d_b}{d_p}\cos\alpha\right) \quad \text{(ball pass frequency, outer race)}$$
+</div>
+
+<p>Including spectral energy at these known physical frequencies as features provides direct diagnostic information that a convolutional network must learn from many more samples.</p>
+
+<!-- =========================================================== -->
+<h2>5. Temporal and Cycle-Based Feature Engineering</h2>
+
+<p>For quantities measured over a physical cycle (combustion, reactor residence time, charge-discharge):</p>
+<ul>
+  <li><strong>Mean over cycle</strong>: removes within-cycle variability, exposes steady-state behaviour</li>
+  <li><strong>Variance over cycle</strong>: quantifies cyclic dispersion; in combustion, COV\(_{IMEP} > 3\%\) indicates unstable combustion</li>
+  <li><strong>Cumulative integral</strong>: \(\int_0^\tau x(t)\,dt\) — total dose (energy, reactant consumed)</li>
+  <li><strong>Rate at key event</strong>: \(dx/dt\) at ignition, peak pressure, 50% MFB</li>
+</ul>
+
+<h3>Residual / Deviation Features for Condition Monitoring</h3>
+
+<div class="formula-block">
+$$\Delta x_j(t) = x_j(t) - x_j^{nominal}\bigl(\text{op. point}(t)\bigr)$$
+</div>
+
+<p>This residual modelling approach: (1) reduces target variance by ~10× of the raw signal, halving required training data; (2) provides a natural fallback (zero residual = healthy); (3) is interpretable to maintenance engineers.</p>
+
+<!-- =========================================================== -->
+<h2>6. Class Imbalance in Engineering</h2>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Synthetic augmentation of rare operating conditions</div>
+  Rare operating conditions (near-surge, near-extinction, near-failure) are rare because they are dangerous or operationally avoided. Synthetic generation of near-extinction combustion data cannot replicate the actual physics operating in these regimes — the flamelet assumption breaks down at extinction. A model trained on synthetically augmented near-extinction data will not correctly predict lean blowout.
+</div>
+
+<p>Correct alternatives to synthetic augmentation:</p>
+<ul>
+  <li><strong>Targeted DOE</strong>: explicitly include underrepresented operating points in the next campaign. Sobol' sensitivity identifies which regions are undersampled relative to their contribution to model variance.</li>
+  <li><strong>Sample weighting</strong>: \(\mathcal{L}_{wtd} = \sum_i w_i(y_i - \hat{f}(\mathbf{x}_i))^2\) with \(w_i \propto 1/p(\mathbf{x}_i)\). Supported directly in XGBoost and PyTorch.</li>
+  <li><strong>Active learning</strong>: use GP acquisition function \(\alpha_{MV} = \sigma^{*2}\) to sequentially target undersampled regions.</li>
+  <li><strong>Physics-based augmentation</strong>: run the first-principles model (reduced kinetics, 0D thermodynamic model) in the underrepresented regime. This is valid because the physics model is the ground truth for that regime.</li>
+</ul>
+
+<!-- =========================================================== -->
+<h2>7. Outlier Detection and Data Quality</h2>
+
+<h3>Modified Z-Score (Univariate, Robust)</h3>
+
+<div class="formula-block">
+$$M_i = \frac{0.6745(x_i - \tilde{x})}{\mathrm{MAD}}, \quad \mathrm{MAD} = \mathrm{median}(|x_i - \tilde{x}|)$$
+</div>
+
+<p>Flag \(|M_i| > 3.5\). Robust to up to 50% contamination. Use before any model fitting.</p>
+
+<h3>Isolation Forest (Multivariate)</h3>
+
+<p>Anomaly score \(s(\mathbf{x},n) = 2^{-E[h(\mathbf{x})]/c(n)}\), where \(h(\mathbf{x})\) is the average path length to isolate \(\mathbf{x}\) in a random tree. \(s \to 1\) indicates anomaly. Preferred for \(d > 5\) and \(n > 1{,}000\).</p>
+
+<div class="box-rule">
+  <div class="box-label">Rule — Outlier handling protocol</div>
+  <ol>
+    <li>Physically impossible values (\(T < T_{amb}\), \([c] < 0\), \(\eta > 1\)): remove with documentation.</li>
+    <li>Clipped sensors (\(> 2\%\) of readings at exact maximum): fix root cause; flag as MNAR.</li>
+    <li>Borderline outliers (flagged but physically possible): winsorise to \([Q_{0.01}, Q_{0.99}]\).</li>
+    <li>Validate: CV RMSE change &lt; 5% after outlier removal.</li>
+    <li>All removed rows logged in data audit trail with reason.</li>
+  </ol>
+</div>
+
+<!-- =========================================================== -->
+<h2>8. Correct Data Splitting for Engineering Models</h2>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Random shuffle for structured engineering data</div>
+  The most common and most expensive error in engineering ML. Engine test data collected in back-to-back runs at similar conditions will have temporally adjacent points split into train and validation sets. The model sees "almost identical" data in both — RMSE looks great in development, fails 30–60% higher in deployment. Always ask: is there a campaign ID, test rig ID, or timestamp that should define the split?
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Rule — Data splitting by structure</div>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr><th>Data structure</th><th>Correct split</th><th>Code</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Multiple campaigns / test rigs</td><td>GroupKFold by campaign ID</td><td><code>GroupKFold(n_splits=5)</code></td></tr>
+      <tr><td>Pure time series, single unit</td><td>TimeSeriesSplit (no future leakage)</td><td><code>TimeSeriesSplit(n_splits=5)</code></td></tr>
+      <tr><td>Repeated measurements, same conditions</td><td>GroupKFold by condition block</td><td><code>GroupKFold</code></td></tr>
+      <tr><td>Truly i.i.d. data (rare in engineering)</td><td>Random KFold</td><td><code>KFold(n_splits=5)</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- =========================================================== -->
+<h2>Chapter Summary</h2>
+
+<div class="box-lesson">
+  <div class="box-label">Key takeaways</div>
+  <ul>
+    <li><strong>Audit before modelling</strong>: compute DQI, classify missing mechanisms (MCAR/MAR/MNAR), check physical bounds. A DQI &lt; 0.90 is a hard stop.</li>
+    <li><strong>Buckingham π first</strong>: always derive dimensionless groups before training. This is not optional — it is the single highest-leverage activity available. Reduces data requirements by 3–10×.</li>
+    <li><strong>Arrhenius transform \(1/T\)</strong>: mandatory for any thermally activated process. Linearises the dominant exponential dependence.</li>
+    <li><strong>Spearman + mutual information</strong>: for exploratory correlation analysis. Pearson misses all nonlinear relationships.</li>
+    <li><strong>Imbalance → targeted DOE</strong>: not SMOTE, not random oversampling. Rare engineering conditions require real data from those conditions.</li>
+    <li><strong>GroupKFold</strong>: the default split for engineering data. Random KFold on batch/temporal data is a systematic error that produces optimistic RMSE by 20–60%.</li>
+  </ul>
+</div>
+
+<nav class="chapter-nav">
+  <a href="ch02-mathematics-statistics.html">← Ch 2: Mathematics &amp; Statistics</a>
+  <a href="index.html">Table of Contents</a>
+  <a href="ch04-design-of-experiments.html">Ch 4: Design of Experiments →</a>
+</nav>
+
+</div><!-- .container -->
+
+<footer>
+  The Engineer's Handbook of Machine Learning &nbsp;·&nbsp; Leonardo Pulga PhD &nbsp;·&nbsp;
+  <a href="index.html">All chapters</a>
+</footer>
+
+</body>
+</html>

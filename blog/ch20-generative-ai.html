@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generative Models for Engineering Science | ML Handbook</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#2d333b;--text:#b8c0cc;--muted:#6e7890;--accent:#6da5cc;--green:#5a9e72;--amber:#c49a3c;--red:#c97b76;--code-bg:#13191f;--tag-bg:#1a2d40;}
+*{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;font-size:16px;line-height:1.7;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+header{border-bottom:1px solid var(--border);padding:2rem 0 1.5rem;text-align:center;}
+.series-label{color:var(--muted);font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;font-family:monospace;}
+h1{color:var(--accent);font-size:2rem;font-weight:700;margin-bottom:0.5rem;}.subtitle{color:var(--muted);font-size:1rem;}
+.tags{margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;}
+.tag{background:var(--tag-bg);color:var(--accent);padding:0.2rem 0.7rem;border-radius:3px;font-size:0.75rem;font-family:monospace;border:1px solid var(--border);}
+main{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem;}
+.tldr{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:4px;padding:1.2rem 1.5rem;margin-bottom:2.5rem;}
+.tldr h2{color:var(--accent);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.75rem;}
+.tldr ul{padding-left:1.2rem;}.tldr li{margin-bottom:0.35rem;}
+h2{color:var(--accent);font-size:1.35rem;margin:2.5rem 0 1rem;border-bottom:1px solid var(--border);padding-bottom:0.4rem;}
+h3{color:#8db4c8;font-size:1.1rem;margin:1.8rem 0 0.7rem;}
+p{margin-bottom:1rem;}ul,ol{padding-left:1.4rem;margin-bottom:1rem;}li{margin-bottom:0.3rem;}
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-rule{background:var(--surface);border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-label{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.5rem;font-weight:700;}
+.box-lesson .box-label{color:var(--green);}.box-pitfall .box-label{color:var(--amber);}
+.box-rule .box-label{color:#8b949e;}.box-example .box-label{color:#9d8fd4;}
+.math-block{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;margin:1.2rem 0;overflow-x:auto;}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;overflow-x:auto;margin:1.2rem 0;}
+code{font-family:'Courier New',monospace;font-size:0.85rem;color:#a8c4d8;}
+p code,li code{background:var(--code-bg);padding:0.1em 0.35em;border-radius:2px;font-size:0.85em;}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:0.88rem;}
+thead th{background:var(--surface);color:var(--accent);padding:0.6rem 0.8rem;text-align:left;border-bottom:2px solid var(--border);font-family:monospace;font-size:0.8rem;}
+tbody td{padding:0.55rem 0.8rem;border-bottom:1px solid var(--border);vertical-align:top;}
+tbody tr:hover{background:#1a1f27;}
+.nav-links{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:0.9rem;}
+footer{text-align:center;color:var(--muted);font-size:0.8rem;padding:2rem;border-top:1px solid var(--border);margin-top:1rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="series-label">The Engineer's Handbook of Machine Learning</div>
+  <h1>Generative Models for Engineering Science</h1>
+  <div class="subtitle">Chapter 20 &mdash; LLMs, Prompt Engineering, Diffusion Models, Foundation TS Models, RAG</div>
+  <div class="tags">
+    <span class="tag">LLMs</span>
+    <span class="tag">Prompt Engineering</span>
+    <span class="tag">Diffusion Models</span>
+    <span class="tag">VAE</span>
+    <span class="tag">Foundation Models</span>
+    <span class="tag">RAG</span>
+    <span class="tag">Responsible AI</span>
+    <span class="tag">Design Synthesis</span>
+  </div>
+</header>
+
+<main>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>LLMs reliably accelerate <em>routine</em> engineering ML work (code, API usage, boilerplate). They are unreliable for physical interpretation, temporal leakage detection, and regulatory compliance — those remain human-only.</li>
+    <li>The RCTCO prompt template (Role, Context, Task, Constraints, Output) dramatically improves LLM output quality for engineering ML tasks.</li>
+    <li>Foundation time series models (TimeGPT, Lag-Llama, Moirai) require domain-specific fine-tuning to be competitive with custom LSTMs on physical engineering data. Zero-shot underperforms in most engineering cases.</li>
+    <li>RAG (Retrieval-Augmented Generation) reduces hallucination rate from ~30% to ~5% for technical facts by grounding LLM answers in retrieved standards documents and reports.</li>
+    <li>Verify all numerical constants, units, and temporal splits in LLM-generated code. Unit errors propagate silently; use <code>pint</code> for safety-critical calculations.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>1. What Changes and What Does Not</h2>
+
+<table>
+  <thead>
+    <tr><th>Task</th><th>LLM Reliability</th><th>Action</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Boilerplate code (data loading, splitting, plotting)</td><td style="color:var(--green)">High</td><td>Delegate with review</td></tr>
+    <tr><td>Library API usage (GPflow, BoTorch, tsfresh)</td><td style="color:var(--green)">High</td><td>Delegate with review</td></tr>
+    <tr><td>Hyperparameter tuning code (Optuna)</td><td style="color:var(--green)">High</td><td>Delegate with review</td></tr>
+    <tr><td>Algorithm selection for a described problem</td><td style="color:var(--amber)">Medium</td><td>Use as starting point; verify</td></tr>
+    <tr><td>DOE strategy selection</td><td style="color:var(--amber)">Medium</td><td>Use as starting point</td></tr>
+    <tr><td>Uncertainty quantification setup</td><td style="color:var(--amber)">Medium</td><td>Verify coverage empirically</td></tr>
+    <tr><td>Physical interpretation of results</td><td style="color:var(--red)">Low</td><td>Human-only</td></tr>
+    <tr><td>Verification of physical constraints</td><td style="color:var(--red)">Low</td><td>Human-only</td></tr>
+    <tr><td>Detection of temporal leakage</td><td style="color:var(--red)">Low</td><td>Manual audit mandatory</td></tr>
+    <tr><td>Regulatory compliance (Euro 7, ISO 26262)</td><td style="color:var(--red)">Very low</td><td>Human-only</td></tr>
+  </tbody>
+</table>
+
+<!-- ================================================================== -->
+<h2>2. Prompt Engineering for Engineering ML</h2>
+
+<h3>The RCTCO Template</h3>
+
+<div class="box-rule">
+  <div class="box-label">RCTCO Prompt Template</div>
+  <ul>
+    <li><strong>R</strong>ole: "You are an expert in GP regression for engineering surrogates."</li>
+    <li><strong>C</strong>ontext: "I have a diesel engine dataset with 8 inputs and 1,500 rows."</li>
+    <li><strong>T</strong>ask: "Write a Python function to train an ARD Matérn-5/2 GP and compute 95% prediction intervals."</li>
+    <li><strong>C</strong>onstraints: "Use GPflow. Inputs are already scaled. Return the trained model and a predict function."</li>
+    <li><strong>O</strong>utput: "Provide complete, runnable code with type hints and docstrings."</li>
+  </ul>
+</div>
+
+<h3>The 5-Prompt Recipe for Surrogate Development</h3>
+
+<ol>
+  <li><strong>EDA</strong>: "Perform EDA on this engineering dataset. Check: (a) missing values and their pattern, (b) outliers using modified Z-score and Isolation Forest, (c) Spearman correlations between all pairs, (d) physical plausibility of value ranges. Return a Pandas DataFrame with summary statistics."</li>
+  <li><strong>Feature engineering</strong>: "Given this physical system [description], suggest 5 physics-guided features beyond the raw inputs. For each: (a) physical justification, (b) Python formula, (c) expected correlation sign with the target."</li>
+  <li><strong>Model selection</strong>: "Compare GP (Matérn-5/2 ARD), XGBoost (Optuna), and quadratic RSM for this dataset: $n=1500$, $d=8$ inputs, target is NOx [g/kWh]. Use GroupKFold with groups=[speed range]. Report CV RMSE, training time, prediction latency."</li>
+  <li><strong>Hyperparameter tuning</strong>: "Write an Optuna study to tune XGBoost for this regression. Search space: n_estimators [200,2000], max_depth [3,8], lr [0.01,0.3] (log), subsample [0.6,1.0], colsample_bytree [0.6,1.0]. Use 4-fold GroupKFold. n_trials=100."</li>
+  <li><strong>Validation + SHAP</strong>: "Given this trained XGBoost pipeline: (1) residual diagnostic plots (4-panel), (2) SHAP beeswarm plot, (3) check that SHAP signs agree with these physical expectations: [list]. Flag any violations."</li>
+</ol>
+
+<!-- ================================================================== -->
+<h2>3. Foundation Time Series Models</h2>
+
+<table>
+  <thead>
+    <tr><th>Model</th><th>Description</th><th>Engineering Applicability</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>TimeGPT</strong></td><td>Zero-shot forecasting, fine-tunable</td><td>Medium — requires fine-tuning</td></tr>
+    <tr><td><strong>Lag-Llama</strong></td><td>Probabilistic, token-based</td><td>Medium — requires fine-tuning</td></tr>
+    <tr><td><strong>Moirai</strong></td><td>Unified, multi-resolution</td><td>Medium — requires fine-tuning</td></tr>
+    <tr><td><strong>MOMENT</strong></td><td>General-purpose TS encoder</td><td>High (after fine-tuning on domain data)</td></tr>
+  </tbody>
+</table>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Foundation Models on Physical Time Series</div>
+  Foundation TS models are trained on finance, retail, web traffic, and generic IoT. Engineering time series (battery cycling, combustion transients, turbomachinery) have physical constraints (bounded SoC, thermodynamic consistency) and causally structured inputs (engine speed drives temperature, not vice versa) absent from the training distribution. <strong>Zero-shot application to engineering time series typically underperforms a domain-specific LSTM trained on 1,000 cycles.</strong> Fine-tuning on domain data is mandatory before production use.
+</div>
+
+<!-- ================================================================== -->
+<h2>4. Retrieval-Augmented Generation (RAG) for Engineering Documentation</h2>
+
+<p>LLMs have a knowledge cutoff and cannot access proprietary engineering databases, internal calibration reports, or organisation-specific standards. RAG addresses this by retrieving relevant context from a document corpus at query time:</p>
+
+<ol>
+  <li><strong>Corpus preparation</strong>: ingest PDFs of standards (ASME V&amp;V, DO-178C), internal test reports, calibration documents, equipment manuals. Chunk into overlapping 512-token segments; embed with a sentence transformer.</li>
+  <li><strong>Vector index</strong>: store embeddings in a vector database (FAISS, Chroma, Pinecone). Each vector links to its source document, page, and chunk.</li>
+  <li><strong>Query</strong>: embed the engineer's question; retrieve top-$k$ most similar chunks; inject them as context into the LLM prompt.</li>
+  <li><strong>Grounded generation</strong>: LLM generates answers grounded in retrieved context, with source citations. Hallucination rate drops from ~30% (base LLM) to ~5% (RAG with good retrieval).</li>
+</ol>
+
+<div class="box-example">
+  <div class="box-label">Example — Engineering RAG Query</div>
+  <p>A calibration engineer queries: "What is the maximum allowable MAPE for an OBD NOx virtual sensor under Euro 7?"</p>
+  <p>The RAG system retrieves: (1) the relevant paragraph from EU Regulation 715/2007 Amendment 2022, (2) the internal model card template, (3) the validation protocol document. Returns a grounded answer with document citations and exact paragraph numbers — no hallucinated values.</p>
+</div>
+
+<!-- ================================================================== -->
+<h2>5. Diffusion Models and VAEs for Engineering Design Synthesis</h2>
+
+<p>Generative models are increasingly used in engineering for inverse design and latent space exploration:</p>
+
+<ul>
+  <li><strong>VAE for design synthesis</strong>: encode designs (airfoil geometries, material compositions) into a continuous latent space. Sample from the latent space to generate new designs; decode to physical space. Latent space interpolation enables smooth design exploration between known good designs.</li>
+  <li><strong>Diffusion models</strong>: score-based generation conditioned on design objectives (drag, weight, NOx). Rapidly emerging for 3D shape generation and inverse design. Key advantage: generates diverse high-quality samples from complex multi-modal design distributions.</li>
+  <li><strong>Surrogate-in-the-loop generative design</strong>: train a generative model to propose designs; evaluate with a GP/XGBoost surrogate; use the surrogate gradient (or BO acquisition) to guide generation toward the Pareto front.</li>
+</ul>
+
+<!-- ================================================================== -->
+<h2>6. Ten Rules for Responsible LLM-Assisted Engineering ML</h2>
+
+<div class="box-rule">
+  <div class="box-label">Responsible LLM Use in Engineering ML</div>
+  <ol>
+    <li><strong>Verify all numerical constants</strong>: SI unit prefixes, physical constants, and dataset-specific ranges are commonly hallucinated. Verify against datasheets.</li>
+    <li><strong>Never skip physical sanity checks</strong>: run the model on physically extreme inputs; verify outputs make physical sense.</li>
+    <li><strong>Maintain model cards</strong>: document LLM prompts used in model development as part of the provenance record.</li>
+    <li><strong>Test edge cases manually</strong>: LLMs generate code that works on the median case; edge cases (cold start, fault conditions) require explicit tests.</li>
+    <li><strong>Document prompt history</strong>: treat prompts as code — version control them alongside the notebook.</li>
+    <li><strong>Verify temporal splits</strong>: LLMs commonly generate random splits for time series; always manually verify temporal ordering is preserved.</li>
+    <li><strong>Distrust hallucinated references</strong>: verify every cited paper exists and says what is claimed. Use DOI lookup.</li>
+    <li><strong>Check units end-to-end</strong>: unit errors propagate silently through Python (no dimensionality checking by default). Use <code>pint</code> library for critical calculations.</li>
+    <li><strong>Regulatory text requires human authorship</strong>: LLMs cannot be the author of a Type Approval document, model card, or V&amp;V report. They can draft; a qualified engineer must review and sign.</li>
+    <li><strong>Embrace the tool, own the judgement</strong>: use LLMs to accelerate the 80% of engineering ML that is routine. Invest the time saved in the 20% requiring physical reasoning — that is where engineer value is created.</li>
+  </ol>
+</div>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Thermodynamic Consistency in LLM-Generated Code</div>
+  Common violations observed in practice:
+  <ul>
+    <li><strong>Wrong sign conventions</strong>: using $\Delta G &lt; 0$ as spontaneity criterion but implementing $\Delta G &gt; 0$ in the check.</li>
+    <li><strong>Unit inconsistency</strong>: mixing bar and Pa, rpm and rad/s, ppm and g/kWh.</li>
+    <li><strong>Incorrect conservation</strong>: not enforcing atomic balance in combustion stoichiometry code.</li>
+    <li><strong>Temporal leakage</strong>: generating random splits for time-series without GroupKFold.</li>
+  </ul>
+  Every physical quantity in LLM-generated code must be verified against known analytical solutions or dimensional analysis before deployment.
+</div>
+
+<!-- ================================================================== -->
+<h2>7. Key Takeaways</h2>
+
+<ul>
+  <li>Use the RCTCO template for all engineering ML prompts — it reduces ambiguity and improves code quality dramatically.</li>
+  <li>The 5-prompt recipe (EDA → Feature Engineering → Model Selection → HPO → Validation) covers the full surrogate development lifecycle.</li>
+  <li>Foundation TS models require fine-tuning on domain data. MOMENT is the most promising for engineering applications after fine-tuning.</li>
+  <li>RAG reduces hallucination from ~30% to ~5% for technical facts. Essential for any LLM assistant that queries proprietary engineering standards.</li>
+  <li>LLMs are excellent at code generation; terrible at physics reasoning, temporal leakage detection, and regulatory compliance. Know the boundary.</li>
+  <li>Document prompts as code artifacts. A model trained with LLM assistance must have the prompt history in its model card for regulatory traceability.</li>
+</ul>
+
+<div class="nav-links">
+  <a href="ch19-clustering.html">&larr; Ch19: Clustering</a>
+  <a href="ch21-reinforcement-learning.html">Ch21: Reinforcement Learning &rarr;</a>
+</div>
+
+</main>
+
+<footer>
+  <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
+  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+</footer>
+
+</body>
+</html>

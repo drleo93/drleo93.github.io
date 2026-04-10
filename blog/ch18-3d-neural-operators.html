@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Data, Physics-Informed Networks and Neural Operators | ML Handbook</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#2d333b;--text:#b8c0cc;--muted:#6e7890;--accent:#6da5cc;--green:#5a9e72;--amber:#c49a3c;--red:#c97b76;--code-bg:#13191f;--tag-bg:#1a2d40;}
+*{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;font-size:16px;line-height:1.7;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+header{border-bottom:1px solid var(--border);padding:2rem 0 1.5rem;text-align:center;}
+.series-label{color:var(--muted);font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;font-family:monospace;}
+h1{color:var(--accent);font-size:2rem;font-weight:700;margin-bottom:0.5rem;}.subtitle{color:var(--muted);font-size:1rem;}
+.tags{margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;}
+.tag{background:var(--tag-bg);color:var(--accent);padding:0.2rem 0.7rem;border-radius:3px;font-size:0.75rem;font-family:monospace;border:1px solid var(--border);}
+main{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem;}
+.tldr{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:4px;padding:1.2rem 1.5rem;margin-bottom:2.5rem;}
+.tldr h2{color:var(--accent);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.75rem;}
+.tldr ul{padding-left:1.2rem;}.tldr li{margin-bottom:0.35rem;}
+h2{color:var(--accent);font-size:1.35rem;margin:2.5rem 0 1rem;border-bottom:1px solid var(--border);padding-bottom:0.4rem;}
+h3{color:#8db4c8;font-size:1.1rem;margin:1.8rem 0 0.7rem;}
+p{margin-bottom:1rem;}ul,ol{padding-left:1.4rem;margin-bottom:1rem;}li{margin-bottom:0.3rem;}
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-rule{background:var(--surface);border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-label{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.5rem;font-weight:700;}
+.box-lesson .box-label{color:var(--green);}.box-pitfall .box-label{color:var(--amber);}
+.box-rule .box-label{color:#8b949e;}.box-example .box-label{color:#9d8fd4;}
+.math-block{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;margin:1.2rem 0;overflow-x:auto;}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;overflow-x:auto;margin:1.2rem 0;}
+code{font-family:'Courier New',monospace;font-size:0.85rem;color:#a8c4d8;}
+p code,li code{background:var(--code-bg);padding:0.1em 0.35em;border-radius:2px;font-size:0.85em;}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:0.88rem;}
+thead th{background:var(--surface);color:var(--accent);padding:0.6rem 0.8rem;text-align:left;border-bottom:2px solid var(--border);font-family:monospace;font-size:0.8rem;}
+tbody td{padding:0.55rem 0.8rem;border-bottom:1px solid var(--border);vertical-align:top;}
+tbody tr:hover{background:#1a1f27;}
+.nav-links{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:0.9rem;}
+footer{text-align:center;color:var(--muted);font-size:0.8rem;padding:2rem;border-top:1px solid var(--border);margin-top:1rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="series-label">The Engineer's Handbook of Machine Learning</div>
+  <h1>3D Data, Physics-Informed Networks and Neural Operators</h1>
+  <div class="subtitle">Chapter 18 &mdash; POD-ROM, PINN, FNO, DeepONet, GNN, Transolver</div>
+  <div class="tags">
+    <span class="tag">POD-ROM</span>
+    <span class="tag">PINN</span>
+    <span class="tag">FNO</span>
+    <span class="tag">DeepONet</span>
+    <span class="tag">MeshGraphNet</span>
+    <span class="tag">Transolver</span>
+    <span class="tag">Neural Operators</span>
+    <span class="tag">CFD Surrogate</span>
+  </div>
+</header>
+
+<main>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>Six architectures compete for engineering field prediction: POD-ROM, PINN, U-Net, FNO, DeepONet, GNN/Transolver. None is universally best — selection depends on data volume, mesh type, and PDE knowledge.</li>
+    <li>Selection rule: $n_s &lt; 200$ simulations → POD-GP; structured mesh → FNO; unstructured + varying geometry → GNN or Transolver; sparse data + known PDE → PINN.</li>
+    <li>Neural operators (FNO, DeepONet) are <strong>discretisation-invariant</strong>: trained once, evaluated at any mesh resolution without retraining.</li>
+    <li>Transformer-based operators (Transolver, OFormer) apply attention over $K$ compressed tokens instead of $N$ mesh points — $\mathcal{O}(NK)$ vs $\mathcal{O}(N^2)$.</li>
+    <li>POD: choose $K$ to retain ≥99.9% cumulative energy ($\sum_{k=1}^K \sigma_k^2 / \sum \sigma_k^2 \geq 0.999$). For smooth aerodynamics: $K \approx 10$&ndash;30 modes.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>1. 3D Engineering Data: Types and Challenges</h2>
+
+<p>Three fundamental challenges distinguish 3D field surrogates from 0D scalar surrogates:</p>
+<ol>
+  <li><strong>Dimensionality</strong>: $n_{outputs} = n_{mesh\,cells} \times n_{fields} \sim \mathcal{O}(10^6)$. Direct regression is infeasible.</li>
+  <li><strong>Mesh sensitivity</strong>: outputs are defined on a mesh. A different mesh (refined near a boundary) produces an incomparable output vector.</li>
+  <li><strong>Physical constraints</strong>: divergence-free velocity $\nabla\cdot\mathbf{u} = 0$, non-negative temperature, continuity of stress across interfaces.</li>
+</ol>
+
+<!-- ================================================================== -->
+<h2>2. Architecture Selection Guide</h2>
+
+<table>
+  <thead>
+    <tr><th>Method</th><th>Data Needed</th><th>Mesh Type</th><th>PDE Required</th><th>Strengths</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>POD-GP/MLP</strong></td><td>$n_s \geq 50$</td><td>Fixed structured</td><td>No</td><td>Production-ready; interpretable modes; UQ via GP</td></tr>
+    <tr><td><strong>PINN</strong></td><td>Sparse measurements</td><td>Mesh-free</td><td>Yes (required)</td><td>Data-efficient; enforces physics; geometry-flexible</td></tr>
+    <tr><td><strong>U-Net</strong></td><td>$n_s \geq 200$</td><td>Structured uniform</td><td>No</td><td>Encoder-decoder; fast; established for image-like fields</td></tr>
+    <tr><td><strong>FNO</strong></td><td>$n_s \geq 500$</td><td>Structured uniform</td><td>No</td><td>Discretisation-invariant; spectral efficiency</td></tr>
+    <tr><td><strong>DeepONet</strong></td><td>$n_s \geq 200$</td><td>Any (sensor pts)</td><td>No</td><td>Works with irregular sensor locations; operator learning</td></tr>
+    <tr><td><strong>GNN/MeshGraphNet</strong></td><td>$n_s \geq 500$</td><td>Unstructured</td><td>No</td><td>Handles arbitrary mesh; message passing respects topology</td></tr>
+    <tr><td><strong>Transolver</strong></td><td>$n_s \geq 1{,}000$</td><td>Any</td><td>No</td><td>$\mathcal{O}(NK)$ attention; SOTA on Navier-Stokes benchmarks</td></tr>
+  </tbody>
+</table>
+
+<!-- ================================================================== -->
+<h2>3. Proper Orthogonal Decomposition (POD-ROM)</h2>
+
+<p>Given a snapshot matrix $\mathbf{S} \in \mathbb{R}^{N_h \times n_s}$ ($N_h$ DOFs, $n_s$ snapshots), the POD basis is found via SVD:</p>
+
+<div class="math-block">
+$$\mathbf{S} = \mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^\top, \quad \boldsymbol{\phi}_k = \mathbf{u}_k \in \mathbb{R}^{N_h}$$
+$$\text{POD coefficients: } \boldsymbol{\alpha}(\boldsymbol{\mu}) = \mathbf{U}_{:,1:K}^\top \mathbf{s}(\boldsymbol{\mu}) \in \mathbb{R}^K \quad (K \ll N_h)$$
+$$\text{Non-intrusive ROM: } \hat{\mathbf{s}}(\boldsymbol{\mu}) = \mathbf{U}_{:,1:K}\hat{f}(\boldsymbol{\mu})$$
+</div>
+
+<p>$\hat{f}$ is a GP or MLP trained on pairs $\{(\boldsymbol{\mu}_i, \boldsymbol{\alpha}_i)\}$. Choose $K$ to retain ≥99.9% cumulative energy. For smooth aerodynamics: $K \approx 10$&ndash;30 modes. For combustion with sharp gradients: $K \approx 100$&ndash;500.</p>
+
+<h3>Handling Varying Meshes Across CFD Snapshots</h3>
+
+<p>The POD snapshot matrix requires all snapshots on the <em>same</em> mesh. When blade morphing or AMR changes the mesh between CFD runs, project all snapshots onto a canonical reference grid using RBF interpolation:</p>
+
+<pre><code>import numpy as np
+from scipy.interpolate import RBFInterpolator
+
+def project_to_reference(snapshots_list, coords_list, ref_coords):
+    """
+    Project CFD snapshots from varying meshes to a canonical reference grid.
+    snapshots_list: list of (n_nodes_i, n_fields) arrays
+    coords_list:    list of (n_nodes_i, 3) coordinate arrays
+    ref_coords:     (N_ref, 3) reference grid coordinates
+    """
+    n_snap = len(snapshots_list)
+    n_ref, n_fields = ref_coords.shape[0], snapshots_list[0].shape[1]
+    S_ref = np.zeros((n_ref, n_fields, n_snap))
+    for i, (snap, coords) in enumerate(zip(snapshots_list, coords_list)):
+        rbf = RBFInterpolator(coords, snap,
+                              kernel='thin_plate_spline', smoothing=0.0)
+        S_ref[:, :, i] = rbf(ref_coords)
+    return S_ref   # shape: (N_ref, n_fields, n_snap)</code></pre>
+
+<div class="box-lesson">
+  <div class="box-label">Lesson</div>
+  For Transolver and FNO, the projection step is unnecessary — they natively handle unstructured and varying meshes (FNO: spectral domain; Transolver: point cloud attention). Use the native mesh coordinates as positional inputs directly.
+</div>
+
+<!-- ================================================================== -->
+<h2>4. Physics-Informed Neural Networks (PINN)</h2>
+
+<p>PINNs minimise a composite loss combining observed data and the PDE residual at unlabelled collocation points:</p>
+
+<div class="math-block">
+$$\mathcal{L} = \underbrace{\lambda_d \sum_{i\in\mathcal{D}}\|u_\theta(\mathbf{x}_i) - u_i\|^2}_{\text{data loss}} + \underbrace{\lambda_r \sum_{j\in\mathcal{R}}\|\mathcal{N}[u_\theta](\mathbf{x}_j)\|^2}_{\text{PDE residual loss}}$$
+</div>
+
+<p>The PDE operator $\mathcal{N}[u_\theta]$ is evaluated via automatic differentiation — no mesh required. Collocation points $\mathbf{x}_j^c$ are sampled anywhere in the domain without labels.</p>
+
+<div class="box-rule">
+  <div class="box-label">PINN vs. POD-ROM Decision</div>
+  <table style="margin:0">
+    <thead><tr><th>Criterion</th><th>PINN</th><th>POD-ROM</th></tr></thead>
+    <tbody>
+      <tr><td>Data availability</td><td>Few measurements, known PDE</td><td>Many simulation snapshots</td></tr>
+      <tr><td>Geometry changes</td><td>Good (mesh-free)</td><td>Poor (new mesh = new ROM)</td></tr>
+      <tr><td>Speed</td><td>Training slow; prediction fast</td><td>Both fast</td></tr>
+      <tr><td>Uncertainty</td><td>Limited</td><td>Via GP on POD coefficients</td></tr>
+      <tr><td>Maturity</td><td>Research/early adoption</td><td>Production-ready</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — PINN Loss Weighting</div>
+  The balance between $\lambda_d$ and $\lambda_r$ is critical and problem-dependent. If $\lambda_r \gg \lambda_d$, the network satisfies the PDE but ignores the data (underfitting). If $\lambda_d \gg \lambda_r$, physics is not enforced. Start with $\lambda_d = \lambda_r = 1$; use self-adaptive weights (SA-PINN) or gradient normalisation (GradNorm) for automatic tuning.
+</div>
+
+<!-- ================================================================== -->
+<h2>5. Neural Operators: Learning Mappings Between Function Spaces</h2>
+
+<p>Classical ML maps finite vectors $\mathbb{R}^n \to \mathbb{R}^m$. Neural operators learn mappings between <em>function spaces</em> $\mathcal{G}^\dagger: \mathcal{A} \to \mathcal{U}$ — making them <strong>discretisation-invariant</strong>: once trained, evaluate at any mesh resolution without retraining.</p>
+
+<h3>Fourier Neural Operator (FNO)</h3>
+
+<p>FNO applies its integral kernel in the Fourier domain, truncating to the $K_{max}$ lowest-frequency modes:</p>
+
+<div class="math-block">
+$$v_{t+1}(\mathbf{x}) = \sigma\!\left(W v_t(\mathbf{x}) + \mathcal{F}^{-1}\!\left(R_\phi \cdot \mathcal{F}(v_t)\right)(\mathbf{x})\right)$$
+</div>
+
+<p>where $R_\phi$ are learnable complex weights (applied to the $K_{max}$ Fourier modes) and $W$ is a local linear transform. Requires structured uniform grids. Spectral truncation provides implicit regularisation and $\mathcal{O}(N \log N)$ complexity via FFT.</p>
+
+<h3>DeepONet: Deep Operator Network</h3>
+
+<p>DeepONet separates the operator learning into two sub-networks:</p>
+<ul>
+  <li><strong>Branch network</strong>: encodes the input function $a$ (evaluated at $m$ sensor locations) → trunk-compatible embedding.</li>
+  <li><strong>Trunk network</strong>: encodes the query location $\mathbf{y}$ where the output $u(\mathbf{y})$ is evaluated.</li>
+  <li><strong>Output</strong>: $u_\theta(\mathbf{y}) = \sum_{k=1}^p b_k(a) \cdot t_k(\mathbf{y})$ (dot product of branch and trunk outputs).</li>
+</ul>
+
+<p>Works with irregular sensor locations — ideal for sparse experimental data combined with a physics-informed constraint.</p>
+
+<h3>Graph Neural Networks for Unstructured Meshes</h3>
+
+<p>GNN/MeshGraphNet represents the CFD mesh as a graph: nodes = mesh points, edges = mesh connectivity. Message passing aggregates information from geometric neighbours, respecting the mesh topology. Each message-passing step propagates information by one edge hop — stack $L$ layers to cover a neighbourhood of radius $L$ edges.</p>
+
+<h3>Transolver: Token-Based Transformer for Physics</h3>
+
+<p>Transolver compresses the $N$-point mesh into $K \ll N$ physics tokens (learned via attention-weighted pooling), then applies full self-attention over the $K$ tokens:</p>
+
+<div class="math-block">
+$$\text{Complexity: } \mathcal{O}(NK) \text{ vs } \mathcal{O}(N^2) \text{ for full attention}$$
+</div>
+
+<p>Each token captures a coherent physical region (boundary layer, wake, separation bubble) rather than a fixed spatial patch. State-of-the-art on Navier-Stokes and elasticity benchmarks as of 2024.</p>
+
+<!-- ================================================================== -->
+<h2>6. Key Takeaways</h2>
+
+<ul>
+  <li><strong>POD-ROM</strong>: the production-ready baseline. SVD on the snapshot matrix; GP or MLP maps parameters to POD coefficients. Choose $K$ for 99.9% energy retention.</li>
+  <li><strong>PINN</strong>: mesh-free, data-efficient, physically consistent. Requires the PDE to be known. Slow training; tuning $\lambda_d/\lambda_r$ is critical.</li>
+  <li><strong>FNO</strong>: discretisation-invariant, $\mathcal{O}(N \log N)$, requires structured grids. Best for parametric PDE families (Navier-Stokes, heat equation).</li>
+  <li><strong>DeepONet</strong>: branch + trunk network architecture; works with irregular sensor locations. Good for operator learning from sparse experimental data.</li>
+  <li><strong>GNN/MeshGraphNet</strong>: topology-respecting message passing on unstructured meshes. Handles arbitrary geometry without projection.</li>
+  <li><strong>Transolver</strong>: $\mathcal{O}(NK)$ attention over physics tokens. SOTA accuracy; requires $n_s \geq 1{,}000$ simulations.</li>
+  <li>All architectures can be wrapped with conformal prediction for field-level uncertainty quantification (prediction intervals on the full field output).</li>
+</ul>
+
+<div class="nav-links">
+  <a href="ch17-physics-multifidelity.html">&larr; Ch17: Physics &amp; Multi-Fidelity</a>
+  <a href="ch19-clustering.html">Ch19: Clustering &rarr;</a>
+</div>
+
+</main>
+
+<footer>
+  <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
+  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+</footer>
+
+</body>
+</html>

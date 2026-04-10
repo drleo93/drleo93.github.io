@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 9: Time Series Analysis | Engineer's ML Handbook</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#2d333b;--text:#b8c0cc;--muted:#6e7890;--accent:#6da5cc;--green:#5a9e72;--amber:#c49a3c;--red:#c97b76;--code-bg:#13191f;--tag-bg:#1a2d40}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.7}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:1.4rem 2rem}
+header .breadcrumb{font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem}
+header h1{font-size:1.7rem;font-weight:700;color:#d0dae8;line-height:1.25}
+header .meta{font-size:0.82rem;color:var(--muted);margin-top:0.5rem}
+.tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin:0.9rem 0}
+.tag{background:var(--tag-bg);color:var(--accent);font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;border:1px solid #2a4a66}
+.container{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
+.tldr{background:#0c1e30;border:1px solid #2a4a66;border-left:4px solid var(--accent);border-radius:6px;padding:1.1rem 1.4rem;margin:1.5rem 0}
+.tldr h3{color:var(--accent);font-size:0.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:0.5rem}
+.tldr ul{padding-left:1.2rem}.tldr li{margin-bottom:0.25rem;font-size:0.92rem}
+h2{color:#c8d6e5;font-size:1.3rem;margin:2.2rem 0 0.8rem;padding-bottom:0.35rem;border-bottom:1px solid var(--border)}
+h3{color:#a8bcd0;font-size:1.05rem;margin:1.6rem 0 0.5rem}
+p{margin-bottom:0.9rem}ul,ol{padding-left:1.5rem;margin-bottom:0.9rem}li{margin-bottom:0.3rem}
+code{background:var(--code-bg);color:#a8d4a8;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.85em;padding:0.1em 0.4em;border-radius:3px}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto;margin:1rem 0}
+pre code{background:none;padding:0;font-size:0.88em}
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-rule{background:#161b22;border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0}
+.box-label{font-size:0.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:0.5rem}
+.box-lesson .box-label{color:var(--green)}.box-pitfall .box-label{color:var(--amber)}.box-rule .box-label{color:#8b9aaa}.box-example .box-label{color:#9d8fd4}
+.tbl-wrap{overflow-x:auto;margin:1.2rem 0}
+table{width:100%;border-collapse:collapse;font-size:0.87rem}
+th{background:#1c2636;color:#c8d6e5;padding:0.6rem 0.85rem;text-align:left;border-bottom:2px solid var(--border)}
+td{padding:0.55rem 0.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#161d28}td:first-child{color:#9bafc4}
+.formula-block{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:0.9rem 1.2rem;margin:1rem 0;text-align:center;overflow-x:auto}
+nav.chapter-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0;margin-top:2rem;border-top:1px solid var(--border);font-size:0.88rem}
+nav.chapter-nav a{color:var(--accent)}
+footer{background:var(--surface);border-top:1px solid var(--border);padding:1.2rem 2rem;text-align:center;font-size:0.8rem;color:var(--muted);margin-top:3rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="breadcrumb"><a href="index.html">Engineer's ML Handbook</a> › Part III: Sequential &amp; Dynamic</div>
+  <h1>Ch 9: Time Series Analysis for Engineering Systems</h1>
+  <div class="meta">Chapter 9 of 23 &nbsp;·&nbsp; ~30 min read &nbsp;·&nbsp; Classical methods before deep learning</div>
+  <div class="tags">
+    <span class="tag">stationarity</span>
+    <span class="tag">ARIMA</span>
+    <span class="tag">Kalman filter</span>
+    <span class="tag">ACF/PACF</span>
+    <span class="tag">STL decomposition</span>
+    <span class="tag">VAR</span>
+    <span class="tag">windowing</span>
+    <span class="tag">Welch PSD</span>
+    <span class="tag">temporal leakage</span>
+  </div>
+</header>
+<div class="container">
+
+<div class="tldr">
+  <h3>TL;DR</h3>
+  <ul>
+    <li>Test for stationarity (ADF) before any time series modelling. Non-stationarity types: trend, seasonality, regime switching, concept drift — each requires a different fix.</li>
+    <li>Always split at the <strong>series level</strong> before windowing. Window-level random splits create temporal leakage and produce overoptimistic CV RMSE by 30–60%.</li>
+    <li>The Kalman filter is the optimal estimator for linear-Gaussian state-space models. Use it for battery SoC estimation, thermal state estimation, sensor fusion.</li>
+    <li>ACF identifies MA order; PACF identifies AR order. Check residuals with Ljung-Box (\(p > 0.05\)) after fitting ARIMA.</li>
+    <li>Welch PSD with Hann window: frequency resolution \(\Delta f = f_s/L\); use \(L = 8\)–\(16 \times 1/f_{min}\).</li>
+    <li>STL decomposition (Loess-based) is the recommended method for trend-seasonality decomposition — robust to outliers, handles any seasonality type.</li>
+  </ul>
+</div>
+
+<h2>1. Engineering Time Series Characteristics</h2>
+
+<p>Engineering time series differ from financial or climatological ones in ways that matter for preprocessing:</p>
+<ul>
+  <li><strong>Multi-rate</strong>: ECU at 100 Hz, thermocouples at 1 Hz, GPS at 10 Hz — synchronisation is mandatory before any analysis</li>
+  <li><strong>Physically bounded</strong>: concentrations ≥ 0, efficiency ∈ [0,1], SoC ∈ [0,1] — violations indicate sensor faults</li>
+  <li><strong>Operating-mode switching</strong>: drive cycles switch between idle, acceleration, cruise — piecewise stationary, not globally stationary</li>
+  <li><strong>Slowly sampled outputs</strong>: PEMS emission at ~5 Hz vs. engine control at 200 Hz — requires up-/downsampling strategies</li>
+</ul>
+
+<h2>2. Stationarity Testing and Preprocessing</h2>
+
+<p>A process \(\{X_t\}\) is <strong>weakly stationary</strong> if: \(\mathbb{E}[X_t] = \mu\) for all \(t\), and \(\mathrm{Cov}(X_t, X_{t+h}) = \gamma(h)\) for all \(t, h\). Most classical time series models require stationarity.</p>
+
+<p><strong>Augmented Dickey-Fuller (ADF) test</strong>: \(H_0\) = unit root (non-stationary). Reject at \(p < 0.05\) to assert stationarity. In Python: <code>statsmodels.tsa.stattools.adfuller(series)</code>.</p>
+
+<h3>Engineering Non-Stationarity Types</h3>
+
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>Type</th><th>Engineering example</th><th>Fix</th></tr></thead>
+  <tbody>
+    <tr><td>Trend</td><td>Catalyst activity decreasing; battery capacity degrading</td><td>HP filter or differencing; or model trend as a feature</td></tr>
+    <tr><td>Seasonality</td><td>Process plant with daily thermal cycles; batch reactor with shift-based feed</td><td>Fourier decomposition or STL</td></tr>
+    <tr><td>Regime switching</td><td>Engine transitions between idle, acceleration, cruise</td><td>Piecewise stationarity: treat each regime separately</td></tr>
+    <tr><td>Concept drift</td><td>Sensor ageing, catalyst deactivation, process modification</td><td>Detect with CUSUM; trigger model recalibration</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>3. STL Decomposition</h2>
+
+<div class="formula-block">
+$$y_t = T_t + S_t + R_t \quad \text{(additive)}, \qquad \text{or} \qquad y_t = T_t \cdot S_t \cdot R_t \quad \text{(multiplicative)}$$
+</div>
+
+<p>STL (Seasonal-Trend decomposition using Loess) is the recommended method: handles any seasonality type, robust to outliers, works for complex changing seasonal patterns. <code>statsmodels.tsa.seasonal.STL</code>.</p>
+
+<p>Engineering applications: catalyst activity (\(T_t\) = long-term deactivation, \(S_t\) = daily regeneration, \(R_t\) = unexpected fouling); heat exchanger temperature (\(T_t\) = gradual fouling, \(S_t\) = diurnal cooling water variation).</p>
+
+<h2>4. ACF, PACF, and Welch PSD</h2>
+
+<h3>Autocorrelation and Partial Autocorrelation</h3>
+
+<div class="formula-block">
+$$\hat{\rho}(h) = \frac{\sum_{t=1}^{n-h}(x_t-\bar{x})(x_{t+h}-\bar{x})}{\sum_{t=1}^n(x_t-\bar{x})^2}$$
+</div>
+
+<p>Bartlett confidence bands: \(\pm 1.96/\sqrt{n}\). ACF identifies MA order \(q\) (cuts off at lag \(q\)); PACF identifies AR order \(p\) (cuts off at lag \(p\)).</p>
+
+<p>Engineering readings: in-cylinder pressure ACF shows strong autocorrelation at the firing period \(T_{fire} = 2/N_{rpm}\) and harmonics — engine healthy. Vibration signal from a healthy bearing: ACF near zero for all \(h > 0\). ACF non-zero at lag \(1/f_{BPFO}\) → early bearing fault.</p>
+
+<h3>Welch PSD</h3>
+
+<div class="formula-block">
+$$\hat{S}_{xx}(f) = \frac{1}{KL}\sum_{k=0}^{K-1}\left|\sum_{n=0}^{L-1} x[n+kD]\, w[n]\, e^{-j2\pi fn/f_s}\right|^2$$
+</div>
+
+<p>Frequency resolution: \(\Delta f = f_s/L\). Use Hann window \(w[n]\). For a 4-stroke engine at speed \(N\) [rpm]: firing frequency \(f_{fire} = N/120\) [Hz] dominates in-cylinder pressure PSD. Broad-band energy increase at 2–5 kHz in bearing vibration PSD indicates distributed surface damage; a sharp spike at \(f_{BSF}\) indicates a ball defect.</p>
+
+<h2>5. Classical Time Series Models</h2>
+
+<h3>ARIMA</h3>
+
+<div class="formula-block">
+$$\Phi_p(B)(1-B)^d X_t = \Theta_q(B)\varepsilon_t, \quad \varepsilon_t \sim \mathcal{N}(0,\sigma^2)$$
+</div>
+
+<p><strong>Box-Jenkins identification procedure</strong>:</p>
+<ol>
+  <li>Test stationarity (ADF); apply differencing if non-stationary</li>
+  <li>Use ACF to identify MA order \(q\) (cuts off at lag \(q\))</li>
+  <li>Use PACF to identify AR order \(p\) (cuts off at lag \(p\))</li>
+  <li>Estimate parameters by MLE</li>
+  <li>Validate: residuals pass Ljung-Box test (\(p > 0.05\))</li>
+</ol>
+
+<p>Use for univariate process control signals (reactor temperature, column pressure) where the autoregressive structure is physically motivated. For multivariate systems with known inputs: use ARIMAX or VAR.</p>
+
+<h3>Kalman Filter for State Estimation</h3>
+
+<p>Linear-Gaussian state-space model:</p>
+<div class="formula-block">
+$$\mathbf{x}_{t+1} = \mathbf{A}\mathbf{x}_t + \mathbf{B}\mathbf{u}_t + \mathbf{w}_t, \quad \mathbf{w}_t \sim \mathcal{N}(\mathbf{0},\mathbf{Q})$$
+$$\mathbf{y}_t = \mathbf{C}\mathbf{x}_t + \mathbf{v}_t, \quad \mathbf{v}_t \sim \mathcal{N}(\mathbf{0},\mathbf{R})$$
+</div>
+
+<p>Prediction step: \(\hat{\mathbf{x}}_{t|t-1} = \mathbf{A}\hat{\mathbf{x}}_{t-1|t-1}\), \(\mathbf{P}_{t|t-1} = \mathbf{A}\mathbf{P}_{t-1|t-1}\mathbf{A}^\top + \mathbf{Q}\)</p>
+
+<p>Update step (Kalman gain \(\mathbf{K}_t\)):</p>
+<div class="formula-block">
+$$\mathbf{K}_t = \mathbf{P}_{t|t-1}\mathbf{C}^\top(\mathbf{C}\mathbf{P}_{t|t-1}\mathbf{C}^\top + \mathbf{R})^{-1}$$
+$$\hat{\mathbf{x}}_{t|t} = \hat{\mathbf{x}}_{t|t-1} + \mathbf{K}_t(\mathbf{y}_t - \mathbf{C}\hat{\mathbf{x}}_{t|t-1})$$
+</div>
+
+<div class="box-example">
+  <div class="box-label">Example — Battery SoC estimation (EKF)</div>
+  For a lithium-ion cell with equivalent circuit model: state \(\mathbf{x} = [\text{SoC}, V_{RC1}, V_{RC2}]^\top\). Observation: terminal voltage \(V_{term}\). The Kalman filter fuses coulomb-counting (prediction step) with terminal voltage measurement (update step), correcting for measurement noise and current integration drift simultaneously. EKF linearises the nonlinear OCV–SoC curve at each time step.
+</div>
+
+<h3>VAR for Multivariate Systems</h3>
+
+<div class="formula-block">
+$$\mathbf{Y}_t = \mathbf{c} + \mathbf{A}_1\mathbf{Y}_{t-1} + \cdots + \mathbf{A}_p\mathbf{Y}_{t-p} + \boldsymbol{\varepsilon}_t$$
+</div>
+
+<p>Each variable's forecast depends on its own lags and the lags of all other variables. Lag order selection via BIC (parsimony — preferred for engineering where overfitting to noise is costly). Use for multivariate process control signals where cross-variable dynamics matter.</p>
+
+<h2>6. Forecasting Method Selection</h2>
+
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>Application</th><th>Method</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td>Batch process endpoint</td><td>ETS or ARIMA</td><td>Short horizon; interpretable</td></tr>
+    <tr><td>Energy consumption 24h ahead</td><td>Holt-Winters</td><td>Daily seasonality</td></tr>
+    <tr><td>Catalyst activity trajectory</td><td>Kalman filter</td><td>State estimation with UQ</td></tr>
+    <tr><td>Flow rate 1-step-ahead</td><td>SES (\(\alpha=0.3\))</td><td>Robust; ECU-deployable; \(O(1)\) compute</td></tr>
+    <tr><td>Long-horizon product demand</td><td>ARIMAX + exogenous</td><td>Multi-step; economic drivers</td></tr>
+    <tr><td>Multivariate process control</td><td>VAR or LSTM</td><td>Cross-variable dependencies</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>7. Windowing for Supervised Learning — Temporal Leakage</h2>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Window-level random splits</div>
+  For sliding windows of length \(W\) and hop \(H < W\), consecutive windows overlap by \(W - H\) timesteps. Random train/test split at the window level means training and test windows share timesteps — the test set is not independent. This produces CV RMSE estimates that are 30–60% lower than deployment performance.
+</div>
+
+<pre><code># CORRECT: split at the series level FIRST, then window
+n_train = int(0.70 * T_total)
+n_val   = int(0.85 * T_total)
+
+X_tr, y_tr = sliding_windows(series[:n_train],     W=50, H=1, horizon=1)
+X_va, y_va = sliding_windows(series[n_train:n_val], W=50, H=1, horizon=1)
+X_te, y_te = sliding_windows(series[n_val:],        W=50, H=1, horizon=1)
+
+# FORBIDDEN:
+# random.shuffle(all_windows)  # leaks future into training</code></pre>
+
+<h2>Chapter Summary</h2>
+
+<div class="box-lesson">
+  <div class="box-label">Key takeaways</div>
+  <ul>
+    <li><strong>Test stationarity first</strong>: ADF test before any model fitting. Address trend, seasonality, and regime switching explicitly — each requires a different transformation.</li>
+    <li><strong>ACF → MA order; PACF → AR order</strong>. Validate residuals with Ljung-Box after ARIMA fitting.</li>
+    <li><strong>Kalman filter</strong>: optimal for linear-Gaussian state-space. Correct framework for battery SoC, thermal state, and sensor fusion. EKF for mildly nonlinear systems.</li>
+    <li><strong>Split at series level before windowing</strong>: window-level splits are a systematic error that produces overoptimistic results.</li>
+    <li><strong>STL decomposition</strong>: the default for trend-seasonality decomposition in engineering time series — robust, flexible, outlier-resistant.</li>
+    <li>For deep learning time series models (LSTM, TCN, Transformers): see Ch. 10.</li>
+  </ul>
+</div>
+
+<nav class="chapter-nav">
+  <a href="ch08-validation-interpretability.html">← Ch 8: Validation &amp; Interpretability</a>
+  <a href="index.html">Table of Contents</a>
+  <a href="ch10-deep-time-series.html">Ch 10: Deep Time Series →</a>
+</nav>
+</div>
+<footer>The Engineer's Handbook of Machine Learning &nbsp;·&nbsp; Leonardo Pulga PhD &nbsp;·&nbsp; <a href="index.html">All chapters</a></footer>
+</body>
+</html>

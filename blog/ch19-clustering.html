@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clustering and Unsupervised Learning for Engineering Data | ML Handbook</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#2d333b;--text:#b8c0cc;--muted:#6e7890;--accent:#6da5cc;--green:#5a9e72;--amber:#c49a3c;--red:#c97b76;--code-bg:#13191f;--tag-bg:#1a2d40;}
+*{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;font-size:16px;line-height:1.7;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+header{border-bottom:1px solid var(--border);padding:2rem 0 1.5rem;text-align:center;}
+.series-label{color:var(--muted);font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;font-family:monospace;}
+h1{color:var(--accent);font-size:2rem;font-weight:700;margin-bottom:0.5rem;}.subtitle{color:var(--muted);font-size:1rem;}
+.tags{margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;}
+.tag{background:var(--tag-bg);color:var(--accent);padding:0.2rem 0.7rem;border-radius:3px;font-size:0.75rem;font-family:monospace;border:1px solid var(--border);}
+main{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem;}
+.tldr{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:4px;padding:1.2rem 1.5rem;margin-bottom:2.5rem;}
+.tldr h2{color:var(--accent);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.75rem;}
+.tldr ul{padding-left:1.2rem;}.tldr li{margin-bottom:0.35rem;}
+h2{color:var(--accent);font-size:1.35rem;margin:2.5rem 0 1rem;border-bottom:1px solid var(--border);padding-bottom:0.4rem;}
+h3{color:#8db4c8;font-size:1.1rem;margin:1.8rem 0 0.7rem;}
+p{margin-bottom:1rem;}ul,ol{padding-left:1.4rem;margin-bottom:1rem;}li{margin-bottom:0.3rem;}
+.box-lesson{background:#0c2316;border-left:4px solid var(--green);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-pitfall{background:#2a1600;border-left:4px solid var(--amber);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-rule{background:var(--surface);border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-example{background:#131220;border-left:4px solid #7c6fad;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-label{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.5rem;font-weight:700;}
+.box-lesson .box-label{color:var(--green);}.box-pitfall .box-label{color:var(--amber);}
+.box-rule .box-label{color:#8b949e;}.box-example .box-label{color:#9d8fd4;}
+.math-block{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;margin:1.2rem 0;overflow-x:auto;}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;overflow-x:auto;margin:1.2rem 0;}
+code{font-family:'Courier New',monospace;font-size:0.85rem;color:#a8c4d8;}
+p code,li code{background:var(--code-bg);padding:0.1em 0.35em;border-radius:2px;font-size:0.85em;}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:0.88rem;}
+thead th{background:var(--surface);color:var(--accent);padding:0.6rem 0.8rem;text-align:left;border-bottom:2px solid var(--border);font-family:monospace;font-size:0.8rem;}
+tbody td{padding:0.55rem 0.8rem;border-bottom:1px solid var(--border);vertical-align:top;}
+tbody tr:hover{background:#1a1f27;}
+.nav-links{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:0.9rem;}
+footer{text-align:center;color:var(--muted);font-size:0.8rem;padding:2rem;border-top:1px solid var(--border);margin-top:1rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="series-label">The Engineer's Handbook of Machine Learning</div>
+  <h1>Clustering and Unsupervised Learning</h1>
+  <div class="subtitle">Chapter 19 &mdash; K-Means, DBSCAN, GMM, Silhouette, Operating Mode Detection</div>
+  <div class="tags">
+    <span class="tag">K-Means</span>
+    <span class="tag">DBSCAN</span>
+    <span class="tag">GMM</span>
+    <span class="tag">Silhouette</span>
+    <span class="tag">EM Algorithm</span>
+    <span class="tag">Operating Modes</span>
+    <span class="tag">Fault Taxonomy</span>
+    <span class="tag">PCA</span>
+  </div>
+</header>
+
+<main>
+
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>Clustering serves six distinct purposes in engineering: operating mode detection, fault taxonomy, data-driven DOE, data compression, transfer learning, and exploratory analysis.</li>
+    <li>K-means: fast ($\mathcal{O}(nKdt)$), spherical clusters. Select $K$ by combined silhouette + Davies-Bouldin score, not just the elbow. Always standardise features first.</li>
+    <li>DBSCAN: no $K$ needed, arbitrary-shape clusters, identifies noise points. Use when clusters have irregular shapes (fault manifolds in vibration space).</li>
+    <li>GMM: probabilistic soft assignments; correct for elliptical clusters; provides a density score for anomaly detection: $s(\mathbf{x}) = -\log p(\mathbf{x})$.</li>
+    <li>Bayesian GMM (Dirichlet process) removes the need to specify $K$ — components with $\pi_k &lt; 0.01$ are automatically pruned.</li>
+    <li>Always validate clusters physically: a statistically optimal $K$ that produces physically uninterpretable clusters is not a useful model.</li>
+  </ul>
+</div>
+
+<!-- ================================================================== -->
+<h2>1. Why Clustering in Engineering ML?</h2>
+
+<p>Six distinct purposes in engineering surrogate workflows:</p>
+<ol>
+  <li><strong>Operating mode detection</strong>: identify distinct dynamic regimes in a drive cycle, process, or grid to allow mode-switching or multi-model surrogates.</li>
+  <li><strong>Fault taxonomy</strong>: without labelled fault data, cluster historical anomalies to identify distinct fault types; interpret clusters physically to create maintenance procedures.</li>
+  <li><strong>Data-driven DOE</strong>: cover the operating space uniformly by clustering existing data and placing new experimental points where cluster density is lowest.</li>
+  <li><strong>Data compression</strong>: represent a large dataset by its cluster centroids for initialisation, dimensionality reduction, or codebook generation.</li>
+  <li><strong>Transfer learning</strong>: identify which source domain clusters are most similar to the target domain for domain adaptation.</li>
+  <li><strong>Exploratory analysis</strong>: discover structure in high-dimensional sensor data invisible in pairwise scatter plots.</li>
+</ol>
+
+<!-- ================================================================== -->
+<h2>2. K-Means Clustering</h2>
+
+<p>K-means partitions $n$ points into $K$ clusters by minimising within-cluster sum of squares (inertia):</p>
+
+<div class="math-block">
+$$J_K = \sum_{k=1}^K \sum_{\mathbf{x}_i \in \mathcal{C}_k} \|\mathbf{x}_i - \boldsymbol{\mu}_k\|_2^2$$
+</div>
+
+<p>The Lloyd-Forgy algorithm alternates assignment (E-step: assign each point to the nearest centroid) and centroid update (M-step: recompute centroids) until convergence. Complexity: $\mathcal{O}(nKdt)$.</p>
+
+<h3>Choosing $K$: Silhouette + Davies-Bouldin</h3>
+
+<div class="math-block">
+$$\text{Silhouette: } s_i = \frac{b_i - a_i}{\max(a_i, b_i)} \in [-1, 1]$$
+</div>
+
+<p>where $a_i$ = mean intra-cluster distance, $b_i$ = mean nearest-cluster distance. $\bar{s} \to 1$ indicates well-separated clusters. The Davies-Bouldin index measures average cluster overlap — lower is better.</p>
+
+<pre><code>from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score, davies_bouldin_score
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+
+def select_k_and_cluster(X, k_range=(2, 15), n_init=20, random_state=42):
+    """Select optimal K using combined silhouette + Davies-Bouldin score."""
+    scaler = StandardScaler()
+    X_s = scaler.fit_transform(X)
+
+    K_vals, sils, dbs = [], [], []
+    for K in range(*k_range):
+        km = KMeans(n_clusters=K, n_init=n_init, random_state=random_state)
+        labels = km.fit_predict(X_s)
+        K_vals.append(K)
+        sils.append(silhouette_score(X_s, labels, sample_size=min(5000, len(X))))
+        dbs.append(davies_bouldin_score(X_s, labels))
+
+    # Combined score: maximise silhouette, minimise DB
+    sil_norm = (np.array(sils) - min(sils)) / (max(sils) - min(sils) + 1e-9)
+    db_norm  = 1 - (np.array(dbs) - min(dbs)) / (max(dbs) - min(dbs) + 1e-9)
+    combined = 0.6 * sil_norm + 0.4 * db_norm
+    best_K   = K_vals[int(np.argmax(combined))]
+
+    best_km = KMeans(n_clusters=best_K, n_init=n_init, random_state=random_state)
+    labels  = best_km.fit_predict(X_s)
+    print(f"Optimal K = {best_K}  |  Silhouette = {sils[best_K - k_range[0]]:.3f}")
+    return best_K, best_km, labels, scaler</code></pre>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — Elbow Method Alone is Insufficient</div>
+  The elbow of the inertia curve is often ambiguous — the "elbow" can appear anywhere from $K=3$ to $K=8$ depending on scale. Always combine the elbow with silhouette and Davies-Bouldin. More importantly: always validate the optimal $K$ physically. A K=6 solution with silhouette=0.6 that produces physically uninterpretable clusters is worse than a K=4 solution with silhouette=0.55 where each cluster maps to a known operating regime.
+</div>
+
+<!-- ================================================================== -->
+<h2>3. DBSCAN: Density-Based Clustering</h2>
+
+<p>DBSCAN finds clusters of arbitrary shape without requiring $K$ to be specified. It classifies each point as:</p>
+<ul>
+  <li><strong>Core point</strong>: has ≥ <code>min_samples</code> neighbours within radius $\varepsilon$.</li>
+  <li><strong>Border point</strong>: reachable from a core point but not itself a core point.</li>
+  <li><strong>Noise point</strong>: neither core nor border; labelled $-1$.</li>
+</ul>
+
+<div class="box-rule">
+  <div class="box-label">DBSCAN Parameter Selection</div>
+  <ol>
+    <li><strong>$\varepsilon$</strong>: plot the $k$-nearest-neighbour distance (for $k = $ <code>min_samples</code>) sorted ascending. Choose $\varepsilon$ at the "knee" of this curve.</li>
+    <li><strong>min_samples</strong>: set to $d+1$ at minimum; $2d$ for noisy datasets. For $d > 10$: use $\max(5, d/2)$.</li>
+    <li><strong>Distance metric</strong>: for physical engineering data with mixed units, use Mahalanobis distance or pre-standardise and use Euclidean.</li>
+    <li>Prefer DBSCAN over K-means when: clusters have irregular shapes (fault manifolds), noise points must be identified, or the number of clusters is unknown.</li>
+  </ol>
+</div>
+
+<!-- ================================================================== -->
+<h2>4. Gaussian Mixture Models (GMM)</h2>
+
+<p>GMM represents the data as a mixture of $K$ Gaussians, estimated by the Expectation-Maximisation (EM) algorithm:</p>
+
+<div class="math-block">
+$$p(\mathbf{x}) = \sum_{k=1}^K \pi_k\,\mathcal{N}(\mathbf{x};\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$$
+$$\text{E-step: } \gamma_{ik} = \frac{\pi_k\,\mathcal{N}(\mathbf{x}_i;\,\boldsymbol{\mu}_k,\boldsymbol{\Sigma}_k)}{\sum_j \pi_j\,\mathcal{N}(\mathbf{x}_i;\,\boldsymbol{\mu}_j,\boldsymbol{\Sigma}_j)}$$
+$$\text{M-step: } N_k = \sum_i \gamma_{ik}, \quad \boldsymbol{\mu}_k = \frac{1}{N_k}\sum_i \gamma_{ik}\mathbf{x}_i, \quad \boldsymbol{\Sigma}_k = \frac{1}{N_k}\sum_i \gamma_{ik}(\mathbf{x}_i - \boldsymbol{\mu}_k)(\mathbf{x}_i - \boldsymbol{\mu}_k)^\top$$
+</div>
+
+<p>GMM provides:</p>
+<ul>
+  <li><strong>Soft assignments</strong> $\gamma_{ik} = p(k|\mathbf{x}_i)$ — probabilistic cluster membership.</li>
+  <li><strong>Anomaly score</strong> $s(\mathbf{x}) = -\log p(\mathbf{x})$ — log-likelihood anomaly detection.</li>
+  <li><strong>Elliptical clusters</strong> — handles elongated and correlated cluster shapes that K-means (spherical) cannot.</li>
+</ul>
+
+<p><strong>Connection to K-means</strong>: in the limit $\boldsymbol{\Sigma}_k = \sigma^2\mathbf{I}$, $\sigma^2 \to 0$, soft assignments become one-hot and EM reduces to K-means. GMM is the probabilistic generalisation.</p>
+
+<h3>Bayesian GMM: Automatic Component Selection</h3>
+
+<p>Bayesian GMM with a Dirichlet process prior (DPGMM) removes the need to specify $K$: start with $K_{max}$ components; place a Dirichlet concentration prior $\alpha_0$ on the mixing weights. After fitting, components with $\pi_k &lt; 0.01$ are automatically pruned. Use <code>sklearn.mixture.BayesianGaussianMixture(n_components=20, n_init=5)</code> — the algorithm determines the effective $K$ automatically.</p>
+
+<!-- ================================================================== -->
+<h2>5. Method Comparison</h2>
+
+<table>
+  <thead>
+    <tr><th>Method</th><th>Cluster Shape</th><th>$K$ Required?</th><th>Noise Handling</th><th>Best For</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>K-Means</strong></td><td>Spherical</td><td>Yes</td><td>No</td><td>Convex clusters, large $n$, fast iteration</td></tr>
+    <tr><td><strong>K-Medoids</strong></td><td>Spherical</td><td>Yes</td><td>Better than K-Means</td><td>Non-Euclidean distances; outlier robustness</td></tr>
+    <tr><td><strong>DBSCAN</strong></td><td>Arbitrary</td><td>No</td><td>Explicit (label $-1$)</td><td>Irregular shapes, noise detection, unknown $K$</td></tr>
+    <tr><td><strong>GMM</strong></td><td>Elliptical</td><td>Yes (or DPGMM)</td><td>Via $\pi_k$ threshold</td><td>Probabilistic membership, anomaly scoring</td></tr>
+    <tr><td><strong>Hierarchical</strong></td><td>Any</td><td>Post-hoc</td><td>No</td><td>Small $n$; dendrogram visualisation</td></tr>
+  </tbody>
+</table>
+
+<!-- ================================================================== -->
+<h2>6. Engineering Application: Operating Mode Detection</h2>
+
+<div class="box-example">
+  <div class="box-label">Example — Drive Cycle Operating Mode Detection</div>
+  <p><strong>Setup</strong>: 1 Hz ECU data from 500 real-world drive cycles. Features: engine speed $N$, load $\text{BMEP}$, coolant temperature $T_{cool}$, gear position. Goal: identify distinct operating modes for mode-switching surrogate models.</p>
+  <p><strong>Method</strong>: standardise features; apply K-means with silhouette selection. Result: $K = 5$ modes — cold idle, warm idle, city driving (low load), motorway (high load), deceleration fuel cut-off.</p>
+  <p><strong>Validation</strong>: each cluster is physically interpretable; centroid $N$ and BMEP values match known ECU operating points. Train a separate XGBoost surrogate per mode — overall RMSE drops by 23% vs. a single global model.</p>
+</div>
+
+<!-- ================================================================== -->
+<h2>7. Key Takeaways</h2>
+
+<ul>
+  <li>Always standardise features before clustering — K-means and GMM are sensitive to feature scale.</li>
+  <li>Use <strong>combined silhouette + Davies-Bouldin</strong> for $K$ selection, not elbow alone. Validate the result physically.</li>
+  <li><strong>K-means</strong>: fast, good for convex clusters. Use <code>n_init=20</code> to avoid poor local optima.</li>
+  <li><strong>DBSCAN</strong>: no $K$ needed, handles irregular shapes and explicitly marks noise. Choose $\varepsilon$ from the $k$-NN distance curve knee.</li>
+  <li><strong>GMM</strong>: probabilistic soft assignments + anomaly score. Use Bayesian GMM (DPGMM) when $K$ is unknown.</li>
+  <li>Mode-switching models (one surrogate per cluster) consistently outperform global models when operating regimes have distinct dynamics.</li>
+  <li>Fault taxonomy via DBSCAN: label all historical anomalies, cluster them without class labels, then interpret clusters physically. This is how you build a fault dictionary from unlabelled field data.</li>
+</ul>
+
+<div class="nav-links">
+  <a href="ch18-3d-neural-operators.html">&larr; Ch18: 3D &amp; Neural Operators</a>
+  <a href="ch20-generative-ai.html">Ch20: Generative AI &rarr;</a>
+</div>
+
+</main>
+
+<footer>
+  <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
+  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+</footer>
+
+</body>
+</html>
