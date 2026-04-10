@@ -5,58 +5,108 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leonardo Pulga</title>
+  <title>Leonardo Pulga — Sr. Engineering Data Scientist, Ph.D.</title>
 
-  <!--
-    - favicon
-  -->
   <link rel="shortcut icon" href="./assets/images/logo.ico" type="image/x-icon">
-
-  <!--
-    - custom css link
-  -->
   <link rel="stylesheet" href="./assets/css/style.css">
-
-  <!--
-    - google font link
-  -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── tech tag pills used in About and Blog ── */
+    .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .tech-tag {
+      background: hsla(45, 100%, 71%, 0.08);
+      border: 1px solid hsla(45, 100%, 71%, 0.2);
+      color: hsl(45, 100%, 71%);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+    }
+    /* ── achievement cards in About ── */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .achievement-card {
+      background: var(--bg-gradient-jet);
+      border: 1px solid hsl(0, 0%, 22%);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .achievement-card ion-icon {
+      font-size: 22px;
+      color: hsl(45, 100%, 71%);
+    }
+    .achievement-card .ach-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: hsl(0, 0%, 85%);
+    }
+    .achievement-card .ach-desc {
+      font-size: 11.5px;
+      color: hsl(0, 0%, 55%);
+      line-height: 1.5;
+    }
+    /* ── stat row ── */
+    .stat-row {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin: 18px 0 0;
+    }
+    .stat-box {
+      background: var(--bg-gradient-jet);
+      border: 1px solid hsl(0, 0%, 22%);
+      border-radius: 10px;
+      padding: 12px 20px;
+      text-align: center;
+      flex: 1;
+      min-width: 100px;
+    }
+    .stat-box .stat-num {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: hsl(45, 100%, 71%);
+      display: block;
+    }
+    .stat-box .stat-label {
+      font-size: 11px;
+      color: hsl(0, 0%, 55%);
+      margin-top: 2px;
+    }
+  </style>
 </head>
 
 <body>
 
-  <!--
-    - #MAIN
-  -->
-
   <main>
 
-    <!--
-      - #SIDEBAR
-    -->
-
+    <!--  SIDEBAR  -->
     <aside class="sidebar" data-sidebar>
 
       <div class="sidebar-info">
-
         <figure class="avatar-box">
-          <img src="./assets/images/my-avatar.png" alt="Richard hanrick" width="80">
+          <img src="./assets/images/my-avatar.png" alt="Leonardo Pulga" width="80">
         </figure>
 
         <div class="info-content">
-          <h1 class="name" title="Richard hanrick">Richard hanrick</h1>
-
-          <p class="title">Web developer</p>
+          <h1 class="name" title="Leonardo Pulga">Leonardo Pulga</h1>
+          <p class="title">Sr. Engineering Data Scientist, Ph.D.</p>
         </div>
 
         <button class="info_more-btn" data-sidebar-btn>
           <span>Show Contacts</span>
-
           <ion-icon name="chevron-down"></ion-icon>
         </button>
-
       </div>
 
       <div class="sidebar-info_more">
@@ -66,59 +116,45 @@
         <ul class="contacts-list">
 
           <li class="contact-item">
-
             <div class="icon-box">
               <ion-icon name="mail-outline"></ion-icon>
             </div>
-
             <div class="contact-info">
               <p class="contact-title">Email</p>
-
-              <a href="mailto:richard@example.com" class="contact-link">richard@example.com</a>
+              <a href="mailto:leonardo.pulga93@gmail.com" class="contact-link">leonardo.pulga93@gmail.com</a>
             </div>
-
           </li>
 
           <li class="contact-item">
-
             <div class="icon-box">
               <ion-icon name="phone-portrait-outline"></ion-icon>
             </div>
-
             <div class="contact-info">
               <p class="contact-title">Phone</p>
-
-              <a href="tel:+12133522795" class="contact-link">+1 (213) 352-2795</a>
+              <a href="tel:+393335910206" class="contact-link">+39 333 591 0206</a>
             </div>
-
           </li>
 
           <li class="contact-item">
-
-            <div class="icon-box">
-              <ion-icon name="calendar-outline"></ion-icon>
-            </div>
-
-            <div class="contact-info">
-              <p class="contact-title">Birthday</p>
-
-              <time datetime="1982-06-23">June 23, 1982</time>
-            </div>
-
-          </li>
-
-          <li class="contact-item">
-
             <div class="icon-box">
               <ion-icon name="location-outline"></ion-icon>
             </div>
-
             <div class="contact-info">
               <p class="contact-title">Location</p>
-
-              <address>Sacramento, California, USA</address>
+              <address>Novi di Modena, MO — Italy</address>
             </div>
+          </li>
 
+          <li class="contact-item">
+            <div class="icon-box">
+              <ion-icon name="globe-outline"></ion-icon>
+            </div>
+            <div class="contact-info">
+              <p class="contact-title">ResearchGate</p>
+              <a href="https://www.researchgate.net/profile/Leonardo-Pulga" class="contact-link" target="_blank">
+                researchgate.net/…/Leonardo-Pulga
+              </a>
+            </div>
           </li>
 
         </ul>
@@ -128,20 +164,16 @@
         <ul class="social-list">
 
           <li class="social-item">
-            <a href="#" class="social-link">
-              <ion-icon name="logo-facebook"></ion-icon>
+            <a href="https://www.linkedin.com/in/leonardopulga/" class="social-link" target="_blank"
+               title="LinkedIn">
+              <ion-icon name="logo-linkedin"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="#" class="social-link">
-              <ion-icon name="logo-twitter"></ion-icon>
-            </a>
-          </li>
-
-          <li class="social-item">
-            <a href="#" class="social-link">
-              <ion-icon name="logo-instagram"></ion-icon>
+            <a href="https://github.com/drleo93" class="social-link" target="_blank"
+               title="GitHub">
+              <ion-icon name="logo-github"></ion-icon>
             </a>
           </li>
 
@@ -152,52 +184,32 @@
     </aside>
 
 
-
-
-
-    <!--
-      - #main-content
-    -->
-
+    <!--  MAIN CONTENT  -->
     <div class="main-content">
 
-      <!--
-        - #NAVBAR
-      -->
-
+      <!-- NAVBAR -->
       <nav class="navbar">
-
         <ul class="navbar-list">
-
           <li class="navbar-item">
-            <button class="navbar-link  active" data-nav-link>About</button>
+            <button class="navbar-link active" data-nav-link>About</button>
           </li>
-
           <li class="navbar-item">
             <button class="navbar-link" data-nav-link>Resume</button>
           </li>
-
           <li class="navbar-item">
             <button class="navbar-link" data-nav-link>Blog</button>
           </li>
-
           <li class="navbar-item">
             <button class="navbar-link" data-nav-link>Contact</button>
           </li>
-
         </ul>
-
       </nav>
 
 
-
-
-
-      <!--
-        - #ABOUT
-      -->
-
-      <article class="about  active" data-page="about">
+      <!-- ══════════════════════════════════════
+           ABOUT
+      ══════════════════════════════════════ -->
+      <article class="about active" data-page="about">
 
         <header>
           <h2 class="h2 article-title">About me</h2>
@@ -205,196 +217,100 @@
 
         <section class="about-text">
           <p>
-            I'm Creative Director and UI/UX Designer from Sydney, Australia, working in web development and print media.
-            I enjoy
-            turning complex problems into simple, beautiful and intuitive designs.
+            I'm a Senior Engineering Data Scientist at <strong>Baker Hughes</strong>, working at the intersection
+            of physics-based modelling and machine learning for energy systems. Seven-plus years of building
+            things that actually run in production — from virtual sensors on turbomachinery test rigs to
+            3D surrogate models that cut FEM/CFD runtimes by 50–90%.
           </p>
-
           <p>
-            My job is to build your website so that it is functional and user-friendly but at the same time attractive.
-            Moreover, I
-            add personal touch to your product and make sure that is eye-catching and easy to use. My aim is to bring
-            across your
-            message and identity in the most creative way. I created web design for many famous brand companies.
+            My sweet spot is <em>hybrid modelling</em>: taking the physics you already trust (thermodynamics,
+            fluid mechanics, PDEs) and making it fast, uncertainty-aware, and continuously updating with
+            real sensor data. I hold a Ph.D. from UNIBO in Automotive for Intelligent Mobility, where I
+            worked on AI-augmented CFD for internal combustion engines in cooperation with Maserati.
+          </p>
+          <p>
+            I also wrote a technical handbook on applied ML for engineering — all 23 chapters are available
+            as readable posts in the <a href="#" onclick="document.querySelector('[data-nav-link]:nth-child(3)').click();return false;">Blog</a> tab above.
           </p>
         </section>
 
+        <!-- stat row -->
+        <div class="stat-row">
+          <div class="stat-box">
+            <span class="stat-num">7+</span>
+            <div class="stat-label">years industry ML</div>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">50–90%</span>
+            <div class="stat-label">sim-time reduction</div>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">23</span>
+            <div class="stat-label">handbook chapters</div>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">2nd</span>
+            <div class="stat-label">LEC Data Challenge</div>
+          </div>
+        </div>
 
-        <!--
-          - service
-        -->
 
+        <!-- What I'm doing -->
         <section class="service">
 
-          <h3 class="h3 service-title">What i'm doing</h3>
+          <h3 class="h3 service-title">What I'm working on</h3>
 
           <ul class="service-list">
 
             <li class="service-item">
-
               <div class="service-icon-box">
-                <img src="./assets/images/icon-design.svg
-                " alt="design icon" width="40">
+                <img src="./assets/images/icon-design.svg" alt="scientific ML icon" width="40">
               </div>
-
               <div class="service-content-box">
-                <h4 class="h4 service-item-title">Web design</h4>
-
+                <h4 class="h4 service-item-title">Scientific ML & Surrogate Modelling</h4>
                 <p class="service-item-text">
-                  The most modern and high-quality design made at a professional level.
+                  GP, PINN, FNO, DeepONet — fast physics-faithful surrogates that replace
+                  FEM/CFD queries in optimisation and digital-twin loops.
                 </p>
               </div>
-
             </li>
 
             <li class="service-item">
-
               <div class="service-icon-box">
-                <img src="./assets/images/icon-dev.svg" alt="Web development icon" width="40">
+                <img src="./assets/images/icon-dev.svg" alt="virtual sensor icon" width="40">
               </div>
-
               <div class="service-content-box">
-                <h4 class="h4 service-item-title">Web development</h4>
-
+                <h4 class="h4 service-item-title">Hybrid Virtual Sensors & Anomaly Detection</h4>
                 <p class="service-item-text">
-                  High-quality development of sites at the professional level.
+                  Grey-box architectures (physics model + ML residual) for real-time estimation.
+                  CUSUM, Isolation Forest, LSTM autoencoders for turbomachinery monitoring.
                 </p>
               </div>
-
             </li>
 
             <li class="service-item">
-
               <div class="service-icon-box">
-                <img src="./assets/images/icon-app.svg" alt="mobile app icon" width="40">
+                <img src="./assets/images/icon-app.svg" alt="optimisation icon" width="40">
               </div>
-
               <div class="service-content-box">
-                <h4 class="h4 service-item-title">Mobile apps</h4>
-
+                <h4 class="h4 service-item-title">Bayesian Optimisation & Engineering Design</h4>
                 <p class="service-item-text">
-                  Professional development of applications for iOS and Android.
+                  Multi-objective BO (qEHVI), Bayesian RBDO, surrogate-assisted MDO.
+                  Reduced calibration times by 50–90% across multiple product lines.
                 </p>
               </div>
-
             </li>
 
             <li class="service-item">
-
               <div class="service-icon-box">
-                <img src="./assets/images/icon-photo.svg" alt="camera icon" width="40">
+                <img src="./assets/images/icon-photo.svg" alt="3D AI icon" width="40">
               </div>
-
               <div class="service-content-box">
-                <h4 class="h4 service-item-title">Photography</h4>
-
+                <h4 class="h4 service-item-title">3D AI & Neural Operators</h4>
                 <p class="service-item-text">
-                  I make high-quality photos of any category at a professional level.
+                  POD-ROM, FNO, GNN for full-field CFD/FEM predictions. Making spatial ML
+                  tractable for real engineering geometries at production latencies.
                 </p>
-              </div>
-
-            </li>
-
-          </ul>
-
-        </section>
-
-
-        <!--
-          - testimonials
-        -->
-
-        <section class="testimonials">
-
-          <h3 class="h3 testimonials-title">Testimonials</h3>
-
-          <ul class="testimonials-list has-scrollbar">
-
-            <li class="testimonials-item">
-              <div class="content-card" data-testimonials-item>
-
-                <figure class="testimonials-avatar-box">
-                  <img src="./assets/images/avatar-1.png" alt="Daniel lewis" width="60" data-testimonials-avatar>
-                </figure>
-
-                <h4 class="h4 testimonials-item-title" data-testimonials-title>Daniel lewis</h4>
-
-                <div class="testimonials-text" data-testimonials-text>
-                  <p>
-                    Richard was hired to create a corporate identity. We were very pleased with the work done. She has a
-                    lot of experience
-                    and is very concerned about the needs of client. Lorem ipsum dolor sit amet, ullamcous cididt
-                    consectetur adipiscing
-                    elit, seds do et eiusmod tempor incididunt ut laborels dolore magnarels alia.
-                  </p>
-                </div>
-
-              </div>
-            </li>
-
-            <li class="testimonials-item">
-              <div class="content-card" data-testimonials-item>
-
-                <figure class="testimonials-avatar-box">
-                  <img src="./assets/images/avatar-2.png" alt="Jessica miller" width="60" data-testimonials-avatar>
-                </figure>
-
-                <h4 class="h4 testimonials-item-title" data-testimonials-title>Jessica miller</h4>
-
-                <div class="testimonials-text" data-testimonials-text>
-                  <p>
-                    Richard was hired to create a corporate identity. We were very pleased with the work done. She has a
-                    lot of experience
-                    and is very concerned about the needs of client. Lorem ipsum dolor sit amet, ullamcous cididt
-                    consectetur adipiscing
-                    elit, seds do et eiusmod tempor incididunt ut laborels dolore magnarels alia.
-                  </p>
-                </div>
-
-              </div>
-            </li>
-
-            <li class="testimonials-item">
-              <div class="content-card" data-testimonials-item>
-
-                <figure class="testimonials-avatar-box">
-                  <img src="./assets/images/avatar-3.png" alt="Emily evans" width="60" data-testimonials-avatar>
-                </figure>
-
-                <h4 class="h4 testimonials-item-title" data-testimonials-title>Emily evans</h4>
-
-                <div class="testimonials-text" data-testimonials-text>
-                  <p>
-                    Richard was hired to create a corporate identity. We were very pleased with the work done. She has a
-                    lot of experience
-                    and is very concerned about the needs of client. Lorem ipsum dolor sit amet, ullamcous cididt
-                    consectetur adipiscing
-                    elit, seds do et eiusmod tempor incididunt ut laborels dolore magnarels alia.
-                  </p>
-                </div>
-
-              </div>
-            </li>
-
-            <li class="testimonials-item">
-              <div class="content-card" data-testimonials-item>
-
-                <figure class="testimonials-avatar-box">
-                  <img src="./assets/images/avatar-4.png" alt="Henry william" width="60" data-testimonials-avatar>
-                </figure>
-
-                <h4 class="h4 testimonials-item-title" data-testimonials-title>Henry william</h4>
-
-                <div class="testimonials-text" data-testimonials-text>
-                  <p>
-                    Richard was hired to create a corporate identity. We were very pleased with the work done. She has a
-                    lot of experience
-                    and is very concerned about the needs of client. Lorem ipsum dolor sit amet, ullamcous cididt
-                    consectetur adipiscing
-                    elit, seds do et eiusmod tempor incididunt ut laborels dolore magnarels alia.
-                  </p>
-                </div>
-
               </div>
             </li>
 
@@ -403,288 +319,243 @@
         </section>
 
 
-        <!--
-          - testimonials modal
-        -->
+        <!-- Achievements -->
+        <section class="testimonials" style="margin-top: 30px;">
 
-        <div class="modal-container" data-modal-container>
+          <h3 class="h3 testimonials-title">Achievements & Highlights</h3>
 
-          <div class="overlay" data-overlay></div>
+          <div class="achievements-grid">
 
-          <section class="testimonials-modal">
-
-            <button class="modal-close-btn" data-modal-close-btn>
-              <ion-icon name="close-outline"></ion-icon>
-            </button>
-
-            <div class="modal-img-wrapper">
-              <figure class="modal-avatar-box">
-                <img src="./assets/images/avatar-1.png" alt="Daniel lewis" width="80" data-modal-img>
-              </figure>
-
-              <img src="./assets/images/icon-quote.svg" alt="quote icon">
+            <div class="achievement-card">
+              <ion-icon name="trophy-outline"></ion-icon>
+              <div class="ach-title">LEC Data Challenge</div>
+              <div class="ach-desc">2nd Place — 2021 & 2023. Exoplanet transit signal detection from photometric time series.</div>
             </div>
 
-            <div class="modal-content">
-
-              <h4 class="h3 modal-title" data-modal-title>Daniel lewis</h4>
-
-              <time datetime="2021-06-14">14 June, 2021</time>
-
-              <div data-modal-text>
-                <p>
-                  Richard was hired to create a corporate identity. We were very pleased with the work done. She has a
-                  lot of experience
-                  and is very concerned about the needs of client. Lorem ipsum dolor sit amet, ullamcous cididt
-                  consectetur adipiscing
-                  elit, seds do et eiusmod tempor incididunt ut laborels dolore magnarels alia.
-                </p>
-              </div>
-
+            <div class="achievement-card">
+              <ion-icon name="trophy-outline"></ion-icon>
+              <div class="ach-title">Ariel Data Challenge</div>
+              <div class="ach-desc">4th Place — 2022. Atmospheric retrieval from space telescope spectral data.</div>
             </div>
 
-          </section>
+            <div class="achievement-card">
+              <ion-icon name="ribbon-outline"></ion-icon>
+              <div class="ach-title">Top 10% Kaggler</div>
+              <div class="ach-desc">Multiple competition placements across time-series and science ML challenges.</div>
+            </div>
 
-        </div>
+            <div class="achievement-card">
+              <ion-icon name="school-outline"></ion-icon>
+              <div class="ach-title">Ph.D. — UNIBO</div>
+              <div class="ach-desc">Automotive for Intelligent Mobility. AI-augmented CFD for ICEs with Maserati. 2022.</div>
+            </div>
 
+            <div class="achievement-card">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              <div class="ach-title">Eng. Profession</div>
+              <div class="ach-desc">Qualified for the Italian Engineering Profession (Ordine degli Ingegneri).</div>
+            </div>
 
-        <!--
-          - clients
-        -->
+            <div class="achievement-card">
+              <ion-icon name="flash-outline"></ion-icon>
+              <div class="ach-title">Mensa Italy</div>
+              <div class="ach-desc">Affiliate member. Top 2% IQ. Useful mostly for solving riddles, honestly.</div>
+            </div>
 
-        <section class="clients">
+          </div>
 
-          <h3 class="h3 clients-title">Clients</h3>
+        </section>
 
-          <ul class="clients-list has-scrollbar">
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-1-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-2-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-3-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-4-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-5-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-6-color.png" alt="client logo">
-              </a>
-            </li>
-
-          </ul>
-
+        <!-- Tech stack tags -->
+        <section style="margin-top: 30px;">
+          <h3 class="h3" style="margin-bottom: 10px;">Tech stack</h3>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">PyTorch</span>
+            <span class="tech-tag">TensorFlow</span>
+            <span class="tech-tag">GPflow</span>
+            <span class="tech-tag">BoTorch</span>
+            <span class="tech-tag">scikit-learn</span>
+            <span class="tech-tag">ONNX</span>
+            <span class="tech-tag">AWS</span>
+            <span class="tech-tag">Docker</span>
+            <span class="tech-tag">Linux</span>
+            <span class="tech-tag">MLflow</span>
+            <span class="tech-tag">Matlab</span>
+            <span class="tech-tag">Fortran</span>
+            <span class="tech-tag">OpenFOAM</span>
+            <span class="tech-tag">Star-CD</span>
+            <span class="tech-tag">Ansys</span>
+            <span class="tech-tag">Simulink</span>
+            <span class="tech-tag">Aspen</span>
+            <span class="tech-tag">Calculix</span>
+          </div>
         </section>
 
       </article>
 
 
-
-
-
-      <!--
-        - #RESUME
-      -->
-
+      <!-- ══════════════════════════════════════
+           RESUME
+      ══════════════════════════════════════ -->
       <article class="resume" data-page="resume">
 
         <header>
           <h2 class="h2 article-title">Resume</h2>
         </header>
 
+        <!-- Experience -->
         <section class="timeline">
 
           <div class="title-wrapper">
             <div class="icon-box">
-              <ion-icon name="book-outline"></ion-icon>
+              <ion-icon name="briefcase-outline"></ion-icon>
             </div>
-
-            <h3 class="h3">Education</h3>
-          </div>
-
-          <ol class="timeline-list">
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">University school of the arts</h4>
-
-              <span>2007 — 2008</span>
-
-              <p class="timeline-text">
-                Nemo enims ipsam voluptatem, blanditiis praesentium voluptum delenit atque corrupti, quos dolores et
-                quas molestias
-                exceptur.
-              </p>
-
-            </li>
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">New york academy of art</h4>
-
-              <span>2006 — 2007</span>
-
-              <p class="timeline-text">
-                Ratione voluptatem sequi nesciunt, facere quisquams facere menda ossimus, omnis voluptas assumenda est
-                omnis..
-              </p>
-
-            </li>
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">High school of art and design</h4>
-
-              <span>2002 — 2004</span>
-
-              <p class="timeline-text">
-                Duis aute irure dolor in reprehenderit in voluptate, quila voluptas mag odit aut fugit, sed consequuntur
-                magni dolores
-                eos.
-              </p>
-
-            </li>
-
-          </ol>
-
-        </section>
-
-        <section class="timeline">
-
-          <div class="title-wrapper">
-            <div class="icon-box">
-              <ion-icon name="book-outline"></ion-icon>
-            </div>
-
             <h3 class="h3">Experience</h3>
           </div>
 
           <ol class="timeline-list">
 
             <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">Creative director</h4>
-
-              <span>2015 — Present</span>
-
+              <h4 class="h4 timeline-item-title">Senior AI Specialist for Engineering & Controls</h4>
+              <span>July 2025 — Present · Baker Hughes, Florence (remote)</span>
               <p class="timeline-text">
-                Nemo enim ipsam voluptatem blanditiis praesentium voluptum delenit atque corrupti, quos dolores et qvuas
-                molestias
-                exceptur.
+                Leading definition and development of scientific ML and engineering tools for simulation and
+                optimisation with foundational and specialised models and agentic workflows — cutting simulation
+                times by 50–90%. Driving the AI for Engineering technology roadmap and collaborating with
+                interdisciplinary research teams and external research centres.
               </p>
-
             </li>
 
             <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">Art director</h4>
-
-              <span>2013 — 2015</span>
-
+              <h4 class="h4 timeline-item-title">Lead AI Specialist</h4>
+              <span>July 2023 — July 2025 · Baker Hughes, Florence (remote)</span>
               <p class="timeline-text">
-                Nemo enims ipsam voluptatem, blanditiis praesentium voluptum delenit atque corrupti, quos dolores et
-                quas molestias
-                exceptur.
+                Led development and deployment of hybrid virtual sensors and anomaly detection algorithms for
+                turbomachinery components and plants, running in remote monitoring and test environments.
+                Built surrogate models for engineering design and manufacturing teams integrating simulation
+                and experimental data into optimisation and reliability workflows. AI4Science: 3D AI tools
+                for FEM, CFD and material simulation acceleration.
               </p>
-
             </li>
 
             <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">Web designer</h4>
-
-              <span>2010 — 2013</span>
-
+              <h4 class="h4 timeline-item-title">Computational Researcher — Consultant</h4>
+              <span>May 2018 — July 2023 · NAIS srl, Bologna (remote)</span>
               <p class="timeline-text">
-                Nemo enims ipsam voluptatem, blanditiis praesentium voluptum delenit atque corrupti, quos dolores et
-                quas molestias
-                exceptur.
+                Automotive AI applications for Tier-1 and OEM customers: virtual sensors, optimisation &
+                calibration workflows, advanced controls. Co-authored a position paper with Ferrari S.p.A. on
+                virtual sensor requirements and certification. Built 3D surrogate models and AI R&D tools
+                for product design and optimisation.
               </p>
-
             </li>
 
           </ol>
 
         </section>
 
+        <!-- Education -->
+        <section class="timeline">
+
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="book-outline"></ion-icon>
+            </div>
+            <h3 class="h3">Education</h3>
+          </div>
+
+          <ol class="timeline-list">
+
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Ph.D. — Automotive for Intelligent Mobility</h4>
+              <span>Oct. 2018 — May 2022 · Università di Bologna (UNIBO)</span>
+              <p class="timeline-text">
+                Advanced methods for CFD simulation of internal combustion engines with AI and detailed
+                chemical kinetics integration. Developed in cooperation with NAIS srl for Maserati.
+                Supervisor: Prof. G.M. Bianchi. Focus: combustion RANS/LES surrogates, reduced-order
+                modelling, AI-accelerated chemistry.
+              </p>
+            </li>
+
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">M.Sc. / B.Sc. — Mechanical Engineering</h4>
+              <span>Sept. 2012 — April 2018 · UNIBO · Politecnico di Milano · Tongji University Shanghai</span>
+              <p class="timeline-text">
+                Mechanical engineering fundamentals, fluid mechanics, heat transfer, and structural mechanics.
+                International exchange at Politecnico di Milano and Tongji University Shanghai.
+                Graduated with focus on computational methods and engineering simulation.
+              </p>
+            </li>
+
+          </ol>
+
+        </section>
+
+        <!-- Skills -->
         <section class="skill">
 
-          <h3 class="h3 skills-title">My skills</h3>
+          <h3 class="h3 skills-title">Core skills</h3>
 
           <ul class="skills-list content-card">
 
             <li class="skills-item">
-
               <div class="title-wrapper">
-                <h5 class="h5">Web design</h5>
-                <data value="80">80%</data>
+                <h5 class="h5">Python · PyTorch · Scientific ML</h5>
+                <data value="95">95%</data>
               </div>
-
               <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 80%;"></div>
+                <div class="skill-progress-fill" style="width: 95%;"></div>
               </div>
-
             </li>
 
             <li class="skills-item">
-
               <div class="title-wrapper">
-                <h5 class="h5">Graphic design</h5>
-                <data value="70">70%</data>
+                <h5 class="h5">Surrogate Modelling (GP, PINN, FNO)</h5>
+                <data value="92">92%</data>
               </div>
-
               <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 70%;"></div>
+                <div class="skill-progress-fill" style="width: 92%;"></div>
               </div>
-
             </li>
 
             <li class="skills-item">
-
               <div class="title-wrapper">
-                <h5 class="h5">Branding</h5>
+                <h5 class="h5">Bayesian Optimisation & UQ</h5>
+                <data value="88">88%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 88%;"></div>
+              </div>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">CFD & FEM Simulation (OpenFOAM, Ansys)</h5>
+                <data value="85">85%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 85%;"></div>
+              </div>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Time-Series · Virtual Sensors · Anomaly Detection</h5>
                 <data value="90">90%</data>
               </div>
-
               <div class="skill-progress-bg">
                 <div class="skill-progress-fill" style="width: 90%;"></div>
               </div>
-
             </li>
 
             <li class="skills-item">
-
               <div class="title-wrapper">
-                <h5 class="h5">WordPress</h5>
-                <data value="50">50%</data>
+                <h5 class="h5">MLOps · AWS · Docker · ONNX</h5>
+                <data value="78">78%</data>
               </div>
-
               <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 50%;"></div>
+                <div class="skill-progress-fill" style="width: 78%;"></div>
               </div>
-
             </li>
 
           </ul>
@@ -694,10 +565,9 @@
       </article>
 
 
-      <!--
-        - #BLOG
-      -->
-
+      <!-- ══════════════════════════════════════
+           BLOG
+      ══════════════════════════════════════ -->
       <article class="blog" data-page="blog">
 
         <header>
@@ -706,173 +576,131 @@
 
         <section class="blog-posts">
 
+          <p style="color: hsl(0,0%,55%); font-size: 13px; margin-bottom: 20px; line-height: 1.7;">
+            Chapter-by-chapter posts from <em>The Engineer's Handbook of Machine Learning</em>.
+            Technical, detailed, and written for people who have to actually deploy these things.
+            <a href="./blog/index.html" style="color: hsl(45,100%,71%);">→ See all 23 chapters</a>
+          </p>
+
           <ul class="blog-posts-list">
 
             <li class="blog-post-item">
-              <a href="#">
-
+              <a href="./blog/ch10-deep-time-series.html">
                 <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-1.jpg" alt="Design conferences in 2022" loading="lazy">
+                  <img src="./assets/images/blog-1.jpg" alt="Deep Learning for Time Series" loading="lazy">
                 </figure>
-
                 <div class="blog-content">
-
                   <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-
+                    <p class="blog-category">Deep Learning</p>
                     <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
+                    <time datetime="2026-04-01">Chapter 10</time>
                   </div>
-
-                  <h3 class="h3 blog-item-title">Design conferences in 2022</h3>
-
+                  <h3 class="h3 blog-item-title">LSTM, TCN & Transformers for Engineering Time Series</h3>
                   <p class="blog-text">
-                    Veritatis et quasi architecto beatae vitae dicta sunt, explicabo.
+                    Simulation error vs one-step error, dilated convolutions, causal masking,
+                    PatchTST, and a grey-box NOx virtual sensor.
                   </p>
-
                 </div>
-
               </a>
             </li>
 
             <li class="blog-post-item">
-              <a href="#">
-
+              <a href="./blog/ch15-optimisation.html">
                 <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-2.jpg" alt="Best fonts every designer" loading="lazy">
+                  <img src="./assets/images/blog-2.jpg" alt="Bayesian Optimisation" loading="lazy">
                 </figure>
-
                 <div class="blog-content">
-
                   <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-
+                    <p class="blog-category">Optimisation</p>
                     <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
+                    <time datetime="2026-04-01">Chapter 15</time>
                   </div>
-
-                  <h3 class="h3 blog-item-title">Best fonts every designer</h3>
-
+                  <h3 class="h3 blog-item-title">Bayesian Optimisation: EI, TuRBO, Adjoint & Multi-Objective</h3>
                   <p class="blog-text">
-                    Sed ut perspiciatis, nam libero tempore, cum soluta nobis est eligendi.
+                    Expected Improvement, Trust Region BO, gradient-based adjoint method for
+                    PDE-constrained optimisation, constrained BO, and Pareto fronts.
                   </p>
-
                 </div>
-
               </a>
             </li>
 
             <li class="blog-post-item">
-              <a href="#">
-
+              <a href="./blog/ch17-physics-multifidelity.html">
                 <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-3.jpg" alt="Design digest #80" loading="lazy">
+                  <img src="./assets/images/blog-3.jpg" alt="Multi-fidelity" loading="lazy">
                 </figure>
-
                 <div class="blog-content">
-
                   <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-
+                    <p class="blog-category">Physics ML</p>
                     <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
+                    <time datetime="2026-04-01">Chapter 17</time>
                   </div>
-
-                  <h3 class="h3 blog-item-title">Design digest #80</h3>
-
+                  <h3 class="h3 blog-item-title">Multi-Fidelity GP: 200 RANS + 12 Hot-Fire Tests</h3>
                   <p class="blog-text">
-                    Excepteur sint occaecat cupidatat no proident, quis nostrum exercitationem ullam corporis suscipit.
+                    Kennedy-O'Hagan co-kriging, PINN physics loss, budget allocation rules,
+                    and physics-constrained architectures for turbine surrogates.
                   </p>
-
                 </div>
-
               </a>
             </li>
 
             <li class="blog-post-item">
-              <a href="#">
-
+              <a href="./blog/ch18-3d-neural-operators.html">
                 <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-4.jpg" alt="UI interactions of the week" loading="lazy">
+                  <img src="./assets/images/blog-4.jpg" alt="Neural Operators" loading="lazy">
                 </figure>
-
                 <div class="blog-content">
-
                   <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-
+                    <p class="blog-category">3D AI</p>
                     <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
+                    <time datetime="2026-04-01">Chapter 18</time>
                   </div>
-
-                  <h3 class="h3 blog-item-title">UI interactions of the week</h3>
-
+                  <h3 class="h3 blog-item-title">3D Fields & Neural Operators: FNO, DeepONet, Transolver</h3>
                   <p class="blog-text">
-                    Enim ad minim veniam, consectetur adipiscing elit, quis nostrud exercitation ullamco laboris nisi.
+                    POD-ROM SVD pipeline, Fourier Neural Operator kernel, GNN message passing,
+                    and O(NK) attention for full-field engineering predictions.
                   </p>
-
                 </div>
-
               </a>
             </li>
 
             <li class="blog-post-item">
-              <a href="#">
-
+              <a href="./blog/ch23-digital-twin.html">
                 <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-5.jpg" alt="The forgotten art of spacing" loading="lazy">
+                  <img src="./assets/images/blog-5.jpg" alt="Digital Twin" loading="lazy">
                 </figure>
-
                 <div class="blog-content">
-
                   <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-
+                    <p class="blog-category">Digital Twin</p>
                     <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
+                    <time datetime="2026-04-01">Chapter 23</time>
                   </div>
-
-                  <h3 class="h3 blog-item-title">The forgotten art of spacing</h3>
-
+                  <h3 class="h3 blog-item-title">Digital Twin Architecture: FEM → ROM → Real-Time Update</h3>
                   <p class="blog-text">
-                    Maxime placeat, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    EnKF data assimilation, innovation-sequence health monitor, model-plant
+                    mismatch detection, and transfer learning for data-scarce assets.
                   </p>
-
                 </div>
-
               </a>
             </li>
 
             <li class="blog-post-item">
-              <a href="#">
-
+              <a href="./blog/ch21-reinforcement-learning.html">
                 <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-6.jpg" alt="Design digest #79" loading="lazy">
+                  <img src="./assets/images/blog-6.jpg" alt="Reinforcement Learning" loading="lazy">
                 </figure>
-
                 <div class="blog-content">
-
                   <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-
+                    <p class="blog-category">Control & RL</p>
                     <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
+                    <time datetime="2026-04-01">Chapter 21</time>
                   </div>
-
-                  <h3 class="h3 blog-item-title">Design digest #79</h3>
-
+                  <h3 class="h3 blog-item-title">Reinforcement Learning for Engineering Control: PPO, SAC & Safe RL</h3>
                   <p class="blog-text">
-                    Optio cumque nihil impedit uo minus quod maxime placeat, velit esse cillum.
+                    Sim-to-real gap bound, hybrid energy management gymnasium env,
+                    reward shaping, CPO, and CBF safety filters.
                   </p>
-
                 </div>
-
               </a>
             </li>
 
@@ -883,13 +711,9 @@
       </article>
 
 
-
-
-
-      <!--
-        - #CONTACT
-      -->
-
+      <!-- ══════════════════════════════════════
+           CONTACT
+      ══════════════════════════════════════ -->
       <article class="contact" data-page="contact">
 
         <header>
@@ -898,25 +722,31 @@
 
         <section class="mapbox" data-mapbox>
           <figure>
+            <!-- Modena, Italy -->
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d199666.5651251294!2d-121.58334177520186!3d38.56165006739519!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x809ac672b28397f9%3A0x921f6aaa74197fdb!2sSacramento%2C%20CA%2C%20USA!5e0!3m2!1sen!2sbd!4v1647608789441!5m2!1sen!2sbd"
-              width="400" height="300" loading="lazy"></iframe>
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d91207.23388455588!2d10.855056!3d44.645997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477fef3f90b8dd77%3A0x3c1c8e54a591b80c!2sModena%2C%20Italy!5e0!3m2!1sen!2sit!4v1680000000000"
+              width="400" height="300" loading="lazy" style="border:0;"></iframe>
           </figure>
         </section>
 
         <section class="contact-form">
 
-          <h3 class="h3 form-title">Contact Form</h3>
+          <h3 class="h3 form-title">Get in touch</h3>
+
+          <p style="color: hsl(0,0%,55%); font-size: 13px; margin-bottom: 20px; line-height: 1.7;">
+            Working on an ML project for turbomachinery, combustion, or energy systems?
+            Interested in collaboration, consulting, or just want to talk about Bayesian
+            optimisation at 11pm? Drop a message.
+          </p>
 
           <form action="#" class="form" data-form>
 
             <div class="input-wrapper">
               <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
-
               <input type="email" name="email" class="form-input" placeholder="Email address" required data-form-input>
             </div>
 
-            <textarea name="message" class="form-input" placeholder="Your Message" required data-form-input></textarea>
+            <textarea name="message" class="form-input" placeholder="Your message" required data-form-input></textarea>
 
             <button class="form-btn" type="submit" disabled data-form-btn>
               <ion-icon name="paper-plane"></ion-icon>
@@ -934,18 +764,7 @@
   </main>
 
 
-
-
-
-
-  <!--
-    - custom js link
-  -->
   <script src="./assets/js/script.js"></script>
-
-  <!--
-    - ionicon link
-  -->
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
