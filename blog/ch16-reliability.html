@@ -13,32 +13,38 @@ MathJax = {
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
 :root {
-  --bg:#0d1117;--surface:#161b22;--border:#2d333b;--text:#b8c0cc;--muted:#6e7890;
-  --accent:#6da5cc;--green:#5a9e72;--amber:#c49a3c;--red:#c97b76;--code-bg:#13191f;--tag-bg:#1a2d40;
+  --bg:#2a2d35;--surface:#33373f;--border:#484d58;--text:#d4d8e0;--muted:#8e94a4;
+  --accent:#7db8d8;--green:#5faa7a;--amber:#c9a84c;--red:#c97b76;--code-bg:#22262e;--tag-bg:#2d3d52;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;font-size:16px;line-height:1.7;}
 a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
-header{border-bottom:1px solid var(--border);padding:2rem 0 1.5rem;text-align:center;}
+header{border-bottom:1px solid var(--border);padding:2rem 0 1.5rem;text-align:center;background:linear-gradient(to bottom, #23262e, var(--bg));}
 .series-label{color:var(--muted);font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;font-family:monospace;}
 h1{color:var(--accent);font-size:2rem;font-weight:700;margin-bottom:0.5rem;}
 .subtitle{color:var(--muted);font-size:1rem;}
 .tags{margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;}
 .tag{background:var(--tag-bg);color:var(--accent);padding:0.2rem 0.7rem;border-radius:3px;font-size:0.75rem;font-family:monospace;border:1px solid var(--border);}
-main{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem;}
+main{max-width:900px;margin:0 auto;padding:2.5rem 1.5rem;}
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1.5rem 2rem;margin-bottom:2.5rem;}
+.toc h2{color:var(--accent);font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:1rem;}
+.toc ol{padding-left:1.2rem;}.toc li{margin-bottom:0.25rem;font-size:0.9rem;}
+.toc a{color:var(--text);}.toc a:hover{color:var(--accent);}
 .tldr{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:4px;padding:1.2rem 1.5rem;margin-bottom:2.5rem;}
 .tldr h2{color:var(--accent);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.75rem;}
 .tldr ul{padding-left:1.2rem;}.tldr li{margin-bottom:0.35rem;}
-h2{color:var(--accent);font-size:1.35rem;margin:2.5rem 0 1rem;border-bottom:1px solid var(--border);padding-bottom:0.4rem;}
+h2{color:var(--accent);font-size:1.35rem;margin:2.8rem 0 1rem;border-bottom:1px solid var(--border);padding-bottom:0.4rem;}
 h3{color:#8db4c8;font-size:1.1rem;margin:1.8rem 0 0.7rem;}
+h4{color:#a0b8c8;font-size:0.95rem;margin:1.4rem 0 0.5rem;font-style:italic;}
 p{margin-bottom:1rem;}ul,ol{padding-left:1.4rem;margin-bottom:1rem;}li{margin-bottom:0.3rem;}
-.box-lesson{background:#1a3326;border-left:4px solid var(--green);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
-.box-pitfall{background:#3a2210;border-left:4px solid var(--amber);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-lesson{background:#243d2e;border-left:4px solid var(--green);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-pitfall{background:#4a3220;border-left:4px solid var(--amber);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
 .box-rule{background:var(--surface);border:1px solid var(--border);border-left:4px solid #6e7681;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
-.box-example{background:#2a293e;border-left:4px solid #7c6fad;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-example{background:#3a3950;border-left:4px solid #9d8fd4;border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
+.box-tip{background:#1e3545;border-left:4px solid var(--accent);border-radius:4px;padding:1rem 1.2rem;margin:1.5rem 0;}
 .box-label{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;font-family:monospace;margin-bottom:0.5rem;font-weight:700;}
 .box-lesson .box-label{color:var(--green);}.box-pitfall .box-label{color:var(--amber);}
-.box-rule .box-label{color:#8b949e;}.box-example .box-label{color:#9d8fd4;}
+.box-rule .box-label{color:#8b949e;}.box-example .box-label{color:#9d8fd4;}.box-tip .box-label{color:var(--accent);}
 .math-block{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;margin:1.2rem 0;overflow-x:auto;}
 pre{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;overflow-x:auto;margin:1.2rem 0;}
 code{font-family:'Courier New',monospace;font-size:0.85rem;color:#a8c4d8;}
@@ -46,9 +52,15 @@ p code,li code{background:var(--code-bg);padding:0.1em 0.35em;border-radius:2px;
 table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:0.88rem;}
 thead th{background:var(--surface);color:var(--accent);padding:0.6rem 0.8rem;text-align:left;border-bottom:2px solid var(--border);font-family:monospace;font-size:0.8rem;}
 tbody td{padding:0.55rem 0.8rem;border-bottom:1px solid var(--border);vertical-align:top;}
-tbody tr:hover{background:#1a1f27;}
+tbody tr:hover{background:#3a3f4a;}
+.cite{font-size:0.8rem;color:var(--muted);font-style:italic;}
 .nav-links{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:0.9rem;}
 footer{text-align:center;color:var(--muted);font-size:0.8rem;padding:2rem;border-top:1px solid var(--border);margin-top:1rem;}
+.dist-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1.2rem 1.5rem;margin:1rem 0;}
+.dist-card h4{color:var(--accent);margin-top:0;font-style:normal;font-size:1rem;}
+.dist-card .meta{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:0.7rem;}
+.dist-card .badge{background:var(--tag-bg);color:var(--accent);font-size:0.72rem;font-family:monospace;padding:0.15rem 0.6rem;border-radius:3px;border:1px solid var(--border);}
+.section-anchor{display:block;height:0;visibility:hidden;}
 </style>
 </head>
 <body>
@@ -56,190 +68,1184 @@ footer{text-align:center;color:var(--muted);font-size:0.8rem;padding:2rem;border
 <header>
   <div class="series-label">The Engineer's Handbook of Machine Learning</div>
   <h1>Reliability Engineering</h1>
-  <div class="subtitle">Chapter 16 &mdash; Weibull Analysis, Censored Data, Prognostics, and RBDO</div>
+  <div class="subtitle">Chapter 16 &mdash; Distributions, Censored Data, ALT, Prognostics, Repairable Systems, RBDO</div>
   <div class="tags">
-    <span class="tag">Weibull</span>
-    <span class="tag">Hazard Rate</span>
-    <span class="tag">Censored Data</span>
-    <span class="tag">MLE</span>
-    <span class="tag">RUL</span>
-    <span class="tag">Prognostics</span>
-    <span class="tag">Bathtub Curve</span>
-    <span class="tag">RBDO</span>
+    <span class="tag">Weibull</span><span class="tag">Lognormal</span><span class="tag">Censored Data</span>
+    <span class="tag">MLE</span><span class="tag">ALT</span><span class="tag">Kaplan-Meier</span>
+    <span class="tag">Crow-AMSAA</span><span class="tag">RUL</span><span class="tag">RBDO</span>
+    <span class="tag">Stress-Strength</span><span class="tag">Physics of Failure</span>
   </div>
 </header>
 
 <main>
 
-<div class="tldr">
-  <h2>TL;DR</h2>
-  <ul>
-    <li>The Weibull distribution is the universal tool of reliability engineering. The shape parameter $\beta$ encodes the failure mechanism: $\beta &lt; 1$ (infant mortality), $\beta \approx 1$ (random), $\beta &gt; 1$ (wear-out).</li>
-    <li><strong>Censoring is critical</strong>: treating right-censored observations as failures underestimates component life by 2&ndash;5&times;. Always use MLE with correct censoring treatment.</li>
-    <li>RUL prediction without a calibrated prediction interval (P10/P90 band) is not engineering output — the interval drives maintenance scheduling, not the point estimate.</li>
-    <li>Use likelihood ratio confidence bounds, not Wald (Fisher matrix) bounds, when $n &lt; 30$.</li>
-    <li>Always report $B_{10}$ life (10% failure probability) alongside the characteristic life $\eta = B_{63.2}$.</li>
-  </ul>
-</div>
-
-<!-- ================================================================== -->
-<h2>1. Reliability Functions</h2>
-
-<p>Reliability is the probability a system performs its required function for a specified time under stated conditions:</p>
-
-<div class="math-block">
-$$R(t) = P(T > t) = 1 - F(t)$$
-$$\text{Hazard rate: } h(t) = \frac{f(t)}{R(t)} = -\frac{d}{dt}\ln R(t) \quad \text{[failures/time]}$$
-$$\text{Cumulative hazard: } H(t) = \int_0^t h(\tau)\,d\tau = -\ln R(t) \implies R(t) = \exp(-H(t))$$
-</div>
-
-<!-- ================================================================== -->
-<h2>2. The Weibull Distribution</h2>
-
-<div class="math-block">
-$$f(t;\eta,\beta) = \frac{\beta}{\eta}\left(\frac{t}{\eta}\right)^{\beta-1} \exp\!\left[-\left(\frac{t}{\eta}\right)^\beta\right]$$
-$$F(t;\eta,\beta) = 1 - \exp\!\left[-\left(\frac{t}{\eta}\right)^\beta\right]$$
-$$h(t;\eta,\beta) = \frac{\beta}{\eta}\left(\frac{t}{\eta}\right)^{\beta-1} \quad \text{(power-law hazard)}$$
-</div>
-
-<p>where $\eta &gt; 0$ is the <strong>characteristic life</strong> (scale; $B_{63.2} = \eta$) and $\beta &gt; 0$ is the <strong>shape parameter</strong> (encodes failure mechanism).</p>
-
-<h3>Physical Interpretation of $\beta$</h3>
-
-<table>
-  <thead><tr><th>$\beta$ Range</th><th>Failure Mode</th><th>Hazard Trend</th><th>Examples</th></tr></thead>
-  <tbody>
-    <tr><td>$\beta &lt; 1$</td><td>Infant mortality</td><td>Decreasing</td><td>Electronic components, weld defects, casting porosity</td></tr>
-    <tr><td>$\beta = 1$</td><td>Random failures</td><td>Constant ($= 1/\eta$)</td><td>External shocks, software bugs, particle erosion</td></tr>
-    <tr><td>$1 &lt; \beta &lt; 4$</td><td>Early wear-out</td><td>Increasing</td><td>Bearing fatigue ($\beta \approx 1.5$&ndash;2.5), corrosion fatigue</td></tr>
-    <tr><td>$\beta \approx 3.5$</td><td>Normal wear-out</td><td>Steep increase</td><td>Planned maintenance items, tyre wear</td></tr>
-    <tr><td>$\beta &gt; 4$</td><td>Rapid wear-out</td><td>Very steep</td><td>Stress corrosion cracking, hydrogen embrittlement</td></tr>
-  </tbody>
-</table>
-
-<p>The classic <strong>bathtub curve</strong> of product life: decreasing hazard ($\beta &lt; 1$) during burn-in → constant ($\beta \approx 1$) in useful life → increasing ($\beta &gt; 2$) in wear-out.</p>
-
-<h3>Key Life Metrics</h3>
-
-<div class="math-block">
-$$B_{10} \text{ life (10\% failure probability)}: \quad t_{B10} = \eta\bigl(-\ln 0.9\bigr)^{1/\beta} = \eta \cdot (0.1054)^{1/\beta}$$
-$$\text{Mean time to failure (MTTF)}: \quad \mathbb{E}[T] = \eta\,\Gamma\!\left(1 + \frac{1}{\beta}\right)$$
-</div>
-
-<!-- ================================================================== -->
-<h2>3. Parameter Estimation</h2>
-
-<h3>Maximum Likelihood Estimation (MLE)</h3>
-
-<div class="math-block">
-$$\ell(\eta,\beta) = n\ln\beta - n\beta\ln\eta + (\beta-1)\sum_{i=1}^n \ln t_i - \sum_{i=1}^n \left(\frac{t_i}{\eta}\right)^\beta$$
-</div>
-
-<p>For complete (uncensored) data, solve the MLE score equations via Newton-Raphson or trust-region methods. For censored data, add censored contributions to the log-likelihood (see below).</p>
-
-<h3>Weibull Probability Plot (WPP)</h3>
-
-<p>Linearise the CDF: $\ln[-\ln(1-F(t))] = \beta\ln t - \beta\ln\eta$. Plot $y = \ln[-\ln(1-\hat{F}_i)]$ vs. $x = \ln t_i$ where the median rank estimator is $\hat{F}_i = (i - 0.3)/(n + 0.4)$. A straight line confirms the Weibull hypothesis. Slope = $\hat{\beta}$; intercept gives $\hat{\eta}$.</p>
-
-<div class="box-rule">
-  <div class="box-label">Parameter Estimation Best Practices</div>
+<!-- ======================================================= TABLE OF CONTENTS -->
+<div class="toc">
+  <h2>Contents</h2>
   <ol>
-    <li>Use <strong>MLE, not least squares</strong>: MLE is asymptotically efficient and handles censoring correctly. LS on the linearised WPP underestimates $\beta$ with censored data.</li>
-    <li>Verify the Weibull assumption with the WPP before fitting. A concave WPP indicates mixed failure modes or a 3-parameter Weibull.</li>
-    <li>Report confidence bounds (90% or 95%) on $\eta$ and $\beta$. Point estimates alone are insufficient for design decisions.</li>
-    <li>Use <strong>likelihood ratio bounds</strong> over Fisher (Wald) bounds when $n &lt; 30$ — Wald bounds are unreliable for small samples.</li>
-    <li>Always report both $B_{10}$ life and characteristic life $\eta = B_{63.2}$.</li>
+    <li><a href="#reliability-functions">Reliability Functions: The Four Building Blocks</a></li>
+    <li><a href="#distributions">Probability Distributions: The Practitioner's Guide</a>
+      &mdash; Weibull, Lognormal, Exponential, Normal, Gamma, Gumbel, Loglogistic, selection table</li>
+    <li><a href="#estimation">Parameter Estimation: MLE, Rank Regression, Plotting Positions</a></li>
+    <li><a href="#confidence">Confidence Bounds: Fisher Matrix vs Likelihood Ratio</a></li>
+    <li><a href="#probability-plots">Probability Plotting: Diagnostics and Pattern Recognition</a></li>
+    <li><a href="#censored">Censored Data: The Most Underestimated Problem</a></li>
+    <li><a href="#nonparametric">Non-Parametric Methods: Kaplan-Meier and Nelson-Aalen</a></li>
+    <li><a href="#competing-risks">Competing Risks and Mixture Models</a></li>
+    <li><a href="#alt">Accelerated Life Testing (ALT)</a></li>
+    <li><a href="#repairable">Repairable Systems: Crow-AMSAA, MCF, ROCOF</a></li>
+    <li><a href="#rul">Remaining Useful Life and Prognostics</a></li>
+    <li><a href="#physics">Physics of Failure: Fatigue, Fracture, Creep</a></li>
+    <li><a href="#stress-strength">Stress-Strength Interference</a></li>
+    <li><a href="#system-reliability">System Reliability: Series, Parallel, RBD</a></li>
+    <li><a href="#testing">Reliability Testing and Sample Sizing</a></li>
+    <li><a href="#rbdo">Reliability-Based Design Optimisation (RBDO)</a></li>
+    <li><a href="#python-cheatsheet">Python reliability Library Cheat Sheet</a></li>
+    <li><a href="#takeaways">Key Takeaways</a></li>
   </ol>
 </div>
 
-<!-- ================================================================== -->
-<h2>4. Censored Data: The Critical Statistical Concept</h2>
+<!-- ======================================================= TL;DR -->
+<div class="tldr">
+  <h2>TL;DR</h2>
+  <ul>
+    <li>The Weibull distribution is the workhorse of reliability engineering. Its shape parameter $\beta$ encodes the failure mechanism directly: $\beta &lt; 1$ (infant mortality), $\beta \approx 1$ (random), $\beta &gt; 1$ (wear-out).</li>
+    <li><strong>Censoring is the critical concept</strong>: treating right-censored observations as failures underestimates component life by 2&ndash;5&times;. Always use MLE with correct censoring treatment.</li>
+    <li>The lognormal fits fatigue and crack-growth failures better than Weibull. Use the probability plot to decide — don't default to Weibull blindly.</li>
+    <li>Use likelihood ratio confidence bounds, not Wald (Fisher matrix) bounds, when $n &lt; 30$.</li>
+    <li>ALT compresses years of service life into days. The Arrhenius model (thermal) and Inverse Power Law (voltage, load) are the two most-used acceleration models in industry.</li>
+    <li>RUL prediction without a calibrated prediction interval (P10/P90 band) is not engineering output. The interval drives maintenance scheduling, not the point estimate.</li>
+    <li>All major algorithms in this chapter are available in the <a href="https://reliability.readthedocs.io" target="_blank">Python <code>reliability</code> library</a> by Matthew Reid &mdash; use it.</li>
+  </ul>
+</div>
+
+<!-- ============================================================= SECTION 1 -->
+<span class="section-anchor" id="reliability-functions"></span>
+<h2>1. Reliability Functions: The Four Building Blocks</h2>
+
+<p>Every reliability distribution is fully characterised by four equivalent functions. Understanding their relationships is more important than memorising formulas &mdash; each function is the most natural description for a different engineering question.</p>
+
+<div class="math-block">
+$$\text{PDF: } f(t) \quad \text{(failure density)} \qquad \text{CDF: } F(t) = \int_0^t f(\tau)\,d\tau \quad \text{(cumulative failure probability)}$$
+$$\text{Reliability: } R(t) = P(T > t) = 1 - F(t) \quad \text{(survival probability)}$$
+$$\text{Hazard rate: } h(t) = \frac{f(t)}{R(t)} = -\frac{d}{dt}\ln R(t) \quad \text{[failures/time/survivor]}$$
+$$\text{Cumulative hazard: } H(t) = \int_0^t h(\tau)\,d\tau = -\ln R(t) \implies R(t) = \exp(-H(t))$$
+</div>
+
+<p>The hazard rate $h(t)$ is the instantaneous failure rate <em>given that the unit has survived to time $t$</em>. It is <strong>not</strong> the same as $f(t)$. This distinction matters: $f(t)$ can decrease while $h(t)$ increases (e.g., Weibull with $\beta &lt; 2$).</p>
+
+<h3>The Bathtub Curve</h3>
+<p>The famous bathtub curve describes the system-level hazard over its lifetime as the superposition of three phases:</p>
+<ul>
+  <li><strong>Burn-in / Infant Mortality</strong>: decreasing hazard. Dominated by manufacturing defects, latent flaws, poor assembly. Weibull $\beta &lt; 1$. Mitigated by burn-in testing, acceptance screening, proof tests.</li>
+  <li><strong>Useful Life</strong>: approximately constant hazard. Random, externally caused failures. Exponential distribution, Weibull $\beta \approx 1$.</li>
+  <li><strong>Wear-out</strong>: increasing hazard. Fatigue, corrosion, erosion, creep. Weibull $\beta &gt; 1$, Lognormal for crack-driven mechanisms.</li>
+</ul>
+
+<div class="box-lesson">
+  <div class="box-label">Senior Practitioner Tip</div>
+  The "bathtub curve" is a system-level concept. Individual failure modes don't follow a bathtub &mdash; each has its own monotone hazard. You get the bathtub shape only when you aggregate multiple failure modes with different $\beta$ values. Always decompose field data by failure mode before fitting distributions. Mixing modes in a single Weibull fit produces a meaningless averaged result.
+</div>
+
+<p>Key metrics derived from the four functions:</p>
+<div class="math-block">
+$$\text{MTTF} = \mathbb{E}[T] = \int_0^\infty R(t)\,dt \qquad \text{Median life: } t_{0.5} = F^{-1}(0.5) = \eta(\ln 2)^{1/\beta}$$
+$$B_p \text{ life (p% failure probability)}: \quad t_{Bp} = F^{-1}(p/100)$$
+</div>
+
+<!-- ============================================================= SECTION 2 -->
+<span class="section-anchor" id="distributions"></span>
+<h2>2. Probability Distributions: The Practitioner's Guide</h2>
+
+<p>Selecting the right distribution is the most consequential modelling decision in reliability analysis. Getting it wrong by even one distribution family can shift $B_{10}$ life estimates by 50% or more. Always justify the choice with a probability plot and a goodness-of-fit test &mdash; not domain convention alone.</p>
+
+<p class="cite">Distribution equations and fitting guidance follow the <a href="https://reliability.readthedocs.io" target="_blank">reliability Python library documentation</a> (Matthew Reid) and Meeker &amp; Escobar (1998), <em>Statistical Methods for Reliability Data</em>.</p>
+
+<!-- =================== Weibull -->
+<div class="dist-card">
+  <h4>Weibull 2-Parameter (Weibull_2P)</h4>
+  <div class="meta">
+    <span class="badge">Parameters: β (shape), η (scale)</span>
+    <span class="badge">Support: t ≥ 0</span>
+    <span class="badge">Hazard: monotone power-law</span>
+  </div>
+
+<div class="math-block">
+$$f(t) = \frac{\beta}{\eta}\left(\frac{t}{\eta}\right)^{\beta-1}\exp\!\left[-\left(\frac{t}{\eta}\right)^\beta\right], \quad
+F(t) = 1-\exp\!\left[-\left(\frac{t}{\eta}\right)^\beta\right], \quad
+h(t) = \frac{\beta}{\eta}\left(\frac{t}{\eta}\right)^{\beta-1}$$
+$$B_{10} = \eta\,(0.10536)^{1/\beta}, \quad \text{MTTF} = \eta\,\Gamma(1+1/\beta)$$
+</div>
+
+  <table>
+    <thead><tr><th>β Range</th><th>Failure Mode</th><th>Hazard</th><th>Industrial Examples</th></tr></thead>
+    <tbody>
+      <tr><td>β &lt; 1</td><td>Infant mortality</td><td>Decreasing</td><td>Casting defects, solder joints, PCB trace voids, installation errors</td></tr>
+      <tr><td>β = 1</td><td>Random (exponential)</td><td>Constant</td><td>Particle erosion, external shocks, software faults</td></tr>
+      <tr><td>1 &lt; β &lt; 2</td><td>Early wear-out</td><td>Slowly increasing</td><td>Rolling element bearings (β ≈ 1.5), adhesive bond fatigue</td></tr>
+      <tr><td>β ≈ 2</td><td>Rayleigh wear-out</td><td>Linear increase</td><td>Dynamic seals, cable insulation</td></tr>
+      <tr><td>2 &lt; β &lt; 4</td><td>Moderate wear-out</td><td>Increasing</td><td>Gear tooth fatigue (β ≈ 2.5–3.5), pump impeller erosion</td></tr>
+      <tr><td>β ≈ 3.5</td><td>Approaches normal</td><td>Steep increase</td><td>Planned-maintenance items, tyre wear, brake pads</td></tr>
+      <tr><td>β &gt; 4</td><td>Rapid degradation</td><td>Very steep</td><td>Stress-corrosion cracking, hydrogen embrittlement, thermal fatigue</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>When to use:</strong> Flexible monotone hazard shapes. First choice for mechanical component fatigue, wear, and corrosion when the hazard is known to be monotone. Avoid when failure time distribution is multimodal or when the WPP shows curvature (suggesting 3-parameter Weibull or a different family).</p>
+
+  <div class="box-tip">
+    <div class="box-label">Senior Practitioner Tip — Weibull</div>
+    The most common Weibull mistake in industry: fitting a single Weibull to data from mixed failure modes. If two failure modes have $\beta_1 = 0.5$ (early failures) and $\beta_2 = 3.0$ (wear-out), the mixed data produces a WPP with an S-curve — not a straight line. Fit a <strong>Competing Risks model</strong> (see Section 8) or segment the data by cause code before fitting. Another red flag: a WPP where all points follow the line except the first 2–3 (which fall below it) — this is the signature of a threshold / failure-free period, indicating a 3-parameter Weibull with location parameter $\gamma &gt; 0$.
+  </div>
+</div>
+
+<!-- =================== Weibull 3P -->
+<div class="dist-card">
+  <h4>Weibull 3-Parameter (Weibull_3P)</h4>
+  <div class="meta">
+    <span class="badge">Parameters: β, η, γ (location/threshold)</span>
+    <span class="badge">Support: t ≥ γ ≥ 0</span>
+  </div>
+  <p>Adds a location parameter $\gamma$ (failure-free period): $F(t) = 1-\exp[-(t-\gamma)^{\beta}/\eta^\beta]$ for $t \geq \gamma$.</p>
+  <p><strong>When to use:</strong> When there is a guaranteed failure-free period &mdash; e.g., a turbine blade cannot fail in the first 500 cycles before it has accumulated enough fatigue damage. The WPP will show the first points falling <em>below</em> the fitted line through the later points. MLE for $\gamma$ is not straightforward (the likelihood may be unbounded); use penalised MLE or the method of moments for $\gamma$ and MLE for $\beta$, $\eta$ conditional on $\hat{\gamma}$.</p>
+  <div class="box-pitfall">
+    <div class="box-label">Pitfall — Weibull 3P Overfitting</div>
+    With small samples ($n &lt; 20$), the 3-parameter Weibull almost always fits better than 2P by construction &mdash; you're adding a free parameter. Always compare with AIC/BIC or a likelihood ratio test before adopting the 3P model. A common error: fitting 3P to censored data with $n = 10$ and reporting $\hat{\gamma}$ as a "guaranteed safe life" for certification. The confidence interval on $\gamma$ from such a fit is enormous.
+  </div>
+</div>
+
+<!-- =================== Lognormal -->
+<div class="dist-card">
+  <h4>Lognormal (Normal_2P on log scale)</h4>
+  <div class="meta">
+    <span class="badge">Parameters: μ (log-mean), σ (log-std)</span>
+    <span class="badge">Support: t > 0</span>
+    <span class="badge">Hazard: non-monotone (rises then falls)</span>
+  </div>
+
+<div class="math-block">
+$$f(t) = \frac{1}{t\sigma\sqrt{2\pi}}\exp\!\left[-\frac{(\ln t - \mu)^2}{2\sigma^2}\right], \quad
+F(t) = \Phi\!\left(\frac{\ln t - \mu}{\sigma}\right)$$
+$$\text{Median} = e^\mu, \quad \text{Mean} = e^{\mu + \sigma^2/2}, \quad h(t) = \frac{\phi(z)}{t\sigma[1-\Phi(z)]},\quad z = \frac{\ln t - \mu}{\sigma}$$
+</div>
+
+  <p><strong>When to use:</strong> The physical justification comes from the multiplicative failure argument: if failure occurs when damage accumulates through a product of many small random increments, the logarithm of the failure time is normally distributed (by CLT). This is the case for:</p>
+  <ul>
+    <li>Fatigue crack growth governed by Paris's law ($da/dN = C(\Delta K)^m$) — crack growth per cycle is multiplicative</li>
+    <li>Diffusion-driven degradation (oxide growth, corrosion pitting depth)</li>
+    <li>Electronic device degradation (migration, dielectric breakdown, electromigration)</li>
+    <li>Strength distributions of composite materials and brittle ceramics</li>
+    <li>Repair time distributions (lognormal is the standard model for lognormal repair times in maintainability)</li>
+  </ul>
+
+  <div class="box-tip">
+    <div class="box-label">Senior Practitioner Tip — Lognormal vs Weibull</div>
+    For fatigue failures, the lognormal often fits better in the central region (50–90% failures) while Weibull fits better in the tails. This matters enormously for B10 life estimates: the Weibull can give a 30–50% shorter B10 than lognormal on the same dataset. For safety-critical applications, always fit both and present both B10 estimates with confidence bounds to the design authority. Never hide the model uncertainty.
+    <br><br>
+    The lognormal hazard function peaks and then <em>decreases</em> at long times &mdash; this is physically realistic for some mechanisms (competing risks where survivors become "immune") but unrealistic for wear-out of a homogeneous population. Use domain knowledge to discriminate.
+  </div>
+</div>
+
+<!-- =================== Exponential -->
+<div class="dist-card">
+  <h4>Exponential (Expon_1P, Expon_2P)</h4>
+  <div class="meta">
+    <span class="badge">Parameters: λ (rate), γ (location, optional)</span>
+    <span class="badge">Constant hazard: h(t) = λ</span>
+    <span class="badge">Memoryless property</span>
+  </div>
+
+<div class="math-block">
+$$f(t) = \lambda e^{-\lambda t}, \quad F(t) = 1 - e^{-\lambda t}, \quad h(t) = \lambda \text{ (constant)}$$
+$$\text{MTTF} = 1/\lambda, \quad \text{Median} = \ln 2/\lambda \approx 0.693/\lambda$$
+</div>
+
+  <p><strong>When to use:</strong> When failure is driven by random external events independent of component age &mdash; particle impacts, random load spikes, software fault activation. The memoryless property means a unit that has survived $t_0$ hours is statistically identical to a new unit. This is the only distribution for which age-based preventive maintenance provides zero reliability improvement &mdash; a critical result for maintenance planning.</p>
+
+  <div class="box-pitfall">
+    <div class="box-label">Pitfall — Exponential as Default</div>
+    Many military standards (MIL-HDBK-217) and early FMEA tools defaulted to exponential distributions for all components. This is statistically wrong for mechanical and structural components, which have clearly increasing hazard rates. The exponential model is appropriate only for electronic components in their useful-life phase and for systems where many independent failure modes compete. Always test the constant-hazard assumption (Crow-AMSAA test, or simply plot the WPP and check if β is statistically distinguishable from 1.0).
+  </div>
+</div>
+
+<!-- =================== Normal -->
+<div class="dist-card">
+  <h4>Normal (Normal_2P)</h4>
+  <div class="meta">
+    <span class="badge">Parameters: μ (mean), σ (std dev)</span>
+    <span class="badge">Support: (−∞, ∞) — truncate to t ≥ 0 in practice</span>
+    <span class="badge">Hazard: monotone increasing</span>
+  </div>
+  <p><strong>When to use:</strong> Strength and material property distributions (yield strength, ultimate tensile strength, hardness). Time-to-failure for well-controlled manufacturing processes where the central limit theorem applies directly to failure accumulation. Wear-out governed by additive damage (not multiplicative). The normal distribution is rarely the best fit to failure time data but is very common in strength modelling for stress-strength interference calculations.</p>
+  <div class="box-tip">
+    <div class="box-label">Tip — Normal for Strength, Lognormal for Life</div>
+    A frequently validated empirical rule: material <em>strengths</em> are well-modelled by Normal; component <em>lives</em> (time to failure) are better modelled by Lognormal (multiplicative accumulation) or Weibull (weakest-link / size effect). The distinction matters for stress-strength analysis where you combine the two distributions.
+  </div>
+</div>
+
+<!-- =================== Gamma -->
+<div class="dist-card">
+  <h4>Gamma (Gamma_2P)</h4>
+  <div class="meta">
+    <span class="badge">Parameters: α (shape), β (scale)</span>
+    <span class="badge">Special cases: α=1 → Exponential; α=n/2 → Chi-squared</span>
+    <span class="badge">Hazard: monotone for α≠1</span>
+  </div>
+<div class="math-block">
+$$f(t) = \frac{t^{\alpha-1}e^{-t/\beta}}{\beta^\alpha\Gamma(\alpha)}, \quad \text{MTTF} = \alpha\beta, \quad \text{Var} = \alpha\beta^2$$
+</div>
+  <p><strong>When to use:</strong> When time to failure is the sum of $\alpha$ exponentially distributed events (e.g., cumulative damage from $\alpha$ random shocks). Common in degradation modelling where degradation increments are Gamma-distributed (Gamma process). Also the conjugate prior for the Poisson rate, making it the natural prior for inter-failure interval rates in Bayesian reliability.</p>
+  <div class="box-tip">
+    <div class="box-label">Tip — Gamma for Degradation</div>
+    The Gamma process is the preferred degradation model when: (1) degradation is monotonically increasing, (2) independent increments, (3) increments follow a Gamma distribution. It's analytically tractable with conjugate Bayesian updates. For turbomachinery tip clearance growth, creep strain accumulation, and corrosion depth, the Gamma process outperforms the Weibull degradation model because it directly models the degradation trajectory rather than the failure time marginal.
+  </div>
+</div>
+
+<!-- =================== Gumbel -->
+<div class="dist-card">
+  <h4>Gumbel / Smallest Extreme Value (Gumbel_2P)</h4>
+  <div class="meta">
+    <span class="badge">Parameters: μ (location), σ (scale)</span>
+    <span class="badge">Log(Weibull) ≡ SEV distribution</span>
+  </div>
+<div class="math-block">
+$$f(t) = \frac{1}{\sigma}\exp\!\left(\frac{t-\mu}{\sigma}\right)\exp\!\left[-\exp\!\left(\frac{t-\mu}{\sigma}\right)\right]$$
+</div>
+  <p><strong>When to use:</strong> The log-scale equivalent of Weibull. If $T \sim \text{Weibull}(\eta,\beta)$, then $\ln T \sim \text{SEV}(\ln\eta, 1/\beta)$. Used internally in reliability software because regression on the SEV model is computationally identical to Weibull fitting on the log scale. Also directly applicable for extreme value problems (minimum strength in a large structure, maximum stress in a random load process).</p>
+</div>
+
+<!-- =================== Loglogistic -->
+<div class="dist-card">
+  <h4>Loglogistic (Loglogistic_2P)</h4>
+  <div class="meta">
+    <span class="badge">Parameters: α (scale), β (shape)</span>
+    <span class="badge">Non-monotone hazard</span>
+    <span class="badge">Heavier right tail than lognormal</span>
+  </div>
+<div class="math-block">
+$$F(t) = \frac{1}{1+(t/\alpha)^{-\beta}}, \quad h(t) = \frac{\beta/\alpha \cdot (t/\alpha)^{\beta-1}}{1+(t/\alpha)^\beta} \quad \text{(peaks at } t=\alpha[(\beta-1)/(\beta+1)]^{1/\beta}\text{)}$$
+</div>
+  <p><strong>When to use:</strong> When the hazard rate first increases then decreases — a pattern seen in some biological populations (therapy-induced failures that eventually subside) and in software reliability (discovery rate of latent bugs). Also useful as a robust alternative to Lognormal when the right tail is heavier than lognormal predicts. In financial reliability contexts (time-to-default modelling), the Loglogistic is closely related to the Proportional Odds model.</p>
+</div>
+
+<!-- =================== Selection Table -->
+<h3>2.9 Distribution Selection Framework</h3>
+
+<table>
+  <thead>
+    <tr><th>Failure Mechanism</th><th>Physics</th><th>First-Choice Distribution</th><th>Alternative</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Rolling element bearing fatigue</td><td>Weakest-link, Hertzian contact</td><td>Weibull (β ≈ 1.1–2.5)</td><td>—</td></tr>
+    <tr><td>High-cycle fatigue (metals, composites)</td><td>Crack nucleation + Paris law</td><td>Lognormal</td><td>Weibull</td></tr>
+    <tr><td>Corrosion pitting</td><td>Diffusion-driven, multiplicative</td><td>Lognormal or Gamma</td><td>Weibull</td></tr>
+    <tr><td>Electronic device dielectric breakdown</td><td>Percolation / diffusion</td><td>Weibull (extreme value, β ≈ 1–2)</td><td>Lognormal</td></tr>
+    <tr><td>Electromigration (IC interconnects)</td><td>Diffusion, Black's equation</td><td>Lognormal</td><td>—</td></tr>
+    <tr><td>Random external shocks</td><td>Poisson process</td><td>Exponential</td><td>—</td></tr>
+    <tr><td>Software failure time</td><td>Bug density, activation</td><td>Exponential or Loglogistic</td><td>Lognormal</td></tr>
+    <tr><td>Seal / O-ring wear</td><td>Abrasive wear, Archard's law</td><td>Weibull (β ≈ 2–3)</td><td>—</td></tr>
+    <tr><td>Creep rupture</td><td>Nucleation, Monkman-Grant</td><td>Lognormal</td><td>Weibull (β &gt; 4)</td></tr>
+    <tr><td>Thermal fatigue (solders, ceramics)</td><td>Coffin-Manson, cyclic damage</td><td>Weibull</td><td>Lognormal</td></tr>
+    <tr><td>Material strength</td><td>Additive, CLT</td><td>Normal</td><td>Lognormal</td></tr>
+    <tr><td>Cumulative shock degradation</td><td>Additive Gamma increments</td><td>Gamma process</td><td>Inverse Gaussian</td></tr>
+  </tbody>
+</table>
+
+<div class="box-rule">
+  <div class="box-label">Distribution Selection Protocol (Senior Practitioner)</div>
+  <ol>
+    <li>Identify the failure mechanism from <strong>failure analysis / FMEA</strong>, not from the data alone.</li>
+    <li>Select 2–3 candidate distributions based on the physics (table above).</li>
+    <li>Fit all candidates using MLE. Generate <strong>probability plots</strong> for each — the best-fitting distribution produces the straightest probability plot.</li>
+    <li>Perform a <strong>goodness-of-fit test</strong>: Anderson-Darling is preferred over KS for reliability data (more sensitive to tail behaviour). Compare AIC/BIC for model selection.</li>
+    <li>Validate the choice by comparing <strong>$B_{10}$ life confidence bounds</strong> between candidate models. If bounds are nearly identical, model choice matters little. If they diverge, report the range as epistemic uncertainty.</li>
+    <li>Document the justification. "Weibull because everyone uses Weibull" is not a justification.</li>
+  </ol>
+</div>
+
+<!-- ============================================================= SECTION 3 -->
+<span class="section-anchor" id="estimation"></span>
+<h2>3. Parameter Estimation: MLE, Rank Regression, Plotting Positions</h2>
+
+<h3>3.1 Maximum Likelihood Estimation (MLE)</h3>
+
+<p>MLE finds the parameter values that maximise the likelihood of observing the actual dataset. It is the gold standard because it is asymptotically efficient (minimum variance), handles censoring correctly, and provides a natural framework for confidence bounds.</p>
+
+<div class="math-block">
+$$\hat{\boldsymbol{\theta}} = \arg\max_{\boldsymbol{\theta}}\, \ell(\boldsymbol{\theta}) = \arg\max_{\boldsymbol{\theta}} \left[\sum_{i \in \mathcal{F}} \ln f(t_i;\boldsymbol{\theta}) + \sum_{i \in \mathcal{C_R}} \ln R(c_i;\boldsymbol{\theta}) + \sum_{i \in \mathcal{C_L}} \ln F(c_i;\boldsymbol{\theta}) + \sum_{i \in \mathcal{C_I}} \ln[F(u_i;\boldsymbol{\theta})-F(l_i;\boldsymbol{\theta})]\right]$$
+</div>
+
+<p>where $\mathcal{F}$ are failures, $\mathcal{C_R}$ right-censored, $\mathcal{C_L}$ left-censored, and $\mathcal{C_I}$ interval-censored observations. Numerically, minimise $-\ell$ using L-BFGS-B or trust-region methods. The <code>reliability</code> library handles all censoring types automatically.</p>
+
+<h3>3.2 Rank Regression (Least Squares on Probability Plot)</h3>
+
+<p>Rank Regression on Y (RRY) minimises squared vertical distances on the probability plot. It is simpler than MLE but less efficient with censored data &mdash; MLE is always preferred when censoring is present. RRY is useful for graphical diagnostics and for cross-checking MLE results on small complete datasets.</p>
+
+<h3>3.3 Plotting Positions (Median Ranks)</h3>
+
+<p>To construct a probability plot, you need an estimate $\hat{F}_i$ for each ordered failure time $t_{(i)}$. Several estimators exist:</p>
+
+<table>
+  <thead><tr><th>Estimator</th><th>Formula</th><th>Recommended for</th></tr></thead>
+  <tbody>
+    <tr><td>Median rank (Benard)</td><td>$(i-0.3)/(n+0.4)$</td><td>Complete data, small $n$ — reduces median-rank bias</td></tr>
+    <tr><td>Mean rank</td><td>$i/(n+1)$</td><td>Simple, slight upward bias</td></tr>
+    <tr><td>Kaplan-Meier</td><td>Product-limit (see §7)</td><td>Censored data &mdash; preferred</td></tr>
+    <tr><td>Nelson-Aalen</td><td>Cumulative hazard estimator</td><td>Sparse data or counting process framework</td></tr>
+  </tbody>
+</table>
+
+<p class="cite">Source: <a href="https://reliability.readthedocs.io" target="_blank">reliability.readthedocs.io</a> — "Plotting Positions" section.</p>
+
+<pre><code>from reliability.Fitters import Fit_Weibull_2P, Fit_Lognormal_2P, Fit_Everything
+
+# Fit a single distribution
+failures = [1200, 1450, 1600, 1850, 2100, 2400, 2650]
+right_censored = [3000, 3000, 3000]
+
+fit_w = Fit_Weibull_2P(failures=failures, right_censored=right_censored, CI=0.9)
+print(f"Weibull: beta={fit_w.beta:.3f}, eta={fit_w.alpha:.1f}")
+
+# Fit all distributions and rank by BIC
+fit_all = Fit_Everything(failures=failures, right_censored=right_censored,
+                         sort_by='BIC', show_histogram_plot=False,
+                         show_PP_plot=False, show_probability_plot=False)
+print(fit_all.results)  # table of all distributions ranked by BIC</code></pre>
+
+<!-- ============================================================= SECTION 4 -->
+<span class="section-anchor" id="confidence"></span>
+<h2>4. Confidence Bounds: Fisher Matrix vs Likelihood Ratio</h2>
+
+<p>A reliability analysis without confidence bounds is not a reliability analysis &mdash; it is a point estimate. Confidence bounds quantify the uncertainty in the fitted parameters due to finite sample size. Two main methods:</p>
+
+<h3>4.1 Fisher Matrix (Wald) Bounds</h3>
+
+<p>Based on the asymptotic normality of MLE. The information matrix $\mathbf{I}(\hat{\boldsymbol{\theta}}) = -\nabla^2\ell|_{\hat{\boldsymbol{\theta}}}$ gives the covariance of parameter estimates:</p>
+
+<div class="math-block">
+$$\text{Var}(\hat{\theta}_j) \approx [\mathbf{I}(\hat{\boldsymbol{\theta}})^{-1}]_{jj}$$
+$$\text{Wald bound: } \hat{\theta}_j \pm z_{\alpha/2}\,\sqrt{\text{Var}(\hat{\theta}_j)}$$
+</div>
+
+<p><strong>Problem:</strong> The normal approximation for log-likelihood contours is only valid asymptotically. For $n &lt; 30$, or when parameters are on the boundary of their support, Wald bounds are unreliable &mdash; they can produce negative lower bounds on a positive-only parameter like $\beta$, or grossly asymmetric intervals.</p>
+
+<h3>4.2 Likelihood Ratio (LR) Bounds</h3>
+
+<p>Based on the profile likelihood. The 90% confidence region for $\theta_j$ is the set of values for which the likelihood ratio statistic is below the chi-squared critical value:</p>
+
+<div class="math-block">
+$$\left\{\theta_j : 2[\ell(\hat{\boldsymbol{\theta}}) - \ell(\theta_j, \hat{\boldsymbol{\theta}}_{-j}(\theta_j))] \leq \chi^2_{1,0.90}\right\}$$
+</div>
+
+<p>where $\hat{\boldsymbol{\theta}}_{-j}(\theta_j)$ is the profile likelihood: the MLE of all other parameters at fixed $\theta_j$. LR bounds are:</p>
+<ul>
+  <li>Invariant under reparameterisation (e.g., bounds on $B_{10}$ are consistent with bounds on $\eta$ and $\beta$ separately)</li>
+  <li>Inherently bounded to the parameter support (cannot produce negative $\beta$)</li>
+  <li>Preferred for $n &lt; 30$ and recommended by the <code>reliability</code> library as the default</li>
+</ul>
+
+<table>
+  <thead><tr><th>Criterion</th><th>Fisher (Wald)</th><th>Likelihood Ratio</th></tr></thead>
+  <tbody>
+    <tr><td>Computation speed</td><td>Fast (matrix inversion)</td><td>Slower (profile optimisation)</td></tr>
+    <tr><td>Small sample accuracy</td><td>Poor ($n &lt; 30$)</td><td>Good</td></tr>
+    <tr><td>Respects parameter support</td><td>No (can give negative $\beta$)</td><td>Yes</td></tr>
+    <tr><td>Invariance under reparameterisation</td><td>No</td><td>Yes</td></tr>
+    <tr><td>Recommended for production reliability</td><td>Large $n$ only</td><td>Default recommendation</td></tr>
+  </tbody>
+</table>
+
+<p class="cite">Source: <a href="https://reliability.readthedocs.io" target="_blank">reliability.readthedocs.io</a> — "Confidence Intervals" section; Meeker &amp; Escobar (1998), §8.</p>
+
+<div class="box-rule">
+  <div class="box-label">Industry Rule</div>
+  Use LR bounds by default. Use Wald bounds only when $n &gt; 50$ and you need fast computation for Monte Carlo reliability growth assessments. Always report both bounds alongside the point estimate. A reported $B_{10}$ life of "1200 hrs" is nearly meaningless without "90% LR bounds: [800, 1900] hrs."
+</div>
+
+<!-- ============================================================= SECTION 5 -->
+<span class="section-anchor" id="probability-plots"></span>
+<h2>5. Probability Plotting: Diagnostics and Pattern Recognition</h2>
+
+<p>The probability plot is not just a fitting tool &mdash; it is a diagnostic instrument. Every pattern deviation from a straight line tells you something about your failure physics.</p>
+
+<h3>5.1 How to Read a Weibull Probability Plot (WPP)</h3>
+
+<p>The WPP linearises the Weibull CDF by plotting $y = \ln[-\ln(1-\hat{F}_i)]$ vs. $x = \ln(t_i)$. For a perfect Weibull, all points fall on a straight line. The slope equals $\hat{\beta}$; the x-intercept at $y=0$ (i.e., $F = 63.2\%$) gives $\ln\hat{\eta}$.</p>
+
+<table>
+  <thead><tr><th>WPP Pattern</th><th>Interpretation</th><th>Action</th></tr></thead>
+  <tbody>
+    <tr><td>Straight line</td><td>2-parameter Weibull fits well</td><td>Proceed with 2P Weibull</td></tr>
+    <tr><td>S-curve (concave then convex)</td><td>Mixed failure modes or heterogeneous population</td><td>Fit Competing Risks or Mixture model; segment by failure mode</td></tr>
+    <tr><td>Concave (curves upward)</td><td>3-parameter Weibull with threshold γ > 0</td><td>Fit Weibull_3P; verify physics of failure-free period</td></tr>
+    <tr><td>Convex (curves downward)</td><td>Lognormal may fit better; or mixture with early infant failures</td><td>Try Lognormal_2P; check early failures separately</td></tr>
+    <tr><td>First 1–2 points far below line</td><td>Outliers or early failures from a different failure mode</td><td>Investigate first failures; separate infant-mortality events</td></tr>
+    <tr><td>Last points above line</td><td>Heavy right tail; possible extreme-value behaviour</td><td>Try Loglogistic or 3P Weibull; check for a plateau</td></tr>
+    <tr><td>Very steep slope (β >> 4)</td><td>Tight failure distribution, well-controlled process</td><td>Verify — tight Weibull on a small sample can be misleading</td></tr>
+  </tbody>
+</table>
+
+<h3>5.2 Goodness-of-Fit Tests for Reliability Data</h3>
+
+<p>Visual assessment of the probability plot is necessary but not sufficient. Always supplement with a quantitative test:</p>
+
+<ul>
+  <li><strong>Anderson-Darling (A-D) test</strong>: preferred for reliability data because it weights the tails more heavily, where reliability decisions are most sensitive. Modified A-D statistics are available for each distribution family.</li>
+  <li><strong>Kolmogorov-Smirnov (K-S) test</strong>: based on the maximum CDF deviation. Less sensitive to tail behaviour, but widely implemented. Conservative with censored data.</li>
+  <li><strong>AIC / BIC</strong>: for comparing distributions with different numbers of parameters. BIC penalises extra parameters more strongly and is generally preferred for model selection with $n &lt; 100$.</li>
+</ul>
+
+<pre><code>from reliability.Fitters import Fit_Everything
+import matplotlib.pyplot as plt
+
+# Fit all common distributions and display ranked results
+fit = Fit_Everything(failures=[500, 700, 800, 850, 1000, 1100, 1400, 1600, 1900, 2200],
+                     right_censored=[2500, 2500],
+                     sort_by='AD',  # rank by Anderson-Darling statistic
+                     show_probability_plot=True,
+                     show_histogram_plot=True)
+# fit.results is a DataFrame with BIC, AIC, AD statistic for each distribution</code></pre>
+
+<p class="cite">Source: <a href="https://reliability.readthedocs.io" target="_blank">reliability.readthedocs.io</a> — "Fitting all available distributions to data."</p>
+
+<!-- ============================================================= SECTION 6 -->
+<span class="section-anchor" id="censored"></span>
+<h2>6. Censored Data: The Most Underestimated Problem</h2>
 
 <div class="box-pitfall">
   <div class="box-label">Pitfall — Treating Censored Observations as Failures</div>
-  Right-censored units (not yet failed at end of study) contribute information that $T_i &gt; c_i$ — they should NOT be treated as failures at time $c_i$. Doing so introduces catastrophic negative bias: component life is underestimated by factors of 2&ndash;5&times;. This is the single most common error in reliability data analysis.
+  Right-censored units (not yet failed at end of study) contribute information that $T_i &gt; c_i$ &mdash; they should NOT be treated as failures at time $c_i$. Doing so introduces catastrophic negative bias: component life is underestimated by factors of 2&ndash;5×. This is the single most common error in reliability data analysis. It leads to over-maintained systems, unnecessary part replacements, and false conclusions about fleet health.
 </div>
 
-<p>Three types of censoring in engineering:</p>
-<ul>
-  <li><strong>Right censoring</strong>: unit removed before failure; exact failure time unknown but $T_i &gt; c_i$. Most common in field data.</li>
-  <li><strong>Left censoring</strong>: unit failed before first inspection; $T_i &lt; c_i$.</li>
-  <li><strong>Interval censoring</strong>: failure known to occur in $(L_i, R_i]$. Common in periodic borescope inspections and NDT campaigns.</li>
-</ul>
+<h3>6.1 Types of Censoring</h3>
 
-<p>The censored MLE log-likelihood:</p>
+<table>
+  <thead><tr><th>Type</th><th>What you know</th><th>Engineering Context</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Right censoring</strong></td><td>$T_i &gt; c_i$</td><td>Unit still running at test/study end; removed before failure (competing reason). Most common in field data.</td></tr>
+    <tr><td><strong>Left censoring</strong></td><td>$T_i &lt; c_i$</td><td>Unit found failed before first inspection. Common in periodic maintenance campaigns.</td></tr>
+    <tr><td><strong>Interval censoring</strong></td><td>$L_i &lt; T_i \leq R_i$</td><td>Failure known to have occurred between two inspections (borescope, NDT). Very common in gas turbine disc inspection data.</td></tr>
+    <tr><td><strong>Type I censoring</strong></td><td>All units monitored to fixed time $c$</td><td>Test-to-time studies. Variable number of failures.</td></tr>
+    <tr><td><strong>Type II censoring</strong></td><td>Test run until $r$ failures occur</td><td>Accelerated test design. Fixed number of failures, variable test time.</td></tr>
+  </tbody>
+</table>
+
+<h3>6.2 MLE with Censored Data</h3>
 
 <div class="math-block">
-$$\ell(\eta,\beta) = \sum_{i \in \mathcal{F}} \ln f(t_i;\eta,\beta) + \sum_{i \in \mathcal{C}} \ln R(c_i;\eta,\beta)$$
+$$\ell(\boldsymbol{\theta}) = \sum_{i \in \mathcal{F}} \ln f(t_i;\boldsymbol{\theta}) + \sum_{i \in \mathcal{C_R}} \ln[1-F(c_i;\boldsymbol{\theta})] + \sum_{i \in \mathcal{C_L}} \ln F(c_i;\boldsymbol{\theta}) + \sum_{i \in \mathcal{C_I}} \ln[F(u_i;\boldsymbol{\theta})-F(l_i;\boldsymbol{\theta})]$$
 </div>
 
-<p>where $\mathcal{F}$ is the set of failures and $\mathcal{C}$ the set of censored observations.</p>
+<pre><code>from reliability.Fitters import Fit_Weibull_2P
+
+# Mixed censoring types
+t_fail    = [850, 1200, 1340, 1650, 1980]
+t_right   = [2000, 2000, 2000, 2000, 2000]   # still running at 2000 hrs
+t_left    = [300, 400]                         # found failed before inspection
+t_int_low = [500, 700]                         # interval: failed between
+t_int_up  = [600, 850]                         #   these two inspection times
+
+fit = Fit_Weibull_2P(
+    failures=t_fail,
+    right_censored=t_right,
+    left_censored=t_left,
+    interval_censored=list(zip(t_int_low, t_int_up)),
+    CI=0.90,
+    show_probability_plot=False
+)
+print(f"β = {fit.beta:.3f}  η = {fit.alpha:.1f} hrs")
+print(f"B10 = {fit.quantiles(0.1):.0f} hrs  [90% LR CI]")</code></pre>
+
+<h3>6.3 Effective Sample Size with Censored Data</h3>
+
+<p>A critical practical question: how much information does a censored observation contribute? A right-censored observation at time $c$ contributes the same amount of information as approximately $F(c;\hat{\boldsymbol{\theta}})$ failures. A unit censored at the median of its distribution contributes about 50% as much information as a failure. This means:</p>
+
+<ul>
+  <li>A fleet of 100 units with 80% still running (80 censored, 20 failed) has an effective sample size of roughly 20 + 80×F(c) ≈ 60 for a typical mid-life censoring time.</li>
+  <li>You need approximately 20 actual failures for reasonable precision on $\beta$ and $\eta$ — not 20 units total.</li>
+  <li>With fewer than 5 failures, all confidence bounds are very wide. Report them anyway; do not suppress wide bounds.</li>
+</ul>
+
+<!-- ============================================================= SECTION 7 -->
+<span class="section-anchor" id="nonparametric"></span>
+<h2>7. Non-Parametric Methods: Kaplan-Meier, Nelson-Aalen, Rank Adjustment</h2>
+
+<p>Non-parametric methods estimate the reliability function without assuming a distribution family. They are essential for exploratory analysis, for checking parametric model assumptions, and for data where no distribution fits well.</p>
+
+<h3>7.1 Kaplan-Meier (Product-Limit) Estimator</h3>
+
+<div class="math-block">
+$$\hat{R}(t) = \prod_{t_{(i)} \leq t} \left(1 - \frac{d_i}{n_i}\right)$$
+</div>
+
+<p>where $d_i$ is the number of failures at time $t_{(i)}$ and $n_i$ is the number of units at risk just before $t_{(i)}$ (risk set). Right-censored observations reduce the risk set at their censoring times without contributing to the product.</p>
+
+<pre><code>from reliability.NonParametricEstimators import KaplanMeier
+
+failures       = [100, 200, 300, 500, 700, 900, 1200]
+right_censored = [150, 400, 600, 800, 1100]
+
+km = KaplanMeier(failures=failures, right_censored=right_censored,
+                 print_results=True, show_plot=True,
+                 plot_CI=True, CI=0.95)
+# km.results: DataFrame with t, d, n, KM estimate, CI bounds</code></pre>
+
+<h3>7.2 Nelson-Aalen Estimator</h3>
+
+<p>Estimates the cumulative hazard function $H(t)$ non-parametrically:</p>
+
+<div class="math-block">
+$$\hat{H}(t) = \sum_{t_{(i)} \leq t} \frac{d_i}{n_i}, \qquad \hat{R}(t) = \exp(-\hat{H}(t))$$
+</div>
+
+<p>The Nelson-Aalen estimator is smoother than Kaplan-Meier for the survival function and is preferred when the hazard function itself is of interest (e.g., for ROCOF estimation in repairable systems).</p>
+
+<h3>7.3 Rank Adjustment</h3>
+
+<p>A non-parametric estimator that adjusts the ordering of observations to account for censoring. It computes the "mean order number" (effective rank) for each failure, then converts to failure probability using the median rank formula. The <code>reliability</code> library implements this for plotting on probability paper when censoring prevents the direct Kaplan-Meier application.</p>
+
+<h3>7.4 When Non-Parametric vs Parametric</h3>
+
+<table>
+  <thead><tr><th>Situation</th><th>Recommended Approach</th></tr></thead>
+  <tbody>
+    <tr><td>Exploratory analysis, unknown distribution family</td><td>Kaplan-Meier first, then parametric</td></tr>
+    <tr><td>Small $n$ (&lt;15 failures), need B10 life extrapolation</td><td>Parametric (non-parametric can't extrapolate)</td></tr>
+    <tr><td>Large $n$ (&gt;100 failures), no clear parametric model</td><td>Nelson-Aalen or smoothed hazard estimates</td></tr>
+    <tr><td>Comparing two fleet populations</td><td>Log-rank test (non-parametric) then parametric if populations differ</td></tr>
+    <tr><td>Regulatory submission, certification</td><td>Parametric with LR bounds (required by most aerospace standards)</td></tr>
+  </tbody>
+</table>
+
+<p class="cite">Source: <a href="https://reliability.readthedocs.io" target="_blank">reliability.readthedocs.io</a> — "Non-parametric Models."</p>
+
+<!-- ============================================================= SECTION 8 -->
+<span class="section-anchor" id="competing-risks"></span>
+<h2>8. Competing Risks and Mixture Models</h2>
+
+<h3>8.1 Competing Risks (Series Failure Modes)</h3>
+
+<p>When a component can fail from multiple independent causes, and the failure time is the minimum across all modes, the failure processes compete. The system reliability under competing risks is:</p>
+
+<div class="math-block">
+$$R_{system}(t) = \prod_{k=1}^K R_k(t) = \prod_{k=1}^K [1-F_k(t)]$$
+$$h_{system}(t) = \sum_{k=1}^K h_k(t)$$
+</div>
+
+<p>This is a <strong>series system</strong> in the failure-mode sense. Each failure mode $k$ has its own distribution (e.g., Mode 1: bearing fatigue, Weibull $\beta_1 = 2.1$; Mode 2: seal leakage, Weibull $\beta_2 = 0.7$). The mixed data without cause code produces a WPP that curves — an S-shape or inflection that does not fit any single distribution.</p>
 
 <pre><code>from reliability.Fitters import Fit_Weibull_2P
-import numpy as np
+from reliability.CompetingRisks import CompetingRisks
 
-# Failure times and censored times
-t_fail   = [850, 1200, 1340, 1650, 1980]  # observed failures
-t_censor = [2000, 2000, 2000, 2000, 2000]  # still running at 2000 hrs
+# Data with cause codes (0 = mode A, 1 = mode B)
+t_modeA = [850, 1200, 1500, 1900]          # failures from mode A
+t_modeB = [200, 400, 550]                   # failures from mode B
+cens_A  = [2000, 2000, 2000]               # mode A right-censored (survived)
+cens_B  = [2000, 2000, 2000, 2000]         # mode B right-censored
 
-# Combine with censoring indicator (0=failure, 1=right-censored)
-times  = np.array(t_fail + t_censor)
-censor = np.array([0]*len(t_fail) + [1]*len(t_censor))
+# Fit each mode independently
+fit_A = Fit_Weibull_2P(failures=t_modeA, right_censored=t_modeB + cens_A,
+                        CI=0.9, show_probability_plot=False)
+fit_B = Fit_Weibull_2P(failures=t_modeB, right_censored=t_modeA + cens_B,
+                        CI=0.9, show_probability_plot=False)
+# Note: units that don't fail from mode A are right-censored for mode A analysis</code></pre>
 
-# MLE fit with censoring
-fit = Fit_Weibull_2P(failures=t_fail, right_censored=t_censor,
-                     CI=0.9, show_probability_plot=False)
-print(f"beta = {fit.beta:.3f}, eta = {fit.alpha:.1f} hrs")
-print(f"B10 life = {fit.quantiles(0.10):.1f} hrs")</code></pre>
+<div class="box-rule">
+  <div class="box-label">Important — Independent Censoring Assumption</div>
+  Competing risks analysis assumes that the cause of failure from one mode is independent of the failure time from another mode. This is the "independent competing risks" assumption and is often violated in practice: a bearing that is heating up may simultaneously accelerate seal degradation. In such cases, the competing risks decomposition still gives correct <em>marginal</em> estimates for each mode's distribution, but the cause-specific hazards cannot be simply added to predict system reliability under modified conditions.
+</div>
 
-<!-- ================================================================== -->
-<h2>5. Remaining Useful Life Prediction</h2>
+<h3>8.2 Mixture Models (Heterogeneous Populations)</h3>
 
-<p>RUL estimation is a regression problem where the target is time-to-failure from the current state. Three key requirements that distinguish it from standard regression:</p>
+<p>A mixture model is appropriate when the population consists of distinct subpopulations with different failure characteristics &mdash; for example, a production batch with a fraction $p$ of "weak" units (infant mortality, small $\beta$) and fraction $1-p$ of "strong" units (wear-out, large $\beta$):</p>
+
+<div class="math-block">
+$$F_{mix}(t) = p\,F_1(t) + (1-p)\,F_2(t)$$
+$$h_{mix}(t) = \frac{p\,f_1(t) + (1-p)\,f_2(t)}{p\,R_1(t) + (1-p)\,R_2(t)}$$
+</div>
+
+<pre><code>from reliability.Fitters import Fit_Weibull_Mixture
+
+# Mixture of two Weibull populations
+failures = [50, 100, 150, 200, 800, 1200, 1500, 1800, 2100, 2400]
+
+mix = Fit_Weibull_Mixture(failures=failures, right_censored=[2500, 2500, 2500],
+                           CI=0.9, show_probability_plot=True)
+print(f"Subpop 1: beta={mix.beta_1:.2f}, alpha={mix.alpha_1:.1f}, p={mix.proportion_1:.3f}")
+print(f"Subpop 2: beta={mix.beta_2:.2f}, alpha={mix.alpha_2:.1f}")</code></pre>
+
+<p>The mixture fraction $p$ can be interpreted as the fraction of "defective" units in the population. It is a key quality control metric: reducing $p$ through process improvement is often more cost-effective than redesigning the component.</p>
+
+<!-- ============================================================= SECTION 9 -->
+<span class="section-anchor" id="alt"></span>
+<h2>9. Accelerated Life Testing (ALT)</h2>
+
+<p>ALT deliberately stresses components beyond their normal operating conditions (higher temperature, voltage, vibration, load) to compress years of service life into days of testing. The objective is to extrapolate the failure time distribution back to normal conditions using a physically motivated acceleration model.</p>
+
+<p class="cite">ALT theory and Python implementation follow <a href="https://reliability.readthedocs.io" target="_blank">reliability.readthedocs.io</a> — "Accelerated Life Testing" section.</p>
+
+<h3>9.1 The Three Core Assumptions of ALT</h3>
+<ol>
+  <li><strong>Same failure mode</strong>: the failure mode at stress level $S$ must be the same as at use stress $S_0$. If accelerated stress causes a different failure mechanism, the extrapolation is invalid. Verify with failure analysis at each stress level.</li>
+  <li><strong>Known acceleration model</strong>: the relationship between failure time and stress follows a specific functional form (Arrhenius, Inverse Power Law, etc.).</li>
+  <li><strong>Same distribution family</strong>: the life distribution family (Weibull, Lognormal) is the same at all stress levels. Only the scale parameter changes with stress; the shape parameter $\beta$ is constant.</li>
+</ol>
+
+<h3>9.2 Arrhenius Model (Thermal Acceleration)</h3>
+
+<p>The Arrhenius model describes thermally-activated degradation processes (corrosion, diffusion, electromigration, chemical degradation):</p>
+
+<div class="math-block">
+$$\text{Life}(T) = A\,\exp\!\left(\frac{E_a}{k_B T}\right)$$
+$$\text{Acceleration Factor: } AF = \frac{\text{Life}(T_0)}{\text{Life}(T_s)} = \exp\!\left[\frac{E_a}{k_B}\left(\frac{1}{T_0} - \frac{1}{T_s}\right)\right]$$
+</div>
+
+<p>where $T$ is absolute temperature (Kelvin), $k_B = 8.617 \times 10^{-5}$ eV/K (Boltzmann constant), $E_a$ is the activation energy (eV, material/mechanism property). Typical values:</p>
+
+<table>
+  <thead><tr><th>Failure Mechanism</th><th>Activation Energy $E_a$ (eV)</th></tr></thead>
+  <tbody>
+    <tr><td>Electromigration (Al)</td><td>0.5 – 0.7</td></tr>
+    <tr><td>Corrosion (Al in humid air)</td><td>0.3 – 0.5</td></tr>
+    <tr><td>Oxide growth (SiO₂)</td><td>1.0 – 1.3</td></tr>
+    <tr><td>Interdiffusion (solder)</td><td>0.3 – 0.5</td></tr>
+    <tr><td>Polymer degradation</td><td>0.5 – 1.0</td></tr>
+    <tr><td>CMOS hot carrier injection</td><td>−0.1 to −0.3 (inverse)</td></tr>
+  </tbody>
+</table>
+
+<h3>9.3 Inverse Power Law (Voltage, Stress, Vibration Acceleration)</h3>
+
+<div class="math-block">
+$$\text{Life}(S) = \frac{A}{S^n}, \qquad AF = \left(\frac{S_s}{S_0}\right)^n$$
+</div>
+
+<p>where $S$ is the stress level (voltage, load amplitude, vibration g-level) and $n$ is the power law exponent. Common values: $n \approx 2$–4 for voltage (capacitor dielectric), $n \approx 4$–12 for fatigue (stress amplitude, S-N curves), $n \approx 2$ for vibration (Miner's rule with random loading).</p>
+
+<h3>9.4 Eyring and Multi-Stress Models</h3>
+
+<div class="math-block">
+$$\ln(\text{Life}) = a_0 + \frac{a_1}{T} + a_2 V + \frac{a_3 V}{T} \qquad \text{(Eyring with thermal and voltage)}$$
+</div>
+
+<p>The dual-stress Eyring model is the workhorse for electronic components subjected to both temperature and humidity (or temperature and voltage). All three models are available in the <code>reliability</code> library's ALT fitters.</p>
+
+<pre><code>from reliability.ALT_fitters import Fit_Weibull_Arrhenius
+
+# ALT data: failures and censored observations at two stress levels (Kelvin)
+failures_hot  = [200, 320, 450, 600, 700]   # at 398K (125°C)
+failures_warm = [1500, 2100, 2700, 3200]    # at 358K (85°C)
+cens_hot   = [800, 800]
+cens_warm  = [4000, 4000, 4000]
+
+fit = Fit_Weibull_Arrhenius(
+    failures      = failures_hot + failures_warm,
+    failure_stress= [398]*len(failures_hot) + [358]*len(failures_warm),
+    right_censored      = cens_hot + cens_warm,
+    right_censored_stress=[398]*len(cens_hot) + [358]*len(cens_warm),
+    use_level_stress=293,  # extrapolate to 20°C (293K)
+    CI=0.9
+)
+print(f"Ea = {fit.Ea:.3f} eV")
+print(f"Use-level B10: {fit.distribution_at_use_level.quantiles(0.1):.0f} hrs")</code></pre>
+
+<div class="box-pitfall">
+  <div class="box-label">Pitfall — ALT Extrapolation Range</div>
+  The Arrhenius acceleration factor grows exponentially with temperature difference. At $E_a = 0.7$ eV, going from 398K to 293K gives AF ≈ 3000×. A test producing 200 hours of failure data is extrapolated to 600,000 hours of use life. The confidence bounds at that extrapolation distance are enormous &mdash; often spanning an order of magnitude. Always plot and report the extrapolated life CDF with confidence bounds, not just the point estimate. And always verify that the failure mode at the accelerated stress matches the use-condition failure mode.
+</div>
+
+<!-- ============================================================= SECTION 10 -->
+<span class="section-anchor" id="repairable"></span>
+<h2>10. Repairable Systems: Crow-AMSAA, MCF, ROCOF</h2>
+
+<p>A repairable system is one that is restored to operation after failure rather than replaced. The statistical framework is fundamentally different from non-repairable analysis: instead of a single failure time, you observe a sequence of inter-failure times (or equivalently, cumulative failure counts). The question is no longer "what is the time to first failure?" but "how does the failure rate evolve with system age?"</p>
+
+<p class="cite">Theory follows <a href="https://reliability.readthedocs.io" target="_blank">reliability.readthedocs.io</a> — "Repairable Systems" section.</p>
+
+<h3>10.1 Non-Homogeneous Poisson Process (NHPP) and the Power Law (Crow-AMSAA)</h3>
+
+<p>The Power Law NHPP is the standard model for repairable system reliability growth/degradation:</p>
+
+<div class="math-block">
+$$\text{ROCOF: } \rho(t) = \frac{\lambda\beta}{\theta}\left(\frac{t}{\theta}\right)^{\beta-1} = \lambda\beta t^{\beta-1}$$
+$$\text{Expected cumulative failures: } \mathbb{E}[N(t)] = \left(\frac{t}{\theta}\right)^\beta = \lambda t^\beta$$
+</div>
+
+<p>The Crow-AMSAA model (MIL-HDBK-189C) is the Power Law NHPP applied to reliability growth testing:</p>
+<ul>
+  <li>$\beta &lt; 1$: ROCOF is decreasing &mdash; the system is improving (reliability growth, early-life failure elimination through design fixes)</li>
+  <li>$\beta = 1$: Constant ROCOF &mdash; Homogeneous Poisson Process, random independent failures</li>
+  <li>$\beta &gt; 1$: ROCOF is increasing &mdash; the system is degrading (wear-out, accumulated damage)</li>
+</ul>
+
+<pre><code>from reliability.Repairable_systems import reliability_growth
+
+# Cumulative failure times for a single system
+failure_times = [5, 12, 21, 35, 42, 58, 67, 82, 93, 108]
+
+rg = reliability_growth(times=failure_times, target_MTBF=15,
+                         show_plot=True, print_results=True)
+print(f"Crow-AMSAA: beta={rg.beta:.3f}, lambda={rg.Lambda:.4f}")
+print(f"Current MTBF = {rg.current_MTBF:.1f} hrs")
+print(f"Projected failures at 150 hrs: {rg.Lambda * 150**rg.beta:.1f}")</code></pre>
+
+<h3>10.2 Mean Cumulative Function (MCF)</h3>
+
+<p>When you have failure data from multiple repairable systems (a fleet), the Mean Cumulative Function is the non-parametric estimate of the expected cumulative number of failures per system as a function of age:</p>
+
+<div class="math-block">
+$$\hat{M}(t) = \sum_{t_{(i)} \leq t} \frac{d_i}{n_i}$$
+</div>
+
+<p>Unlike the Kaplan-Meier (which estimates survival from the first failure), the MCF counts all recurrent events. A concave MCF (decelerating failures) suggests reliability growth; a convex MCF (accelerating failures) indicates system degradation.</p>
+
+<pre><code>from reliability.Repairable_systems import MCF_nonparametric, MCF_parametric
+
+# Multiple systems, each with their own failure history
+system1 = [20, 45, 80, 130]   # failure ages of system 1
+system2 = [10, 55, 100]        # failure ages of system 2
+system3 = [30, 70]             # failure ages of system 3
+censor  = [180, 150, 120]      # end of observation for each system
+
+MCF_nonparametric(data=[system1, system2, system3], times_to_censoring=censor,
+                  print_results=True, show_plot=True)
+
+# Parametric Power Law MCF
+MCF_parametric(data=[system1, system2, system3], times_to_censoring=censor,
+               print_results=True, show_plot=True)</code></pre>
+
+<h3>10.3 Optimal Replacement Time</h3>
+
+<p>For a repairable system with increasing ROCOF ($\beta &gt; 1$), the optimal preventive replacement time $t^*$ minimises the long-run cost per unit time:</p>
+
+<div class="math-block">
+$$t^* = \arg\min_{t}\,\frac{C_p + C_f \cdot \hat{M}(t)}{t}$$
+$$\text{where } C_p = \text{cost of planned replacement}, \quad C_f = \text{cost of failure (unplanned)}$$
+</div>
+
+<pre><code>from reliability.Repairable_systems import optimal_replacement_time
+
+optimal_replacement_time(cost_PM=500, cost_CM=2000,
+                          weibull_alpha=1000, weibull_beta=2.4,
+                          show_plot=True, print_results=True)
+# Returns t* (optimal interval) and the minimum cost rate</code></pre>
+
+<div class="box-lesson">
+  <div class="box-label">Key Distinction — Repairable vs Non-Repairable</div>
+  <ul>
+    <li><strong>Non-repairable</strong>: unit is discarded after failure. Analysis tool: Kaplan-Meier, Weibull. Question: "What is the time to first failure?"</li>
+    <li><strong>Repairable</strong>: unit is restored after failure. Analysis tool: NHPP/Power Law, MCF. Question: "How does the failure rate evolve over system life?"</li>
+  </ul>
+  Mixing the two frameworks is a critical error. Fitting a Weibull to the inter-failure times of a repairable system assumes each repair restores the system to "as good as new" (Renewal Process assumption). The Power Law NHPP makes no such assumption &mdash; it models the actual event history without requiring perfect repair.
+</div>
+
+<!-- ============================================================= SECTION 11 -->
+<span class="section-anchor" id="rul"></span>
+<h2>11. Remaining Useful Life and Prognostics</h2>
+
+<p>RUL estimation is a regression problem where the target is time-to-failure from the current observed system state. It differs from standard regression in two critical ways: the target is inherently censored (running systems have $T &gt; t_{now}$), and the uncertainty in the prediction is as operationally important as the point estimate.</p>
 
 <div class="box-pitfall">
   <div class="box-label">Pitfall — RUL Without Uncertainty</div>
-  Reporting "RUL = 47 hours" without a confidence interval is useless for maintenance scheduling. The decision depends on the cost ratio of false alarm (unnecessary replacement) vs. false miss (failure in service). Only a calibrated P10/P90 interval enables the correct cost-optimal maintenance decision.
+  Reporting "RUL = 47 hours" without a confidence interval is insufficient for maintenance scheduling. The optimal maintenance decision depends on the cost ratio of false alarm (unnecessary replacement) vs. false miss (failure in service). Only a calibrated P10/P90 interval enables the correct cost-optimal decision. Point estimate RUL reports are unsuitable for operational use.
 </div>
 
-<h3>LSTM-Weibull Hybrid for Prognostics</h3>
-
-<p>The recommended approach combines a data-driven health index (LSTM autoencoder bottleneck) with a Weibull degradation model:</p>
+<h3>11.1 LSTM-Weibull Hybrid for Prognostics</h3>
 
 <ol>
-  <li><strong>Health Index (HI)</strong>: train LSTM autoencoder on new/healthy operating data. The reconstruction error is the HI. HI = 0 (new), HI increases monotonically toward failure.</li>
-  <li><strong>Weibull trend fit</strong>: fit Weibull CDF to the HI trajectory as a function of operating time. Use monotone regression to enforce HI non-decrease.</li>
-  <li><strong>RUL estimation</strong>: the RUL is the time for HI to reach the failure threshold $h^*$, given the fitted Weibull parameters. Propagate parameter uncertainty to obtain P10/P90 RUL bounds.</li>
-  <li><strong>Online update</strong>: re-fit the Weibull parameters as new HI observations arrive (Bayesian update or sliding window MLE).</li>
+  <li><strong>Health Index (HI)</strong>: train an LSTM autoencoder on healthy operating data (vibration, temperature, pressure time series). The reconstruction error is the HI. HI ≈ 0 for new components; HI increases monotonically toward a threshold at failure.</li>
+  <li><strong>Monotonicity enforcement</strong>: apply PAVA isotonic regression post-processing, or add a monotone output layer (softplus cumulative sum) to enforce physically correct non-decreasing HI.</li>
+  <li><strong>Weibull trend fit</strong>: at each time step, fit the Weibull CDF to the observed (time, HI) trajectory. As more observations arrive, the fit stabilises.</li>
+  <li><strong>RUL estimation</strong>: the RUL is the extrapolated time for HI to reach the failure threshold $h^*$, given the fitted Weibull parameters. Propagate parameter uncertainty via Monte Carlo or likelihood ratio bounds to obtain P10/P90 RUL intervals.</li>
+  <li><strong>Online update</strong>: re-fit the Weibull parameters (sliding window MLE or Bayesian update) as new HI observations arrive.</li>
 </ol>
 
-<div class="box-lesson">
-  <div class="box-label">Lesson — Monotonic Degradation Constraint</div>
-  Physically, a degradation Health Index should be non-decreasing. Without enforcement, LSTM autoencoders produce noisy HI trajectories that increase and decrease, making RUL estimation unreliable. Enforce monotonicity either by post-processing (PAVA isotonic regression) or by using monotone constraints in the LSTM output head. A noisy HI that occasionally "recovers" confuses the Weibull fit and produces overoptimistic RUL estimates.
+<pre><code>import numpy as np
+from scipy.optimize import minimize
+from scipy.stats import weibull_min
+
+def fit_weibull_to_hi(times, hi_values, threshold=1.0):
+    """
+    Fit Weibull CDF to health index trajectory.
+    Returns beta, eta, and P10/P90 RUL.
+    """
+    def neg_loglik(params):
+        beta, eta = np.exp(params)
+        f_pred = 1 - np.exp(-(times/eta)**beta)
+        return np.sum((hi_values/threshold - f_pred)**2)  # simplified WLS
+
+    res = minimize(neg_loglik, x0=[np.log(2), np.log(max(times)*1.5)],
+                   method='Nelder-Mead')
+    beta, eta = np.exp(res.x)
+
+    # RUL = time for CDF to reach 1.0 (full HI = threshold)
+    # P10 (optimistic): 10th percentile of remaining life
+    t_now = times[-1]
+    t_failure_med = eta * (-np.log(1 - 0.5))**(1/beta)  # median life
+    rul_p50 = max(0, t_failure_med - t_now)
+
+    # Monte Carlo uncertainty propagation (simplified)
+    return {'beta': beta, 'eta': eta, 'rul_p50': rul_p50}
+
+
+# Example: monitor bearing health index
+t = np.array([0, 50, 100, 150, 200, 250])
+hi = np.array([0.02, 0.05, 0.12, 0.25, 0.45, 0.68])  # normalised
+
+result = fit_weibull_to_hi(t, hi, threshold=1.0)
+print(f"β={result['beta']:.2f}, η={result['eta']:.0f}, RUL≈{result['rul_p50']:.0f} hrs")</code></pre>
+
+<h3>11.2 RUL Evaluation Metrics</h3>
+
+<table>
+  <thead><tr><th>Metric</th><th>Formula</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>MAE</td><td>$\frac{1}{N}\sum|RUL_{pred} - RUL_{true}|$</td><td>Symmetric penalty. Easy to interpret.</td></tr>
+    <tr><td>RMSE</td><td>$\sqrt{\frac{1}{N}\sum(RUL_{pred} - RUL_{true})^2}$</td><td>Penalises large errors more.</td></tr>
+    <tr><td>Scoring function (PHM)</td><td>Asymmetric: exp-penalty for early vs. late prediction</td><td>Penalises late prediction (miss) more than early (false alarm) — mirrors real maintenance cost asymmetry</td></tr>
+    <tr><td>PI coverage</td><td>$\%$ of true RUL within P10-P90 interval</td><td>Should be ≈80% for a well-calibrated predictor</td></tr>
+    <tr><td>PI width</td><td>Avg. $RUL_{P90} - RUL_{P10}$</td><td>Narrower is better, conditional on coverage being adequate</td></tr>
+  </tbody>
+</table>
+
+<p>The PHM asymmetric scoring function from the 2008 PHMAP Data Challenge is still widely used in industrial prognostics benchmarks. It penalises early RUL predictions (would miss the failure) more than late predictions (would trigger an unnecessary PM stop).</p>
+
+<!-- ============================================================= SECTION 12 -->
+<span class="section-anchor" id="physics"></span>
+<h2>12. Physics of Failure: Fatigue, Fracture, Creep</h2>
+
+<p>Physics-of-failure (PoF) models provide the mechanistic foundation for reliability predictions when field failure data is scarce &mdash; as is typical for new designs, long-life components, and novel materials. PoF models are also essential for establishing the physical justification of ALT acceleration models.</p>
+
+<h3>12.1 High-Cycle Fatigue: S-N (Wöhler) Curves</h3>
+
+<p>For metals subjected to cyclic stress, the S-N curve relates applied stress amplitude $S$ to the number of cycles to failure $N_f$:</p>
+
+<div class="math-block">
+$$S = \sigma_f'(2N_f)^b \qquad \text{(Basquin's law, log-log linear)}$$
+$$\ln N_f = \ln A - n\ln S \implies \text{life is Lognormal at fixed } S$$
 </div>
 
-<!-- ================================================================== -->
-<h2>6. Reliability-Based Design Optimisation (RBDO)</h2>
+<p>The statistical S-N curve includes scatter in $N_f$ at each $S$ level. For design, use the P10 or P1 S-N curve (10% or 1% failure probability), not the mean. The Weibull distribution is often fitted to $N_f$ at each stress level, with $\beta$ typically in the range 2.5–4.5 for metallic fatigue.</p>
 
-<p>RBDO replaces deterministic constraints $g(\mathbf{x}) \leq 0$ with probabilistic constraints:</p>
+<h3>12.2 Fracture Mechanics (Paris's Law)</h3>
+
+<p>For cracks growing under cyclic loading (damage-tolerant design):</p>
+
+<div class="math-block">
+$$\frac{da}{dN} = C(\Delta K)^m, \quad \Delta K = Y\Delta\sigma\sqrt{\pi a}$$
+$$N_f = \int_{a_0}^{a_c} \frac{da}{C(Y\Delta\sigma\sqrt{\pi a})^m}$$
+</div>
+
+<p>where $a$ is crack length, $a_0$ initial crack size, $a_c$ critical crack size, $Y$ geometry factor, $C$ and $m$ are material constants (Paris parameters). This integral gives the number of cycles from initial flaw to failure. The scatter in $C$, $m$, $a_0$ translates into a Lognormal failure time distribution, justifying the Lognormal distribution choice for crack-growth-dominated failures.</p>
+
+<h3>12.3 Miner's Rule for Cumulative Fatigue Damage</h3>
+
+<div class="math-block">
+$$D = \sum_{i} \frac{n_i}{N_{f,i}} \qquad \text{Failure when } D \geq 1$$
+</div>
+
+<p>where $n_i$ is the number of cycles at stress level $S_i$ and $N_{f,i}$ is the fatigue life at $S_i$ (from the S-N curve). Miner's rule is linear damage accumulation — it ignores sequence effects (high-to-low stress is unconservative; low-to-high is conservative). Modified rules (Corten-Dolan, Marco-Starkey) account for sequence effects but add parameters.</p>
+
+<h3>12.4 Creep Damage (Larson-Miller Parameter)</h3>
+
+<div class="math-block">
+$$P_{LM} = T(C + \log t_r) \quad [\text{°R or K}] \qquad \text{(material constant } C \approx 20\text{ for Ni superalloys)}$$
+</div>
+
+<p>The Larson-Miller parameter allows scaling creep rupture time across temperatures: at fixed stress, if $P_{LM}$ is constant, the rupture life scales accordingly. This provides the thermal acceleration model for high-temperature turbomachinery components — the PoF equivalent of the Arrhenius ALT model.</p>
+
+<div class="box-lesson">
+  <div class="box-label">Connecting PoF to the Reliability Distribution</div>
+  Physics-of-failure analysis gives you the acceleration model (which variable drives life) and the distribution family (multiplicative damage → Lognormal; weakest-link → Weibull). Don't fit distributions blindly to field data: use the PoF model to narrow your distribution choice to 1–2 candidates, then confirm with the probability plot and goodness-of-fit test. This combination of physical reasoning and statistical validation is the hallmark of mature reliability practice.
+</div>
+
+<!-- ============================================================= SECTION 13 -->
+<span class="section-anchor" id="stress-strength"></span>
+<h2>13. Stress-Strength Interference</h2>
+
+<p>Stress-strength interference (SSI) computes the probability that a random load (stress $S$) exceeds the random capacity (strength $X$) of a component. It is the fundamental tool for probabilistic structural design:</p>
+
+<div class="math-block">
+$$R = P(X > S) = \int_0^\infty F_S(x)\,f_X(x)\,dx = \int_0^\infty R_S(x)\,f_X(x)\,dx$$
+</div>
+
+<p>For the Normal-Normal case: if $X \sim \mathcal{N}(\mu_X, \sigma_X^2)$ and $S \sim \mathcal{N}(\mu_S, \sigma_S^2)$, then:</p>
+
+<div class="math-block">
+$$R = \Phi\!\left(\frac{\mu_X - \mu_S}{\sqrt{\sigma_X^2 + \sigma_S^2}}\right) = \Phi(z), \quad z = \frac{\mu_X - \mu_S}{\sqrt{\sigma_X^2 + \sigma_S^2}}$$
+</div>
+
+<p>For other distribution combinations, numerical integration or Monte Carlo is required:</p>
+
+<pre><code>from reliability.Other_functions import stress_strength
+
+stress_strength(stress=dist_S, strength=dist_X, print_results=True, show_plot=True)
+
+# Or manually via Monte Carlo:
+import numpy as np
+from scipy.stats import weibull_min, norm
+
+n = 1_000_000
+strength = norm.rvs(loc=500, scale=40, size=n)   # MPa
+stress   = weibull_min.rvs(c=2.5, scale=200, loc=0, size=n)  # MPa
+
+R = np.mean(strength > stress)
+print(f"P(strength > stress) = {R:.6f}  →  PF = {1-R:.2e}")</code></pre>
+
+<div class="box-tip">
+  <div class="box-label">Senior Practitioner Tip — SSI and Safety Factors</div>
+  Traditional deterministic safety factors (SF = mean strength / mean stress) ignore distribution shapes. A safety factor of 2.0 can correspond to a failure probability anywhere from 10⁻² to 10⁻⁸ depending on the scatter in both distributions. Probabilistic SSI replaces the single SF number with a failure probability, which is directly comparable to reliability targets. When transitioning from deterministic to probabilistic design, the first step is always to characterise the scatter (CoV) of both stress and strength from test data.
+</div>
+
+<!-- ============================================================= SECTION 14 -->
+<span class="section-anchor" id="system-reliability"></span>
+<h2>14. System Reliability: Series, Parallel, RBD</h2>
+
+<h3>14.1 Series Systems</h3>
+
+<p>All components must function for the system to function. System reliability decreases as components are added:</p>
+
+<div class="math-block">
+$$R_s(t) = \prod_{i=1}^n R_i(t), \qquad h_s(t) = \sum_{i=1}^n h_i(t)$$
+</div>
+
+<p>The weakest component dominates. For a series system of $n$ identical components with Weibull life $(\eta, \beta)$:</p>
+
+<div class="math-block">
+$$R_s(t) = \exp\!\left[-n\left(\frac{t}{\eta}\right)^\beta\right] \implies \text{System Weibull: } \eta_s = \eta/n^{1/\beta}, \quad \beta_s = \beta$$
+</div>
+
+<h3>14.2 Parallel Systems (Redundancy)</h3>
+
+<p>System fails only when all components fail. Adding redundancy improves reliability but also changes the shape of the system failure time distribution:</p>
+
+<div class="math-block">
+$$F_s(t) = \prod_{i=1}^n F_i(t), \qquad R_s(t) = 1 - \prod_{i=1}^n [1-R_i(t)]$$
+</div>
+
+<div class="box-rule">
+  <div class="box-label">Redundancy Increases MTTF but not Indefinitely</div>
+  A key result: for exponential components ($h = \lambda$), adding $n$ parallel units gives system MTTF = $\frac{1}{\lambda}(1 + \frac{1}{2} + \cdots + \frac{1}{n})$. This harmonic series grows slowly — doubling from 1 to 2 units adds 50% MTTF; going from 2 to 3 adds only 17%. The marginal reliability improvement from each additional redundant unit diminishes rapidly.
+</div>
+
+<h3>14.3 k-of-n Systems</h3>
+
+<p>The system functions if at least $k$ of $n$ components function (e.g., 2-of-3 voting, 3-of-4 engines):</p>
+
+<div class="math-block">
+$$R_s(t) = \sum_{j=k}^n \binom{n}{j} R(t)^j [1-R(t)]^{n-j}$$
+</div>
+
+<h3>14.4 Reliability Block Diagrams and Minimal Cut Sets</h3>
+
+<p>For complex systems, Reliability Block Diagrams (RBD) or Fault Trees are used to model the system structure. The key computational algorithm is the <strong>minimal cut set</strong> method: a cut set is a set of components whose failure causes system failure; a <em>minimal</em> cut set has no redundant elements. The system unreliability is approximated by:</p>
+
+<div class="math-block">
+$$Q_s(t) \approx \sum_j \prod_{i \in C_j} Q_i(t) \qquad \text{(rare event approximation for small } Q_i\text{)}$$
+</div>
+
+<p>For dynamic systems with load sharing, standby redundancy, or common-cause failures, Monte Carlo system simulation is the most practical approach.</p>
+
+<!-- ============================================================= SECTION 15 -->
+<span class="section-anchor" id="testing"></span>
+<h2>15. Reliability Testing and Sample Sizing</h2>
+
+<h3>15.1 Demonstration Test Plans</h3>
+
+<p>A reliability demonstration test answers: "How many units must I test for how long, with zero failures, to demonstrate a given reliability target with a given confidence?"</p>
+
+<div class="math-block">
+$$\text{Zero-failure test: } n \geq \frac{\ln(1-C)}{\ln R_0} \qquad \text{at time } t_{test}$$
+$$\text{or equivalently: } n \cdot t_{test}^{\beta} \geq \frac{-\ln(1-C)}{\eta^{-\beta}} \quad \text{for Weibull with known } \beta$$
+</div>
+
+<p>For a Weibull with known $\beta$ and target $R_0 = 0.90$ at time $t_0$ with 90% confidence ($C = 0.90$):</p>
+
+<pre><code>from reliability.Reliability_testing import reliability_test_planner
+
+# Weibull-based test plan: demonstrates B10 life >= 1000 hrs at 90% confidence
+reliability_test_planner(
+    test_duration=1500,    # hrs of testing per unit
+    CI=0.9,                # confidence level
+    lifetimes_by_units=True,
+    target_reliability=0.9,  # demonstrate R >= 90%
+    weibull_shape=2.5,     # known beta from prior data
+    show_plot=False
+)</code></pre>
+
+<h3>15.2 Sequential Sampling and Wald SPRT</h3>
+
+<p>The Sequential Probability Ratio Test (SPRT) allows continuous monitoring of a test: after each observation, you decide to accept ($H_0$: reliability $\geq R_1$), reject ($H_1$: reliability $\leq R_0 &lt; R_1$), or continue testing. This is dramatically more efficient than fixed-sample tests &mdash; average sample number is typically 40–60% of the equivalent fixed-sample test.</p>
+
+<h3>15.3 Proportion Confidence Intervals</h3>
+
+<p>For pass/fail test results (e.g., $k$ failures in $n$ units), use the Wilson or Clopper-Pearson interval &mdash; not the Wald (normal approximation) interval which fails catastrophically when $k$ is near 0 or $n$:</p>
+
+<pre><code>from reliability.Reliability_testing import one_sided_proportion_test
+
+# Observed 0 failures in 30 units. Upper 95% CI on failure probability?
+one_sided_proportion_test(trials=30, failures=0, CI=0.95)
+# Returns: the demonstrated reliability with 95% confidence</code></pre>
+
+<p class="cite">Source: <a href="https://reliability.readthedocs.io" target="_blank">reliability.readthedocs.io</a> — "Reliability Testing" section.</p>
+
+<!-- ============================================================= SECTION 16 -->
+<span class="section-anchor" id="rbdo"></span>
+<h2>16. Reliability-Based Design Optimisation (RBDO)</h2>
+
+<p>RBDO replaces deterministic design constraints $g(\mathbf{x}) \leq 0$ with probabilistic feasibility constraints, explicitly accounting for uncertainty in loads, material properties, and geometry:</p>
 
 <div class="math-block">
 $$\min_{\mathbf{x}} f(\mathbf{x}) \quad \text{s.t.} \quad P\bigl(g_k(\mathbf{x}, \mathbf{Z}) \leq 0\bigr) \geq \Phi(\beta_{target,k})$$
 </div>
 
-<p>where $\mathbf{Z}$ are uncertain parameters (material properties, loads), $\beta_{target}$ is the target reliability index (e.g., $\beta = 3 \Rightarrow P_f \leq 1.35 \times 10^{-3}$), and $\Phi$ is the normal CDF. The double-loop approach: outer optimisation over $\mathbf{x}$, inner reliability analysis (FORM/SORM or Monte Carlo) per constraint evaluation. For surrogate-assisted RBDO, replace the inner loop with a GP that predicts $P(g_k \leq 0)$ directly (see Chapter 15, constrained BO).</p>
+<p>where $\mathbf{Z}$ are uncertain parameters (material properties, loads), $\beta_{target}$ is the target reliability index (e.g., $\beta = 3 \Rightarrow P_f \leq 1.35 \times 10^{-3}$; $\beta = 4.75$ for most aerospace structural components under FAR 25.571).</p>
 
-<!-- ================================================================== -->
-<h2>7. Key Takeaways</h2>
+<h3>16.1 FORM and SORM (First/Second Order Reliability Methods)</h3>
+
+<p>FORM approximates the limit-state surface $g(\mathbf{u}) = 0$ in standard normal space by a hyperplane at the Most Probable Point (MPP), giving:</p>
+
+<div class="math-block">
+$$P_f \approx \Phi(-\beta_{HL}), \quad \beta_{HL} = \min_{\mathbf{u}: g(\mathbf{u})=0} \|\mathbf{u}\|_2 \quad \text{(Hasofer-Lind index)}$$
+</div>
+
+<p>SORM improves on FORM by fitting a paraboloid at the MPP, correcting for limit-state curvature. Both methods require $\partial g/\partial \mathbf{u}$ (gradient) information &mdash; numerically via finite differences or analytically.</p>
+
+<h3>16.2 Surrogate-Assisted RBDO</h3>
+
+<p>For expensive simulations (FEM structural analysis, CFD), the inner reliability loop (FORM/SORM or Monte Carlo) is too expensive to embed in an outer optimisation loop. Surrogate-based alternatives:</p>
 
 <ul>
-  <li><strong>Weibull shape $\beta$</strong> is the first diagnostic: measure $\beta$ from field data to identify the failure mode before selecting a prognostics strategy.</li>
-  <li><strong>Never treat censored observations as failures</strong>. Right-censored units contribute $\ln R(c_i)$ to the log-likelihood, not $\ln f(c_i)$.</li>
-  <li>Use <strong>MLE</strong> for parameter estimation; likelihood ratio bounds for confidence intervals when $n &lt; 30$.</li>
-  <li>$B_{10}$ life ($t_{B10} = \eta \cdot 0.1054^{1/\beta}$) is the design-relevant metric — it defines the 10% failure probability point.</li>
-  <li>RUL prediction requires a calibrated P10/P90 interval. Point estimates alone are operationally useless for maintenance scheduling.</li>
-  <li>LSTM autoencoder health index + Weibull trend + Bayesian update is the recommended prognostics pipeline for industrial rotating machinery.</li>
-  <li>RBDO: replace deterministic constraints with probabilistic feasibility constraints. Use surrogate-assisted reliability analysis (GP PoF) to avoid expensive inner-loop Monte Carlo.</li>
+  <li><strong>GP-based PoF</strong>: fit a Gaussian process to predict $P_f(\mathbf{x})$ directly. Efficient acquisition functions (e.g., Expected Improvement on Reliability, EIR) guide the sampling. See Chapter 15.</li>
+  <li><strong>Polynomial Chaos Expansion (PCE)</strong>: project the response onto polynomial basis functions of the random inputs. PCE coefficients give moments and failure probabilities analytically.</li>
+  <li><strong>Importance Sampling with GP</strong>: use the GP surrogate to identify the dominant failure region, then sample efficiently.</li>
+</ul>
+
+<pre><code>import numpy as np
+from scipy.stats import norm
+from scipy.optimize import minimize
+
+def form_reliability(g_func, mu, sigma, n_iter=100):
+    """
+    Simple FORM implementation for reliability index.
+    g_func: limit state function g(x) < 0 is failure.
+    mu, sigma: mean and std dev of random variables.
+    """
+    # Transform to standard normal space: u = (x - mu)/sigma
+    u0 = np.zeros(len(mu))  # start at origin
+
+    def g_in_u(u):
+        x = mu + sigma * u
+        return g_func(x)
+
+    def objective(u):
+        return np.sum(u**2)  # minimise distance from origin
+
+    constraints = {'type': 'eq', 'fun': lambda u: g_in_u(u)}
+    res = minimize(objective, u0, method='SLSQP', constraints=constraints)
+
+    beta_HL = np.sqrt(res.fun)
+    pf = norm.cdf(-beta_HL)
+    return {'beta': beta_HL, 'pf': pf, 'mpp': res.x}
+
+# Example: shaft bending, g(x) = x[0] - x[1]  (strength - load)
+result = form_reliability(
+    g_func=lambda x: x[0] - x[1],
+    mu=np.array([500.0, 350.0]),    # mean strength, mean load [MPa]
+    sigma=np.array([50.0, 40.0])    # std dev
+)
+print(f"Hasofer-Lind β = {result['beta']:.3f}  →  Pf = {result['pf']:.2e}")</code></pre>
+
+<!-- ============================================================= SECTION 17 -->
+<span class="section-anchor" id="python-cheatsheet"></span>
+<h2>17. Python <code>reliability</code> Library Cheat Sheet</h2>
+
+<p>The <a href="https://reliability.readthedocs.io" target="_blank">Python <code>reliability</code> library</a> by Matthew Reid is the most comprehensive open-source toolkit for applied reliability engineering. Install with <code>pip install reliability</code>. Key modules:</p>
+
+<table>
+  <thead><tr><th>Module</th><th>Key Classes / Functions</th><th>Use Case</th></tr></thead>
+  <tbody>
+    <tr><td><code>Fitters</code></td><td><code>Fit_Weibull_2P</code>, <code>Fit_Lognormal_2P</code>, <code>Fit_Gamma_2P</code>, <code>Fit_Everything</code></td><td>Fit parametric distributions with censoring</td></tr>
+    <tr><td><code>Distributions</code></td><td><code>Weibull_Distribution</code>, <code>Lognormal_Distribution</code>, etc.</td><td>Create, plot, and compute properties of distributions</td></tr>
+    <tr><td><code>Probability_plotting</code></td><td><code>Weibull_probability_plot</code>, <code>Normal_probability_plot</code></td><td>Probability plots with confidence bounds</td></tr>
+    <tr><td><code>NonParametricEstimators</code></td><td><code>KaplanMeier</code>, <code>NelsonAalen</code>, <code>RankAdjustment</code></td><td>Non-parametric survival estimation</td></tr>
+    <tr><td><code>ALT_fitters</code></td><td><code>Fit_Weibull_Arrhenius</code>, <code>Fit_Lognormal_Eyring</code>, <code>Fit_Everything_ALT</code></td><td>Accelerated life test analysis</td></tr>
+    <tr><td><code>Repairable_systems</code></td><td><code>reliability_growth</code>, <code>MCF_nonparametric</code>, <code>optimal_replacement_time</code></td><td>Crow-AMSAA, MCF, optimal PM</td></tr>
+    <tr><td><code>Reliability_testing</code></td><td><code>reliability_test_planner</code>, <code>one_sided_proportion_test</code></td><td>Test design and demonstration planning</td></tr>
+    <tr><td><code>CompetingRisks</code></td><td><code>CompetingRisks_model</code></td><td>Multi-mode competing risks analysis</td></tr>
+    <tr><td><code>Mixture_models</code></td><td><code>Fit_Weibull_Mixture</code>, <code>Fit_Weibull_DSZI</code></td><td>Mixed populations and defective subgroups</td></tr>
+    <tr><td><code>Other_functions</code></td><td><code>stress_strength</code>, <code>similar_distributions</code>, <code>crosshairs</code></td><td>SSI, distribution comparison, plot tools</td></tr>
+    <tr><td><code>PoF</code></td><td><code>SN_diagram</code>, <code>fracture_mechanics_crack_growth</code>, <code>creep_failure_time</code></td><td>Physics of failure models</td></tr>
+    <tr><td><code>Convert_data</code></td><td><code>times_at_stress_to_data_format</code>, <code>xlsx_to_dataset</code></td><td>Data format conversions for ALT, repairable systems</td></tr>
+  </tbody>
+</table>
+
+<h3>17.1 Minimal Working Example: Full Reliability Analysis Pipeline</h3>
+
+<pre><code>"""
+Full reliability analysis pipeline using the reliability library.
+Source: reliability.readthedocs.io
+"""
+from reliability.Fitters import Fit_Everything, Fit_Weibull_2P
+from reliability.NonParametricEstimators import KaplanMeier
+from reliability.Other_functions import stress_strength
+from reliability.Distributions import Weibull_Distribution, Normal_Distribution
+import matplotlib.pyplot as plt
+
+# ── 1. Data ──────────────────────────────────────────────────────────────────
+failures       = [482, 637, 712, 830, 955, 1040, 1190, 1380, 1600, 1820]
+right_censored = [2000, 2000, 2000]
+
+# ── 2. Non-parametric (no model assumption) ──────────────────────────────────
+km = KaplanMeier(failures=failures, right_censored=right_censored,
+                 CI=0.9, print_results=False, show_plot=True)
+
+# ── 3. Fit all distributions, rank by BIC ────────────────────────────────────
+best = Fit_Everything(failures=failures, right_censored=right_censored,
+                      sort_by='BIC', show_probability_plot=False,
+                      show_PP_plot=False, show_histogram_plot=False)
+print(best.results[['Distribution','BIC','AD']].head(4))
+
+# ── 4. Detailed Weibull fit with confidence bounds ───────────────────────────
+w = Fit_Weibull_2P(failures=failures, right_censored=right_censored,
+                    CI=0.9, CI_type='time')
+print(f"\nWeibull: β={w.beta:.3f}, η={w.alpha:.0f} hrs")
+print(f"B10 = {w.quantiles(0.1):.0f} hrs  [90% LR: {w.quantiles_lower_CI:.0f} – {w.quantiles_upper_CI:.0f}]")
+
+# ── 5. Stress-strength interference ─────────────────────────────────────────
+strength_dist = Weibull_Distribution(alpha=w.alpha, beta=w.beta)
+stress_dist   = Normal_Distribution(mu=400, sigma=60)   # random load
+
+result = stress_strength(stress=stress_dist, strength=strength_dist,
+                         print_results=True, show_plot=True)
+
+plt.show()</code></pre>
+
+<!-- ============================================================= SECTION 18 -->
+<span class="section-anchor" id="takeaways"></span>
+<h2>18. Key Takeaways</h2>
+
+<ul>
+  <li><strong>Know your failure mode before picking a distribution.</strong> Weibull for monotone hazard (wear, fatigue with known slope); Lognormal for multiplicative/diffusion damage (crack growth, electromigration); Exponential for random external events. Never default to Weibull blindly.</li>
+  <li><strong>Never treat censored observations as failures.</strong> Right-censored units contribute $\ln R(c_i)$ to the log-likelihood, not $\ln f(c_i)$. The resulting underestimate of component life can be 2–5× — a catastrophic error in maintenance planning.</li>
+  <li><strong>Use MLE with LR confidence bounds.</strong> LS on the probability plot is for graphical diagnostics only. Use Wald (Fisher matrix) bounds only when $n &gt; 50$; use LR bounds otherwise.</li>
+  <li><strong>Report $B_{10}$ life with confidence bounds, not just a point estimate.</strong> "B10 = 1200 hrs" is not an engineering output. "B10 = 1200 hrs, 90% LR: [820, 1750] hrs" is.</li>
+  <li><strong>Separate failure modes before fitting.</strong> Mixed failure modes produce curved WPPs and meaningless single-distribution fits. Use failure cause codes from CMMS/FRACAS to segment data before analysis.</li>
+  <li><strong>ALT extrapolation requires the same failure mode at accelerated and use stress.</strong> Always verify with failure analysis at each stress level. The acceleration factor uncertainty often dominates the total life prediction uncertainty.</li>
+  <li><strong>Repairable vs non-repairable is a fundamental distinction.</strong> Crow-AMSAA / Power Law NHPP for recurrent failure histories on maintained systems. Weibull for time-to-first-failure on components.</li>
+  <li><strong>RUL prediction requires a P10/P90 interval.</strong> The maintenance decision depends on the cost ratio of false alarm vs. false miss — only a calibrated interval enables the optimal decision.</li>
+  <li><strong>Stress-strength interference connects load and strength distributions.</strong> Probabilistic SSI replaces safety factors with failure probabilities, enabling direct comparison to reliability targets.</li>
+  <li><strong>Use the Python <code>reliability</code> library.</strong> It is the most comprehensive open-source toolkit for this domain and implements everything in this chapter correctly: <a href="https://reliability.readthedocs.io" target="_blank">reliability.readthedocs.io</a>.</li>
+</ul>
+
+<h3>References and Further Reading</h3>
+<ul>
+  <li>Reid, M. — <em>Python reliability library</em>. <a href="https://reliability.readthedocs.io" target="_blank">reliability.readthedocs.io</a>. Comprehensive open-source toolkit with full documentation for all methods in this chapter.</li>
+  <li>Meeker, W. Q. &amp; Escobar, L. A. (1998). <em>Statistical Methods for Reliability Data</em>. Wiley. The definitive reference for MLE, censored data, and confidence bounds in reliability.</li>
+  <li>Nelson, W. (1982). <em>Applied Life Data Analysis</em>. Wiley. Foundational text on probability plotting, censored MLE, and ALT.</li>
+  <li>ReliaSoft / HBK — <em>Life Data Analysis Reference</em>. <a href="https://help.reliasoft.com" target="_blank">help.reliasoft.com</a>. Practical reference with industrial examples for Weibull++.</li>
+  <li>MIL-HDBK-189C (2011). <em>Reliability Growth Management</em>. DoD. Crow-AMSAA reliability growth methodology.</li>
+  <li>Haldar, A. &amp; Mahadevan, S. (2000). <em>Reliability Assessment Using Stochastic Finite Element Analysis</em>. Wiley. FORM/SORM and structural reliability.</li>
+  <li>Billinton, R. &amp; Allan, R. N. (1992). <em>Reliability Evaluation of Engineering Systems</em>. Springer. System reliability: RBD, fault trees, network methods.</li>
 </ul>
 
 <div class="nav-links">
@@ -251,7 +1257,7 @@ $$\min_{\mathbf{x}} f(\mathbf{x}) \quad \text{s.t.} \quad P\bigl(g_k(\mathbf{x},
 
 <footer>
   <p>The Engineer's Handbook of Machine Learning &mdash; Leonardo Pulga PhD</p>
-  <p style="margin-top:0.4rem">Generated for GitHub Pages &bull; MathJax rendering</p>
+  <p style="margin-top:0.4rem">Chapter 16 &bull; Reliability Engineering &bull; MathJax rendering</p>
 </footer>
 
 </body>
